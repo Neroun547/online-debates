@@ -1,0 +1,43 @@
+import { Module } from '@nestjs/common';
+import { AppController } from './app.controller';
+import { AppService } from './app.service';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { ConfigModule } from '@nestjs/config';
+import { User } from './db/user/user.entity';
+import { UserModule } from './user/users.module';
+import { CacheModule } from '@nestjs/cache-manager';
+import KeyvRedis from "@keyv/redis"
+import { CategoriesModule } from './categories/categories.module';
+import { Category } from './db/category/category.entity';
+import { Subject } from './db/subjects/subject.entity';
+import { Admin } from './db/admin/admin.entity';
+import { AdminModule } from './admin/admin.module';
+import { SubjectsModule } from './subjects/subjects.module';
+
+@Module({
+  imports: [
+    ConfigModule.forRoot({ isGlobal: true }),
+    CacheModule.register({
+      stores: [
+        new KeyvRedis(process.env.CACHE_REDIS_URL),
+      ],
+      isGlobal: true
+    }),
+    TypeOrmModule.forRoot({
+      database: process.env.DB_NAME,
+      username: process.env.DB_USERNAME,
+      password: process.env.DB_PASSWORD,
+      port: Number(process.env.DB_PORT),
+      host: process.env.DB_HOST,
+      entities: [User, Category, Subject, Admin],
+      type: "mariadb"
+    }),
+    UserModule,
+    CategoriesModule,
+    AdminModule,
+    SubjectsModule
+  ],
+  controllers: [AppController],
+  providers: [AppService],
+})
+export class AppModule {}

@@ -9,6 +9,9 @@ import { InjectRepository } from "@nestjs/typeorm";
 export class CategoryServiceDb {
     constructor(@InjectRepository(Category) private repository: Repository<Category>) {}
 
+    async countAll(): Promise<number> {
+        return await this.repository.count();
+    }
     async countById(id: number): Promise<number> {
         return await this.repository.count({ where: { id: id } });
     }

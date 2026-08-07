@@ -1,10 +1,11 @@
-import { BadRequestException, Body, Controller, Get, Param, Patch, Req, UseGuards } from "@nestjs/common";
+import { BadRequestException, Body, Controller, Delete, Get, Param, Patch, Req, UseGuards } from "@nestjs/common";
 import { UpdateUserOnlineStatusDto } from "./dto/update-user-online-status.dto";
 import { AuthGuard } from "./auth/auth.guard";
 import { UserService } from "./service/users.service";
 import type { Request } from "express";
 import { UpdateUserPassword } from "./dto/update-user-password.dto";
 import { UpdateUserPersonalDataDto } from "./dto/update-personal-data.dto";
+import { UpdateUserDataResponseDto } from "./dto/update-user-data-response.dto";
 
 @Controller("users")
 export class UsersController {
@@ -37,19 +38,38 @@ export class UsersController {
 
     @UseGuards(AuthGuard)
     @Patch("personal-data")
-    async updateUserPersonalData(@Req() req: Request, @Body() body: UpdateUserPersonalDataDto) {
-        await this.usersService.updateUserParams({
+    async updateUserPersonalData(@Req() req: Request, @Body() body: UpdateUserPersonalDataDto): Promise<UpdateUserDataResponseDto> {
+        const newToken = await this.usersService.updateUserParams({
             userId: req["user"].id,
             email: body.email,
-            username: body.username
+            username: body.username,
+            oldEmail: req["user"].email,
+            oldUsername: req["user"].username
         });
 
-        return;
+        return { token: newToken };
     }
 
     @Get("confirm-new-email/:hash")
-    async confirmUserNewEmailByHash(@Param("hash") hash: string) {
-        await this.usersService.confirmNewEmail(hash);
+    async confirmUserNewEmailByHash(@Param("hash") hash: string): Promise<UpdateUserDataResponseDto> {
+        const newToken = await this.usersService.confirmNewEmail(hash);
+
+        return { token: newToken };
+    }
+
+    @UseGuards(AuthGuard)
+    @Get()
+    async getUserInfo(@Req() req: Request) {
+        return {
+            username: req["user"].username,
+            email: req["user"].email
+        }
+    } 
+
+    @UseGuards(AuthGuard)
+    @Delete()
+    async deleteUser(@Req() req: Request) {
+        await this.usersService.deleteUserById(req["user"].id);
 
         return;
     }

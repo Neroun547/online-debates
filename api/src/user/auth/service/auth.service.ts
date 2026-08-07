@@ -25,7 +25,17 @@ export class AuthService {
         if(!this.checkPassword(userInDb.password, body.password)) {
             throw new ForbiddenException({ message: "Invalid password" });
         }
-        const token = await this.jwtService.signAsync({ id: userInDb.id, email: userInDb.email }, { secret: this.configService.getOrThrow("USER_AUTH_JWT_SECRET"), expiresIn: this.configService.getOrThrow("USER_AUTH_JWT_EXPIRES_IN") });
+        const token = await this.jwtService.signAsync(
+            { 
+                id: userInDb.id, 
+                email: userInDb.email, 
+                username: userInDb.username 
+            }, 
+            { 
+                secret: this.configService.getOrThrow("USER_AUTH_JWT_SECRET"),
+                expiresIn: this.configService.getOrThrow("USER_AUTH_JWT_EXPIRES_IN") 
+            }
+        );
 
         return token;
     }

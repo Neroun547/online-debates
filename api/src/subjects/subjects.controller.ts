@@ -5,6 +5,7 @@ import { CreateSubjectDto } from "./dto/create-subject.dto";
 import type { Request } from "express";
 import { SubjectsService } from "./service/subjects.service";
 import { UpdateSubjectDto } from "./dto/update-subject.dto";
+import { GetByCategoryIdWithCategoryAndUserResponseDto } from "./dto/get-by-category-id-with-category-and-user-response.dto";
 
 @Controller("subjects")
 export class SubjectsController {
@@ -12,7 +13,7 @@ export class SubjectsController {
     
     @UseGuards(AuthGuard)
     @Get()
-    async getSubjects(@Query() query: GetSubjectsDto) {
+    async getSubjects(@Query() query: GetSubjectsDto): Promise<GetByCategoryIdWithCategoryAndUserResponseDto> {
         return await this.subjectsService.getByCategoryIdWithCategoryAndUser(query.page, query.limit, query.categoryId);
     }
     

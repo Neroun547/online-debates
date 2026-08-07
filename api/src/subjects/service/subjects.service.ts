@@ -1,8 +1,8 @@
 import { Injectable, NotFoundException } from "@nestjs/common";
 import { CategoryServiceDb } from "src/db/category/category.service";
-import { SubjectDomainInterface } from "src/db/subjects/interfaces/subject.interfaces";
 import { SubjectServiceDb } from "src/db/subjects/subject.service";
 import { UpdateSubjectDto } from "../dto/update-subject.dto";
+import { GetByCategoryIdWithCategoryAndUserResponseDto } from "../dto/get-by-category-id-with-category-and-user-response.dto";
 
 @Injectable()
 export class SubjectsService {
@@ -11,8 +11,15 @@ export class SubjectsService {
         private categoryServiceDb: CategoryServiceDb
     ) {}
 
-    async getByCategoryIdWithCategoryAndUser(page: number, limit: number, categoryId: number): Promise<SubjectDomainInterface[]> {
-        return await this.subjectsServiceDb.findWithCategoryAndUserByCategoryId(page, limit, categoryId);
+    async getByCategoryIdWithCategoryAndUser(page: number, limit: number, categoryId: number): Promise<GetByCategoryIdWithCategoryAndUserResponseDto> {
+        const currentSkipElements = page * limit;
+        const countAll = await this.subjectsServiceDb.countAll();
+        const data = await this.subjectsServiceDb.findWithCategoryAndUserByCategoryId(page, limit, categoryId);
+
+        return {
+            data: data,
+            isLoadMoreAvailable: countAll > currentSkipElements
+        }
     }
     async createSubject(name: string, categoryId: number, userId: number) {
         const categoryInDb = await this.categoryServiceDb.findById(categoryId);

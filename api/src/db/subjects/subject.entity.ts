@@ -22,14 +22,14 @@ export class Subject {
     @Column()
     categoryId!: number;
     
-    @Column()
+    @Column({ nullable: true })
     userId!: number;
 
-    @ManyToOne(() => User)
+    @ManyToOne(() => User, { nullable: true, onDelete: "SET NULL", onUpdate: "CASCADE" })
     @JoinColumn({ name: "userId" })
     user!: User;
 
-    @ManyToOne(() => Category, (category) => category.subjects, {  })
+    @ManyToOne(() => Category, (category) => category.subjects, { onDelete: "CASCADE", onUpdate: "CASCADE" })
     @JoinColumn({ name: "categoryId" })
     category!: Category;
 }

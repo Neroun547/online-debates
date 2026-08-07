@@ -20,7 +20,7 @@ export class Category {
     @Column({ type: "int" })
     priority!: number;
 
-    @OneToMany(() => Subject, (subject: Subject) => subject.category, { onDelete: "CASCADE", onUpdate: "CASCADE" })
+    @OneToMany(() => Subject, (subject: Subject) => subject.category)
     subjects?: Subject[];
 }
 

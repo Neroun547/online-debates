@@ -9,6 +9,9 @@ import { SubjectMapper } from "./subject.mapper";
 export class SubjectServiceDb {
     constructor(@InjectRepository(Subject) private repository: Repository<Subject>) {}
 
+    async countAll(): Promise<number> {
+        return await this.repository.count();
+    }
     async deleteByIdAndUserId(id: number, userId: number): Promise<void> {
         await this.repository.delete({ id: id, userId: userId });
     }

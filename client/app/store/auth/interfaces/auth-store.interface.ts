@@ -1,6 +1,8 @@
-export interface UserStore {
-    isError: boolean;
-    errorMessage: undefined | string;  
-    token: any;
+import type { BaseStoreInterface } from "~/store/base-store.interface";
+
+export interface UserStore extends BaseStoreInterface {
+    isAuth: boolean;
+    token: string;
+    isOnline: boolean;
 }
 

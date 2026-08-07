@@ -1,0 +1,88 @@
+<template>
+  <div>
+    <div class="mt-15">
+      <div v-if="subjects.length">
+        <h2 class="text-4xl text-center">{{ currentCategory?.name }}</h2>
+        <ul class="list-disc mt-10">
+          <li
+            v-for="subject in subjects"
+            v-bind:key="subject.id"
+            class="text-primary text-xl text-center mt-3"
+          >
+            <ULink class="text-primary cursor-pointer">
+              {{ subject.name }}
+            </ULink>
+          </li>
+        </ul>
+
+        <LoadMoreButton
+          v-if="isLoadMoreAvailable"
+          @load-more="incrementPage"
+          :is-loading="isLoadMoreButtonLoading"
+          class="m-auto block mt-15"
+        />
+      </div>
+      <div v-if="!subjects.length">
+        <h2 class="text-4xl text-center">No subject :( You can be first</h2>
+      </div>
+    </div>
+  </div>
+</template>
+<script setup lang="ts">
+import { useAppStore } from "~/store/app-store";
+import { useCategoriesStore } from "~/store/categories/categories.store";
+import type { CategoryItem } from "~/store/categories/interfaces/get-categories-response.interface";
+import type { SubjectItem } from "~/store/categories/interfaces/get-subjects-response.interface";
+
+const subjects = ref<SubjectItem[]>([]);
+const route = useRoute();
+
+const page = ref(1);
+const limit = ref(20);
+
+const categoriesStore = useCategoriesStore();
+const currentCategory = ref<CategoryItem>();
+
+const isLoadMoreAvailable = ref(false);
+const isLoadMoreButtonLoading = ref(false);
+
+const appStore = useAppStore();
+
+function incrementPage() {
+  page.value += 1;
+}
+
+async function getSubjects() {
+  const response = await categoriesStore.getSubjectsByCategoryId(
+    Number(route.params.id),
+    page.value,
+    limit.value,
+  );
+
+  if (response) {
+    subjects.value.push(...response.data);
+    isLoadMoreAvailable.value = response.isLoadMoreAvailable;
+  }
+}
+
+async function getCategory() {
+  const data = await categoriesStore.getCategoryById(Number(route.params.id));
+
+  if (data) {
+    currentCategory.value = data;
+  }
+}
+
+watch(page, () => {
+  isLoadMoreButtonLoading.value = true;
+  getSubjects().then(() => (isLoadMoreButtonLoading.value = false));
+});
+
+onMounted(() => {
+  appStore.setIsLoading(true);
+
+  Promise.all([getSubjects(), getCategory()]).then(() =>
+    appStore.setIsLoading(false),
+  );
+});
+</script>

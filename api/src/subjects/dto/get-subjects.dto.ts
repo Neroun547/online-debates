@@ -1,5 +1,5 @@
 import { Type } from "class-transformer";
-import { IsInt, Max, Min } from "class-validator";
+import { IsInt, IsOptional, Max, Min } from "class-validator";
 
 export class GetSubjectsDto {
     @Type(() => Number)
@@ -15,6 +15,12 @@ export class GetSubjectsDto {
 
     @Type(() => Number)
     @IsInt()
-    categoryId!: number;
+    @IsOptional()
+    categoryId?: number;
+
+    @Type(() => Number)
+    @IsInt()
+    @IsOptional()
+    userId?: number;
 }
 

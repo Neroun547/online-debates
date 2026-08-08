@@ -16,7 +16,10 @@
       >
         <template v-slot:footerLinks>
           <p>
-            Already have an account ? <ULink to="/auth" class="text-primary hover:text-primary">Sign in</ULink>
+            Already have an account ?
+            <ULink to="/auth" class="text-primary hover:text-primary"
+              >Sign in</ULink
+            >
           </p>
         </template>
       </BaseUserCredentialsForm>
@@ -35,7 +38,7 @@ const userStore = useUserStore();
 
 const isFormSubmittedSuccess = ref(false);
 const isSignupError = ref(false);
-const signupErrorMessage = ref<string | undefined>(undefined); 
+const signupErrorMessage = ref<string | undefined>(undefined);
 
 const fields: Array<PropsFieldItemInterface> = [
   {
@@ -62,9 +65,9 @@ const fields: Array<PropsFieldItemInterface> = [
 ];
 
 const formSchema = z.object({
-  username: z.string().min(6).max(50),
+  username: z.string().trim().min(6).max(50),
   email: z.email(),
-  password: z.string().min(8).max(50),
+  password: z.string().trim().min(8).max(50),
 });
 
 async function signup(data: SignupRequestInterface) {

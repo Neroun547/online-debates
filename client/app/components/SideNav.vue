@@ -5,13 +5,24 @@
     <div class="w-[120px] m-auto">
       <div class="block m-auto mt-5">
         <ULink
-          to="/user/topics"
+          to="/user/slots"
           active-class="text-primary"
           inactive-class="text-black"
           class="flex items-center"
         >
-          <UIcon name="lucide:volume-1" class="block mr-2" />
-          <div class="text-left w-full">My Topics</div>
+          <UIcon name="lucide:calendar-plus-2" class="block mr-2" />
+          <div class="text-left w-full">My Slots</div>
+        </ULink>
+      </div>
+      <div class="block m-auto mt-5">
+        <ULink
+          to="/user/subjects"
+          active-class="text-primary"
+          inactive-class="text-black"
+          class="flex items-center"
+        >
+          <UIcon name="lucide:notebook" class="block mr-2" />
+          <div class="text-left w-full">My subjects</div>
         </ULink>
       </div>
       <div class="block m-auto mt-5">

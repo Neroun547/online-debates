@@ -14,7 +14,14 @@ export class SubjectsController {
     @UseGuards(AuthGuard)
     @Get()
     async getSubjects(@Query() query: GetSubjectsDto): Promise<GetByCategoryIdWithCategoryAndUserResponseDto> {
-        return await this.subjectsService.getByCategoryIdWithCategoryAndUser(query.page, query.limit, query.categoryId);
+        return await this.subjectsService.getByCategoryIdWithCategoryAndUser(
+            {
+                page: query.page,
+                limit: query.limit,
+                categoryId: query.categoryId,
+                userId: query.userId
+            }
+        );
     }
     
     @UseGuards(AuthGuard)

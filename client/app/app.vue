@@ -14,10 +14,6 @@ const appStore = useAppStore();
 
 const isMenuOpen = ref(false);
 
-onBeforeRouteUpdate(() => {
-  appStore.setIsLoading(true);
-});
-
 onMounted(() => {
   isCurrentPublicPage.value = isPublicPage(route.path);
 });
@@ -60,9 +56,7 @@ onMounted(() => {
         />
       </div>
       <div v-if="isCurrentPublicPage">
-        <NuxtPage
-          class="m-auto w-[85%]"
-        />
+        <NuxtPage class="m-auto w-[85%]" />
       </div>
     </UMain>
   </UApp>

@@ -2,7 +2,7 @@
   <UForm
     :schema="props.formSchema"
     :state="formState"
-    @submit="(e) => submitForm(e)"
+    @submit="(e: Event) => submitForm(e)"
     class="shadow p-5 w-max"
   >
     <UFormField

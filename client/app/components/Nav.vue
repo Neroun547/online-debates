@@ -3,11 +3,9 @@
     class="border-[1.5px] border-primary h-[50px] flex justify-between shadow-lg fixed w-full bg-white"
   >
     <div class="flex items-center h-full ml-2">
-      <UIcon
-        name="lucide:menu"
-        class="max-[1300px]:block hidden text-black"
-        @click="toggleMenu"
-      />
+      <button @click="toggleMenu" class="max-[1300px]:block hidden p-2">
+        <UIcon name="lucide:menu" class="text-black" />
+      </button>
       <div class="max-[1300px]:ml-5">{{ isUserOnlineText }}</div>
       <div class="ml-3">
         <USwitch v-model="localIsOnlineState" color="success" />

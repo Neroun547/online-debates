@@ -38,6 +38,14 @@ export const useUserStore = defineStore("user", {
 
             window.location.href = "/auth";
         },
+        async updatePassword(oldPassword: string, newPassword: string, confirmNewPassword: string) {
+            try {
+                this.clearErrorState();
+                await useApiFetch("/users/password", { method: "PATCH", body: { oldPassword: oldPassword, newPassword: newPassword, confirmNewPassword: confirmNewPassword } })
+            } catch(error: any) {
+                this.setError(error.response._data.message);
+            }
+        },
         async confirmNewEmail(hash: string) {
             try {
                 this.clearErrorState();

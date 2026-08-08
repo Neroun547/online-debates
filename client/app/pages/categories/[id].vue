@@ -3,17 +3,7 @@
     <div class="mt-15">
       <div v-if="subjects.length">
         <h2 class="text-4xl text-center">{{ currentCategory?.name }}</h2>
-        <ul class="list-disc mt-10">
-          <li
-            v-for="subject in subjects"
-            v-bind:key="subject.id"
-            class="text-primary text-xl text-center mt-3"
-          >
-            <ULink class="text-primary cursor-pointer">
-              {{ subject.name }}
-            </ULink>
-          </li>
-        </ul>
+        <BaseSubjectsList :data="subjects" class="mt-10" />
 
         <LoadMoreButton
           v-if="isLoadMoreAvailable"
@@ -53,11 +43,11 @@ function incrementPage() {
 }
 
 async function getSubjects() {
-  const response = await categoriesStore.getSubjectsByCategoryId(
-    Number(route.params.id),
-    page.value,
-    limit.value,
-  );
+  const response = await categoriesStore.getSubjects({
+    limit: limit.value,
+    page: page.value,
+    categoryId: Number(route.params.id),
+  });
 
   if (response) {
     subjects.value.push(...response.data);

@@ -12,6 +12,15 @@ export class SubjectServiceDb {
     async countAll(): Promise<number> {
         return await this.repository.count();
     }
+    async countByCategoryIdAndUserId(userId: number, categoryId: number): Promise<number> {
+        return await this.repository.count({ where: { userId: userId, categoryId: categoryId } });
+    }
+    async countByCategoryId(categoryId: number): Promise<number> {
+        return await this.repository.count({ where: { categoryId: categoryId } });
+    }
+    async countByUserId(userId: number): Promise<number> {
+        return await this.repository.count({ where: { userId: userId } });
+    }
     async deleteByIdAndUserId(id: number, userId: number): Promise<void> {
         await this.repository.delete({ id: id, userId: userId });
     }
@@ -20,14 +29,15 @@ export class SubjectServiceDb {
 
         await this.repository.save(model);
     }    
-    async findWithCategoryAndUserByCategoryId(page: number, limit: number, categoryId: number): Promise<SubjectDomainInterface[]> {
+    async findWithCategoryAndUserByCategoryIdAndUserId(page: number, limit: number, categoryId?: number, userId?: number): Promise<SubjectDomainInterface[]> {
         const data = await this.repository.find({ 
             relations: {
                 category: true,
                 user: true
             },
             where: { 
-                categoryId: categoryId 
+                categoryId: categoryId,
+                userId: userId
             }, 
             take: limit, 
             skip: (page - 1) * limit

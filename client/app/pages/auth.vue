@@ -29,7 +29,6 @@
 import { z } from "zod";
 import type { PropsFieldItemInterface } from "~/components/BaseUserCredentialsForm.vue";
 import BaseUserCredentialsForm from "~/components/BaseUserCredentialsForm.vue";
-import { useAppStore } from "~/store/app-store";
 import type { AuthRequestInterface } from "~/store/auth/interfaces/auth-request.interface";
 import { useUserStore } from "~/store/auth/user.store";
 
@@ -38,8 +37,8 @@ const userStore = useUserStore();
 const isFormLoading = ref(false);
 
 const formSchema = z.object({
-  usernameOrEmail: z.string().max(256).min(1),
-  password: z.string().min(8).max(50),
+  usernameOrEmail: z.string().trim().max(256).min(1),
+  password: z.string().trim().min(8).max(50),
 });
 
 const isFormSubmittedSuccess = ref(false);

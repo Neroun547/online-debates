@@ -2,6 +2,7 @@ import { useApiFetch } from "~/libs/useApiFetch";
 import type { CategoriesStore } from "./interfaces/categories-store.interface";
 import type { CategoryItem, GetCategoriesResponseInterface } from "./interfaces/get-categories-response.interface";
 import type { GetSubjectsResponseInterface, SubjectItem } from "./interfaces/get-subjects-response.interface";
+import type { CreateSubjectRequestInterface } from "./interfaces/create-subject-request.interface";
 
 export const useCategoriesStore = defineStore("categories", {
     state: (): CategoriesStore => ({
@@ -9,8 +10,43 @@ export const useCategoriesStore = defineStore("categories", {
         isError: false
     }),
     actions: {
+        async updateSubject(subject: { name: string, categoryId: number, id: number }) {
+            try {
+                this.clearError();
+
+                await useApiFetch("/subjects/" + subject.id, { 
+                    method: "PUT", 
+                    body: {
+                        name: subject.name,
+                        categoryId: subject.categoryId
+                    } 
+                });
+            } catch(error: any) {
+                this.setError(error.response._data.message);
+            }
+        },
+        async deleteSubjectById(id: number) {
+            try {
+                this.clearError();
+
+                await useApiFetch("/subjects/" + id, { method: "DELETE" });
+            } catch(error: any) {
+                this.setError(error.response._data.message);
+            }
+        },
+        async createSubject(subject: CreateSubjectRequestInterface) {
+            try {
+                this.clearError();
+
+                await useApiFetch("/subjects", { method: "POST", body: subject });
+            } catch(error: any) {
+                this.setError(error.response._data.message);
+            }
+        },
         async getCategories(page: number, limit: number): Promise<GetCategoriesResponseInterface | undefined> {
             try {
+                this.clearError();
+
                 const response = await useApiFetch<GetCategoriesResponseInterface>(`/categories?page=${page}&limit=${limit}`, { method: "GET" });
 
                 return response;
@@ -18,9 +54,44 @@ export const useCategoriesStore = defineStore("categories", {
                 this.setError(error.response._data.message);
             }
         },
-        async getSubjectsByCategoryId(categoryId: number, page: number, limit: number): Promise<GetSubjectsResponseInterface | undefined> {
+        async getUserSubjects(params: {
+            page: number;
+            limit: number;
+            categoryId?: number;
+        }): Promise<GetSubjectsResponseInterface | undefined> {
             try {
-                const response = await useApiFetch<GetSubjectsResponseInterface>(`/subjects?page=${page}&limit=${limit}&categoryId=${categoryId}`);
+                this.clearError();
+
+                let url = `/subjects?page=${params.page}$limit=${params.limit}`;
+
+                if(params.categoryId) {
+                    url += `&categoryId=${params.categoryId}`;
+                }
+                const response = await useApiFetch<GetSubjectsResponseInterface>(url);
+
+                return response;
+            } catch(error: any) {
+                this.setError(error.response._data.message);
+            }
+        },
+        async getSubjects(params: {
+            page: number;
+            limit: number;
+            categoryId?: number;
+            userId?: number;
+        }): Promise<GetSubjectsResponseInterface | undefined> {
+            try {
+                this.clearError();
+
+                let url = `/subjects?page=${params.page}&limit=${params.limit}`;
+
+                if(params.userId) {
+                    url += `&userId=${params.userId}`;
+                }
+                if(params.categoryId) {
+                    url += `&categoryId=${params.categoryId}`
+                }
+                const response = await useApiFetch<GetSubjectsResponseInterface>(url);
 
                 return response;
             } catch(error: any) {
@@ -29,6 +100,8 @@ export const useCategoriesStore = defineStore("categories", {
         },
         async getCategoryById(id: number): Promise<CategoryItem | undefined> {
             try {
+                this.clearError();
+
                 const response = await useApiFetch<CategoryItem>(`/categories/${id}`);
 
                 return response;

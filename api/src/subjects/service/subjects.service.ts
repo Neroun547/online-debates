@@ -11,14 +11,19 @@ export class SubjectsService {
         private categoryServiceDb: CategoryServiceDb
     ) {}
 
-    async getByCategoryIdWithCategoryAndUser(page: number, limit: number, categoryId: number): Promise<GetByCategoryIdWithCategoryAndUserResponseDto> {
-        const currentSkipElements = page * limit;
-        const countAll = await this.subjectsServiceDb.countAll();
-        const data = await this.subjectsServiceDb.findWithCategoryAndUserByCategoryId(page, limit, categoryId);
+    async getByCategoryIdWithCategoryAndUser(params: {
+        page: number; 
+        limit: number; 
+        categoryId?: number;
+        userId?: number;
+    }): Promise<GetByCategoryIdWithCategoryAndUserResponseDto> {
+        const currentSkipElements = params.page * params.limit;
+        const countByCategory = await this.getCountByCategoryIdAndUserId(params.categoryId, params.userId);
+        const data = await this.subjectsServiceDb.findWithCategoryAndUserByCategoryIdAndUserId(params.page, params.limit, params.categoryId, params.userId);
 
         return {
             data: data,
-            isLoadMoreAvailable: countAll > currentSkipElements
+            isLoadMoreAvailable: countByCategory > currentSkipElements
         }
     }
     async createSubject(name: string, categoryId: number, userId: number) {
@@ -61,6 +66,18 @@ export class SubjectsService {
             throw new NotFoundException({ message: "Subject not found" });
         }
         await this.subjectsServiceDb.deleteByIdAndUserId(id, userId);
+    }
+
+    private async getCountByCategoryIdAndUserId(categoryId: number | undefined, userId: number | undefined): Promise<number> {
+        if(categoryId !== undefined && userId !== undefined) {
+            return await this.subjectsServiceDb.countByCategoryIdAndUserId(userId, categoryId);
+        } else if(categoryId !== undefined) {
+            return await this.subjectsServiceDb.countByCategoryId(categoryId);
+        } else if(userId !== undefined) {
+            return await this.subjectsServiceDb.countByUserId(userId);
+        } else {
+            return await this.subjectsServiceDb.countAll();
+        }
     }
 }
 

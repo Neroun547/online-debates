@@ -63,18 +63,54 @@
       </div>
       <div class="flex flex-col mt-10 w-full max-w-[800px]">
         <h2 class="text-2xl">Change password</h2>
-        <div class="mt-5">
-          <label>Old password</label>
-          <UInput placeholder="Old password" class="w-full" />
-        </div>
-        <div class="mt-3">
-          <label>New password</label>
-          <UInput placeholder="New password" class="w-full" />
-        </div>
-        <UButton
-          label="Update password"
-          class="w-min mt-5 block cursor-pointer"
-        />
+        <UForm
+          class="mt-5"
+          :schema="updatePasswordSchema"
+          :state="updatePasswordState"
+          @submit.prevent="updatePassword"
+        >
+          <UFormField
+            name="oldPassword"
+            class="w-full"
+            label="Write your old password"
+          >
+            <UInput
+              class="w-full"
+              name="oldPassword"
+              placeholder="Old password"
+              v-model="updatePasswordState.oldPassword"
+              type="password"
+            />
+          </UFormField>
+          <UFormField
+            name="newPassword"
+            class="mt-5 w-full"
+            label="Write your new password"
+          >
+            <UInput
+              name="newPassword"
+              placeholder="New password"
+              v-model="updatePasswordState.newPassword"
+              class="w-full"
+              type="password"
+            />
+          </UFormField>
+          <UFormField
+            name="confirmNewPassword"
+            class="mt-5 w-full"
+            label="Confirm your new password"
+          >
+            <UInput
+              name="confirmNewPassword"
+              placeholder="Confirm new password"
+              v-model="updatePasswordState.confirmNewPassword"
+              class="w-full"
+              type="password"
+            />
+          </UFormField>
+
+          <UButton label="Update password" type="submit" class="mt-5" />
+        </UForm>
       </div>
 
       <div class="mt-10">
@@ -105,11 +141,28 @@ const isUpdateUsernameButtonDisabled = computed(
 );
 
 const updateUsernameFormSchema = z.object({
-  username: z.string().min(6).max(50),
+  username: z.string().trim().min(6).max(50),
 });
 
 const updateEmailUserSchema = z.object({
   email: z.email(),
+});
+
+const updatePasswordSchema = z
+  .object({
+    oldPassword: z.string().trim().min(8).max(50),
+    newPassword: z.string().trim().min(8).max(50),
+    confirmNewPassword: z.string().trim().min(8).max(50),
+  })
+  .refine((data) => data.newPassword === data.confirmNewPassword, {
+    message: "Password do not match",
+    path: ["confirmNewPassword"],
+  });
+
+const updatePasswordState = ref({
+  oldPassword: "",
+  newPassword: "",
+  confirmNewPassword: "",
 });
 
 const toast = useToast();
@@ -137,6 +190,32 @@ function showDeleteAccountModal() {
   isDeleteAccountModalShow.value = true;
 }
 
+async function updatePassword() {
+  await userStore.updatePassword(
+    updatePasswordState.value.oldPassword,
+    updatePasswordState.value.newPassword,
+    updatePasswordState.value.confirmNewPassword,
+  );
+
+  if (userStore.isError) {
+    toast.add({
+      title: "Error",
+      description: userStore.errorMessage,
+      progress: {
+        color: "error",
+      },
+    });
+  } else {
+    toast.add({
+      title: "Success",
+      description: "Password changed success",
+      progress: {
+        color: "success",
+      },
+    });
+  }
+}
+
 async function getUser() {
   const data = await userStore.getUserInfo();
 
@@ -162,6 +241,14 @@ async function updateUsername() {
     });
   } else {
     oldUserData.value.username = user.value.username;
+
+    toast.add({
+      title: "Success",
+      description: "Username updated success",
+      progress: {
+        color: "success",
+      },
+    });
   }
 }
 

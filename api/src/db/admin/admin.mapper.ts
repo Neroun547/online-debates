@@ -18,7 +18,10 @@ export class AdminMapper {
     }
 
     static toSave(data: AdminInterface): Admin {
-        const model = new Admin(data.email, data.password);
+        const model = new Admin();
+
+        model.email = data.email;
+        model.password = data.password;
 
         return model;
     }

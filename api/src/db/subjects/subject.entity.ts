@@ -4,15 +4,6 @@ import { Category } from "../category/category.entity";
 
 @Entity({ name: "subjects" })
 export class Subject {
-    constructor(name: string, categoryId: number, userId: number, id?: number) {
-        if(id) {
-            this.id = id;
-        }
-        this.name = name;
-        this.categoryId = categoryId;
-        this.userId = userId;
-    }
-
     @PrimaryGeneratedColumn()
     id!: number;
 

@@ -9,6 +9,9 @@ import { SubjectMapper } from "./subject.mapper";
 export class SubjectServiceDb {
     constructor(@InjectRepository(Subject) private repository: Repository<Subject>) {}
 
+    async countByCategoryIdAndId(categoryId: number, subjectId: number): Promise<number> {
+        return await this.repository.count({ where: { categoryId: categoryId, id: subjectId } });
+    }
     async countAll(): Promise<number> {
         return await this.repository.count();
     }

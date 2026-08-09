@@ -13,6 +13,10 @@ import { Subject } from './db/subjects/subject.entity';
 import { Admin } from './db/admin/admin.entity';
 import { AdminModule } from './admin/admin.module';
 import { SubjectsModule } from './subjects/subjects.module';
+import { SlotsModule } from './slots/slots.module';
+import { Slots } from './db/slots/slots.entity';
+import { SlotsTemplates } from './db/slots-templates/slots-templates.entity';
+import { Sessions } from './db/sessions/sessions.entity';
 
 @Module({
   imports: [
@@ -29,13 +33,14 @@ import { SubjectsModule } from './subjects/subjects.module';
       password: process.env.DB_PASSWORD,
       port: Number(process.env.DB_PORT),
       host: process.env.DB_HOST,
-      entities: [User, Category, Subject, Admin],
+      entities: [User, Category, Subject, Admin, Slots, SlotsTemplates, Sessions],
       type: "mariadb"
     }),
     UserModule,
     CategoriesModule,
     AdminModule,
-    SubjectsModule
+    SubjectsModule,
+    SlotsModule
   ],
   controllers: [AppController],
   providers: [AppService],

@@ -11,7 +11,10 @@ export class CategoryMapper {
     }
 
     static toSave(data: CategoryInterface): Category {
-        const newModel = new Category(data.name, data.priority);
+        const newModel = new Category();
+
+        newModel.name = data.name;
+        newModel.priority = data.priority;
 
         return newModel;
     }

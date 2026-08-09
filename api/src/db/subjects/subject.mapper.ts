@@ -27,11 +27,11 @@ export class SubjectMapper {
     }
 
     static toSave(data: SubjectInterface): Subject {
-        const model = new Subject(
-            data.name,
-            data.categoryId,
-            data.userId
-        );
+        const model = new Subject();
+
+        model.name = data.name;
+        model.categoryId = data.categoryId;
+        model.userId = data.userId;
 
         return model;
     }

@@ -5,6 +5,9 @@ import { User } from './user/user.entity';
 import { Category } from './category/category.entity';
 import { Subject } from './subjects/subject.entity';
 import { Admin } from './admin/admin.entity';
+import { Slots } from './slots/slots.entity';
+import { SlotsTemplates } from './slots-templates/slots-templates.entity';
+import { Sessions } from './sessions/sessions.entity';
 
 dotenv.config();
 
@@ -17,7 +20,7 @@ export default new DataSource({
   password: process.env.DB_PASSWORD,
 
   synchronize: false,
-  entities: [User, Category, Subject, Admin],
+  entities: [User, Category, Subject, Admin, Slots, SlotsTemplates, Sessions],
   migrations: [
     join(process.cwd(), 'src/db/migrations/*{.ts,.js}'),
   ],

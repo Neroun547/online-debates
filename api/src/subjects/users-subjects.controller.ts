@@ -2,6 +2,7 @@ import { Controller, Get, Query, Req, UseGuards } from "@nestjs/common";
 import { AuthGuard } from "src/user/auth/auth.guard";
 import { GetSubjectsDto } from "./dto/get-subjects.dto";
 import { SubjectsService } from "./service/subjects.service";
+import type { Request } from "express";
 
 @UseGuards(AuthGuard)
 @Controller("users/subjects")
@@ -20,4 +21,3 @@ export class UsersSubjectsController {
         })
     }
 }
-

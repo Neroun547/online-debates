@@ -3,6 +3,9 @@ import type { BaseStoreInterface } from "../base-store.interface";
 import type { CreateSlotsTemplatesRequestInterface } from "./interfaces/create-slots-templates-request.interface";
 import type { SlotItem } from "~/pages/user/slots.vue";
 import { Time } from "@internationalized/date";
+import type { GetSlotsTemplatesResponseInterface } from "./interfaces/get-slots-templates-response.interface";
+import type { CreateSingleSlotRequestInterface } from "./interfaces/create-single-slot-request.interface";
+import type { GetSingleSlotsResponseInterface } from "./interfaces/get-single-slots-response.interface";
 
 function getHoursAndMinutesFromStr(time: string) {
     const arr = time.split(":");
@@ -30,7 +33,7 @@ export const useSlotsStore = defineStore("slotsStore", {
             try {
                 this.clearError();
 
-                const response = await useApiFetch<Array<{ weekday: number, intervals: Array<{ startTime: string; endTime: string;  }> }>>(`/users/slots/templates/?subjectId=${subjectId}`)
+                const response = await useApiFetch<Array<GetSlotsTemplatesResponseInterface>>(`/users/slots/templates/?subjectId=${subjectId}`)
 
                 if(!response) return [];
 
@@ -43,7 +46,7 @@ export const useSlotsStore = defineStore("slotsStore", {
                         intervals: templateSlot.intervals.map(item => { 
                             const parsedTimeFrom = getHoursAndMinutesFromStr(item.startTime);
                             const parsedTimeTo = getHoursAndMinutesFromStr(item.endTime);
-                            
+
                             return {
                                 timeFrom: new Time(parsedTimeFrom.hours, parsedTimeFrom.minutes, 0), 
                                 timeTo: new Time(parsedTimeTo.hours, parsedTimeTo.minutes, 0), 
@@ -60,6 +63,24 @@ export const useSlotsStore = defineStore("slotsStore", {
                 this.setError(error.response._data.message);
             }
             return [];
+        },
+        async createSingleSlot(data: CreateSingleSlotRequestInterface) {
+            try {
+                this.clearError();
+
+                await useApiFetch("/slots/single-slot", { method: "POST", body: data });
+            } catch(error: any) {
+                this.setError(error.response._data.message);
+            }
+        },
+        async getSingleSlots(subjectId: number, dateFrom: string, dateTo: string, page: number, limit: number) {
+            try {
+                this.clearError();
+
+                return await useApiFetch<GetSingleSlotsResponseInterface[]>(`/users/slots/single-slots?subjectId=${subjectId}&dateFrom=${dateFrom}&dateTo=${dateTo}&page=${page}&limit=${limit}`);
+            } catch(error: any) {
+                this.setError(error.response._data.message);
+            }
         },
         clearError() {
             this.isError = false;

@@ -29,7 +29,8 @@ export class AuthService {
             { 
                 id: userInDb.id, 
                 email: userInDb.email, 
-                username: userInDb.username 
+                username: userInDb.username,
+                timezone: userInDb.timezone
             }, 
             { 
                 secret: this.configService.getOrThrow("USER_AUTH_JWT_SECRET"),

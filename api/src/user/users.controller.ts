@@ -39,15 +39,17 @@ export class UsersController {
     @UseGuards(AuthGuard)
     @Patch("personal-data")
     async updateUserPersonalData(@Req() req: Request, @Body() body: UpdateUserPersonalDataDto): Promise<UpdateUserDataResponseDto> {
-        const newToken = await this.usersService.updateUserParams({
+        const result = await this.usersService.updateUserParams({
             userId: req["user"].id,
-            email: body.email,
-            username: body.username,
+            email: body.email?.trim(),
+            username: body.username?.trim(),
+            timezone: body.timezone?.trim(),
             oldEmail: req["user"].email,
-            oldUsername: req["user"].username
+            oldUsername: req["user"].username,
+            oldTimeZone: req["user"].timezone
         });
 
-        return { token: newToken };
+        return { token: result.token, isMailSent: result.isMailSent };
     }
 
     @Get("confirm-new-email/:hash")
@@ -61,8 +63,10 @@ export class UsersController {
     @Get()
     async getUserInfo(@Req() req: Request) {
         return {
+            id: req["user"].id,
             username: req["user"].username,
-            email: req["user"].email
+            email: req["user"].email,
+            timezone: req["user"].timezone
         }
     } 
 

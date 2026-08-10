@@ -41,8 +41,7 @@ onMounted(async () => {
     userNewEmailErrorText.value = userStore.errorMessage;
   } else {
     isUserNewEmailConfirmedSuccess.value = true;
-
-    // window.location.href = "/settings";
+    window.location.href = "/settings";
   }
 });
 </script>

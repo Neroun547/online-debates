@@ -13,104 +13,96 @@
     />
 
     <h2 class="text-4xl">Settings</h2>
-    <div class="flex flex-col">
-      <div class="flex flex-col mt-10 w-full max-w-[800px]">
-        <div class="w-full">
-          <UForm
-            @submit.prevent="updateEmail"
-            :state="user"
-            :schema="updateEmailUserSchema"
-          >
-            <UFormField name="email" label="Email">
-              <UInput
-                placeholder="Email"
-                class="w-full"
-                v-model="user.email"
-                name="email"
-              />
-            </UFormField>
+    <div class="flex flex-col shadow p-5 mt-10">
+      <div class="flex justify-between max-md:flex-col">
+        <div class="flex flex-col w-full mr-5">
+          <div class="w-full">
+            <h2 class="text-2xl">Personal info</h2>
+            <UForm
+              class="mt-5"
+              @submit.prevent="updateUserPersonalInfo"
+              :state="user"
+              :schema="updateEmailUserSchema"
+            >
+              <UFormField name="email" label="Email">
+                <UInput
+                  placeholder="Email"
+                  class="w-full"
+                  v-model="user.email"
+                  name="email"
+                />
+              </UFormField>
+              <UFormField label="Username" name="username" class="mt-5 w-full">
+                <UInput
+                  placeholder="Username"
+                  class="w-full"
+                  v-model="user.username"
+                  name="username"
+                />
+              </UFormField>
+              <UFormField label="Timezone" name="timezone" class="mt-5 w-full">
+                <TimezoneSelect v-model="user.timezone" />
+              </UFormField>
 
-            <UButton
-              class="w-min mt-5 block cursor-pointer"
-              label="Save New Email"
-              type="submit"
-              :disabled="isUpdateEmailButtonDisabled"
-            />
-          </UForm>
-        </div>
-        <div class="w-full mt-3">
-          <UForm
-            @submit.prevent="updateUsername"
-            :schema="updateUsernameFormSchema"
-            :state="user"
-          >
-            <UFormField label="Username" name="username">
-              <UInput
-                placeholder="Username"
-                class="w-full"
-                v-model="user.username"
-                name="username"
+              <UButton
+                class="w-min mt-5 block cursor-pointer"
+                label="Save new personal data"
+                type="submit"
               />
-            </UFormField>
-            <UButton
-              class="w-min mt-5 block cursor-pointer"
-              label="Save New Username"
-              type="submit"
-              :disabled="isUpdateUsernameButtonDisabled"
-            />
-          </UForm>
+            </UForm>
+          </div>
         </div>
-      </div>
-      <div class="flex flex-col mt-10 w-full max-w-[800px]">
-        <h2 class="text-2xl">Change password</h2>
-        <UForm
-          class="mt-5"
-          :schema="updatePasswordSchema"
-          :state="updatePasswordState"
-          @submit.prevent="updatePassword"
-        >
-          <UFormField
-            name="oldPassword"
-            class="w-full"
-            label="Write your old password"
+        <div class="flex flex-col w-full ml-5 max-md:ml-0 max-md:mt-10">
+          <h2 class="text-2xl">Change password</h2>
+          <UForm
+            class="mt-5"
+            :schema="updatePasswordSchema"
+            :state="updatePasswordState"
+            @submit.prevent="updatePassword"
           >
-            <UInput
-              class="w-full"
+            <UFormField
               name="oldPassword"
-              placeholder="Old password"
-              v-model="updatePasswordState.oldPassword"
-              type="password"
-            />
-          </UFormField>
-          <UFormField
-            name="newPassword"
-            class="mt-5 w-full"
-            label="Write your new password"
-          >
-            <UInput
+              class="w-full"
+              label="Write your old password"
+            >
+              <UInput
+                class="w-full"
+                name="oldPassword"
+                placeholder="Old password"
+                v-model="updatePasswordState.oldPassword"
+                type="password"
+              />
+            </UFormField>
+            <UFormField
               name="newPassword"
-              placeholder="New password"
-              v-model="updatePasswordState.newPassword"
-              class="w-full"
-              type="password"
-            />
-          </UFormField>
-          <UFormField
-            name="confirmNewPassword"
-            class="mt-5 w-full"
-            label="Confirm your new password"
-          >
-            <UInput
+              class="mt-5 w-full"
+              label="Write your new password"
+            >
+              <UInput
+                name="newPassword"
+                placeholder="New password"
+                v-model="updatePasswordState.newPassword"
+                class="w-full"
+                type="password"
+              />
+            </UFormField>
+            <UFormField
               name="confirmNewPassword"
-              placeholder="Confirm new password"
-              v-model="updatePasswordState.confirmNewPassword"
-              class="w-full"
-              type="password"
-            />
-          </UFormField>
+              class="mt-5 w-full"
+              label="Confirm your new password"
+            >
+              <UInput
+                name="confirmNewPassword"
+                placeholder="Confirm new password"
+                v-model="updatePasswordState.confirmNewPassword"
+                class="w-full"
+                type="password"
+              />
+            </UFormField>
 
-          <UButton label="Update password" type="submit" class="mt-5" />
-        </UForm>
+            <UButton label="Update password" type="submit" class="mt-5" />
+          </UForm>
+        </div>
       </div>
 
       <div class="mt-10">
@@ -133,19 +125,9 @@ import DeleteAccountModal from "~/components/settings/DeleteAccountModal.vue";
 import { z } from "zod";
 import ConfirmYourNewEmailModal from "~/components/settings/ConfirmYourNewEmailModal.vue";
 
-const isUpdateEmailButtonDisabled = computed(
-  () => oldUserData.value.email === user.value.email,
-);
-const isUpdateUsernameButtonDisabled = computed(
-  () => oldUserData.value.username === user.value.username,
-);
-
-const updateUsernameFormSchema = z.object({
-  username: z.string().trim().min(6).max(50),
-});
-
 const updateEmailUserSchema = z.object({
   email: z.email(),
+  username: z.string().trim().min(6).max(50),
 });
 
 const updatePasswordSchema = z
@@ -174,11 +156,13 @@ const userStore = useUserStore();
 const oldUserData = ref<GetUserInfoResponseInterface>({
   username: "",
   email: "",
+  timezone: "",
 });
 
 const user = ref<GetUserInfoResponseInterface>({
   username: "",
   email: "",
+  timezone: "",
 });
 
 const isDeleteAccountModalShow = ref(false);
@@ -222,41 +206,31 @@ async function getUser() {
   if (data) {
     user.value.username = data.username;
     user.value.email = data.email;
+    user.value.timezone = data.timezone;
 
     oldUserData.value.username = data.username;
     oldUserData.value.email = data.email;
   }
 }
 
-async function updateUsername() {
-  await userStore.updateUsername(user.value.username);
+async function updateUserPersonalInfo() {
+  const result = await userStore.updateUserPersonalInfo({
+    username: user.value.username,
+    email: user.value.email,
+    timezone: user.value.timezone,
+  });
 
-  if (userStore.isError) {
-    toast.add({
-      title: "Error",
-      description: userStore.errorMessage,
-      progress: {
-        color: "error",
-      },
-    });
-  } else {
-    oldUserData.value.username = user.value.username;
+  isConfirmNewEmailModalShow.value = result.isMailSent;
 
+  if (!result.isMailSent && !userStore.isError) {
     toast.add({
       title: "Success",
-      description: "Username updated success",
+      description: "Personal data updated successfully",
       progress: {
         color: "success",
       },
     });
   }
-}
-
-async function updateEmail() {
-  await userStore.updateEmail(user.value.email);
-
-  isConfirmNewEmailModalShow.value = true;
-
   if (userStore.isError) {
     toast.add({
       title: "Error",

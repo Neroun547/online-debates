@@ -6,9 +6,10 @@ import { SlotsTemplatesModuleDb } from "src/db/slots-templates/slots-templates.m
 import { CategoryModuleDb } from "src/db/category/category.module";
 import { SubjectModuleDb } from "src/db/subjects/subject.module";
 import { UsersSlotsController } from "./users-slots.controller";
+import { UserModuleDb } from "src/db/user/user.module";
 
 @Module({
-    imports: [SlotsModuleDb, SlotsTemplatesModuleDb, CategoryModuleDb, SubjectModuleDb],
+    imports: [SlotsModuleDb, SlotsTemplatesModuleDb, CategoryModuleDb, SubjectModuleDb, UserModuleDb],
     controllers: [SlotsController, UsersSlotsController],
     providers: [SlotsService]
 })

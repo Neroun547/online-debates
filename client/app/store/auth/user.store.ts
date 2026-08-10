@@ -7,7 +7,8 @@ import type { AuthResponseInterface } from "./interfaces/auth-response.interface
 import type { SignupRequestInterface } from "./interfaces/signup-request.interface";
 import type { GetUserInfoResponseInterface } from "./interfaces/get-user-data-response.interface";
 import type { UpdateUsernameResponseInterface } from "./interfaces/update-username-response.interface";
-import type { UpdateEmailResponseInterface } from "./interfaces/update-email-response.interface";
+import type { UpdateUserDataResponseInterface } from "./interfaces/update-user-data-response.interface";
+import type { UpdatePersonalInfoRequestInterface } from "./interfaces/update-personal-info-request.interface";
 
 export enum UserStatus {
     ONLINE="online",
@@ -50,7 +51,7 @@ export const useUserStore = defineStore("user", {
             try {
                 this.clearErrorState();
 
-                const response = await useApiFetch<UpdateEmailResponseInterface>("/users/confirm-new-email/" + hash, { method: "GET" });
+                const response = await useApiFetch<UpdateUserDataResponseInterface>("/users/confirm-new-email/" + hash, { method: "GET" });
 
                 if(response) {
                     this.setToken(response.token);
@@ -59,11 +60,26 @@ export const useUserStore = defineStore("user", {
                 this.setError(error.response._data.message);
             }
         },
+        async updateUserPersonalInfo(data: UpdatePersonalInfoRequestInterface): Promise<{ isMailSent: boolean }> {
+            try {
+                this.clearErrorState();
+
+                const response = await useApiFetch<UpdateUserDataResponseInterface>("/users/personal-data", { method: "PATCH", body: data });
+
+                if(response) {
+                    this.setToken(response.token);
+                }
+                return { isMailSent: response && response.isMailSent ? response.isMailSent : false }
+            } catch(error: any) {
+                this.setError(error.response._data.message);
+            }
+            return { isMailSent: false };
+        },
         async updateEmail(email: string) {
             try {
                 this.clearErrorState();
                 
-                const response = await useApiFetch<UpdateEmailResponseInterface>("/users/personal-data", { method: "PATCH", body: { email: email } });
+                const response = await useApiFetch<UpdateUserDataResponseInterface>("/users/personal-data", { method: "PATCH", body: { email: email } });
 
                 if(response) {
                     this.setToken(response.token);

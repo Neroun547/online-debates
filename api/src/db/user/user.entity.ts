@@ -31,6 +31,9 @@ export class User {
     })
     status!: UserStatus;
 
+    @Column({ type: "varchar", length: 50, nullable: true })
+    timezone!: string;
+
     @OneToMany(() => Subject, (subject: Subject) => subject.user)
     subjects?: Subject[];
 }

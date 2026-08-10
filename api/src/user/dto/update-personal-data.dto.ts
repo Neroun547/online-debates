@@ -9,5 +9,10 @@ export class UpdateUserPersonalDataDto {
     @IsOptional()
     @IsEmail()
     email?: string;
+
+    @IsOptional()
+    @IsString()
+    @Length(1, 50)
+    timezone?: string;
 }
 

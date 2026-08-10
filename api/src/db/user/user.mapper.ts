@@ -8,7 +8,8 @@ export class UserMapper {
             email: user.email,
             username: user.username,
             isConfirmed: user.isConfirmed,
-            status: user.status
+            status: user.status,
+            timezone: user.timezone
         }
     }
     static toDomainWithSecureParams(user: User): UserInterface {
@@ -18,7 +19,8 @@ export class UserMapper {
             username: user.username,
             isConfirmed: user.isConfirmed,
             password: user.password,
-            status: user.status
+            status: user.status,
+            timezone: user.timezone
         }
     }
     static toSave(user: UserInterface): User {
@@ -32,6 +34,7 @@ export class UserMapper {
         model.password = user.password;
         model.isConfirmed = user.isConfirmed;
         model.status = user.status;
+        model.timezone = user.timezone;
 
         return model;
     }

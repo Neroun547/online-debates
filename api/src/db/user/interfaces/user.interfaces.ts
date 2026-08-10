@@ -8,6 +8,7 @@ export interface UserInterface {
     password: string;
     isConfirmed: boolean;
     status: UserStatus;
+    timezone: string;
 }
 
 // Interface for update 
@@ -18,6 +19,7 @@ export interface UpdateUserInterface {
     password?: string;
     isConfirmed?: boolean;
     status?: UserStatus;
+    timezone?: string;
 }
 
 // Domain user interface. Without password or other secure data
@@ -27,5 +29,6 @@ export interface UserDomainInterface {
     email: string;
     isConfirmed: boolean;
     status: UserStatus;
+    timezone: string;
 }
 

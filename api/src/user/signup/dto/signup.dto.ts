@@ -11,5 +11,9 @@ export class SignupDto {
     @IsString()
     @Length(8, 50)
     password!: string;
+
+    @IsString()
+    @Length(1, 50)
+    timezone!: string;
 }
 

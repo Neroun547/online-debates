@@ -1,5 +1,13 @@
 <template>
   <div class="mt-15">
+    <CreateSingleSlotModal
+      v-model:is-modal-open="isCreateSingleSlotModalOpen"
+      :is-save-single-slot-loading="isSaveSingleSlotButtonLoading"
+      @save="
+        (data: { date: CalendarDate; timeFrom: Time; timeTo: Time }) =>
+          saveSingleSlot(data)
+      "
+    />
     <h2 class="text-4xl">My slots</h2>
     <div class="max-w-[300px]">
       <div class="mt-5">
@@ -26,92 +34,119 @@
         </div>
       </div>
     </div>
-    <div class="mt-10">
-      <div class="border rounded border-gray-300 shadow">
-        <div v-for="slot in slots" class="p-5 border-b-gray-300 border-b">
-          <div class="flex">
-            <UCheckbox
-              v-model="slot.enabled"
-              @change="onEnableSlot(slot.weekday)"
-            />
-            <div class="ml-2">
-              <h2>{{ weekDaysMap.get(slot.weekday) }}</h2>
-            </div>
-          </div>
-          <div v-if="slot.enabled">
-            <div class="w-max ml-auto">
-              <UButton
-                icon="lucide:plus"
-                size="xs"
-                class="cursor-pointer"
-                @click="addTimeToSlot(slot.weekday)"
+    <div :class="[isSlotsBlockDisabled ? 'blur-sm' : '']">
+      <div class="mt-10">
+        <div class="border rounded border-gray-300 shadow">
+          <div v-for="slot in slots" class="p-5 border-b-gray-300 border-b">
+            <div class="flex">
+              <UCheckbox
+                :disabled="isSlotsBlockDisabled"
+                v-model="slot.enabled"
+                @change="onEnableSlot(slot.weekday)"
               />
-            </div>
-            <div v-for="time in slot.intervals">
-              <div class="mt-5 flex items-center">
-                <label>From</label>
-                <UInputTime
-                  :hour-cycle="24"
-                  v-model="time.timeFrom"
-                  class="ml-2"
-                />
-                <label class="ml-10">To</label>
-                <UInputTime
-                  :hour-cycle="24"
-                  v-model="time.timeTo"
-                  class="ml-2"
-                />
-                <div class="ml-5 mt-1">
-                  <UButton
-                    icon="lucide:trash-2"
-                    size="xs"
-                    class="bg-red-600 active:bg-red-600 cursor-pointer hover:bg-red-600"
-                    @click="deleteTimeFromSlot(slot.weekday, time.id)"
-                  />
-                </div>
+              <div class="ml-2">
+                <h2>{{ weekDaysMap.get(slot.weekday) }}</h2>
               </div>
             </div>
-            <div v-if="slot.isError" class="text-red-600 text-sm mt-5">
-              {{ slot.errorMessage }}
+            <div v-if="slot.enabled">
+              <div class="w-max ml-auto">
+                <UButton
+                  icon="lucide:plus"
+                  size="xs"
+                  class="cursor-pointer"
+                  label="Add slot"
+                  @click="addTimeToSlot(slot.weekday)"
+                />
+              </div>
+              <div v-for="time in slot.intervals">
+                <div class="mt-5 flex items-center">
+                  <label>From</label>
+                  <UInputTime
+                    :hour-cycle="24"
+                    v-model="time.timeFrom"
+                    class="ml-2"
+                  />
+                  <label class="ml-10">To</label>
+                  <UInputTime
+                    :hour-cycle="24"
+                    v-model="time.timeTo"
+                    class="ml-2"
+                  />
+                  <div class="ml-5 mt-1">
+                    <UButton
+                      icon="lucide:trash-2"
+                      size="xs"
+                      class="bg-red-600 active:bg-red-600 cursor-pointer hover:bg-red-600"
+                      @click="deleteTimeFromSlot(slot.weekday, time.id)"
+                    />
+                  </div>
+                </div>
+              </div>
+              <div v-if="slot.isError" class="text-red-600 text-sm mt-5">
+                {{ slot.errorMessage }}
+              </div>
             </div>
+          </div>
+          <div class="ml-auto m-5 w-max">
+            <UButton
+              label="Save schedule"
+              @click="saveRegularSlots"
+              class="cursor-pointer"
+              icon="lucide:import"
+              :disabled="isSaveRegularSlotsButtonDisabled"
+              :loading="isSaveTemplateButtonLoading"
+            />
           </div>
         </div>
       </div>
-      <div class="w-max ml-auto mt-5">
-        <UButton
-          label="Save schedule"
-          @click="saveRegularSlots"
-          class="cursor-pointer"
-          icon="lucide:import"
-          :disabled="isSaveRegularSlotsButtonDisabled"
-          :loading="isSaveTemplateButtonLoading"
-        />
-      </div>
-    </div>
-    <div class="mt-10">
-      <div>
-        <h2 class="text-2xl">Single slots</h2>
-      </div>
-      <div class="w-min ml-auto">
-        <UButton
-          icon="lucide:plus"
-          label="Create single slot"
-          class="cursor-pointer"
-        />
+      <div class="mt-10 border rounded border-gray-300 shadow p-5">
+        <div>
+          <h2 class="text-2xl">Single slots</h2>
+        </div>
+        <div class="w-min ml-auto">
+          <UButton
+            icon="lucide:plus"
+            label="Create single slot"
+            class="cursor-pointer"
+            :disabled="isSaveSingleSlotButtonDisabled"
+            @click="openCreateSingleSlotModal"
+          />
+        </div>
+        <div>
+          <div class="flex">
+            <div>
+              <label for="">Date from</label>
+              <input type="date" class="ml-2" v-model="singleSlotsDateFrom" />
+            </div>
+
+            <div class="ml-20">
+              <label for="">Date to</label>
+              <input type="date" class="ml-2" v-model="singleSlotsDateTo" />
+            </div>
+          </div>
+          <div class="mt-10">
+            <UTable :columns="singleSlotsTableColumns" :data="singleSlots" />
+          </div>
+        </div>
       </div>
     </div>
   </div>
 </template>
 <script setup lang="ts">
 import { useAppStore } from "~/store/app-store";
-import { Time } from "@internationalized/date";
+import { CalendarDate, Time } from "@internationalized/date";
 import PaginationSubjectSelect from "~/components/subjects/PaginationSubjectSelect.vue";
 import PaginationCategoriesSelect from "~/components/subjects/PaginationCategoriesSelect.vue";
 import { useSlotsStore } from "~/store/slots/slots.store";
 import type { SlotItemInTemplateDto } from "~/store/slots/interfaces/create-slots-templates-request.interface";
+import CreateSingleSlotModal from "~/components/slots/CreateSingleSlotModal.vue";
+import { DateTime } from "luxon";
+import type { GetSingleSlotsResponseInterface } from "~/store/slots/interfaces/get-single-slots-response.interface";
+import type { TableColumn } from "@nuxt/ui";
+
+const UButton = resolveComponent("UButton");
 
 const slotsStore = useSlotsStore();
-
 const weekDaysMap = new Map();
 
 weekDaysMap.set(1, "Monday");
@@ -150,6 +185,52 @@ const isSubjectValidationError = ref<boolean>(false);
 const subjectValidationErrorMessage = ref<string>("");
 
 const isSaveRegularSlotsButtonDisabled = ref<boolean>(true);
+const isSaveSingleSlotButtonDisabled = ref<boolean>(true);
+
+const isSlotsBlockDisabled = computed(() => {
+  return selectedCategoryId.value === null || selectedSubjectId.value === null;
+});
+
+const isCreateSingleSlotModalOpen = ref(false);
+const isSaveSingleSlotButtonLoading = ref(false);
+
+const singleSlotsDateFrom = ref();
+const singleSlotsDateTo = ref();
+const singleSlotsPage = ref(1);
+const singleSlotsLimit = ref(20);
+
+const singleSlotsTableColumns: TableColumn<any>[] = [
+  {
+    accessorKey: "startTime",
+    header: "Date from",
+  },
+  {
+    accessorKey: "endTime",
+    header: "Date to",
+  },
+  {
+    id: "actions",
+    meta: {
+      class: {
+        td: "text-right",
+      },
+    },
+    cell: () => {
+      return h(UButton, {
+        icon: "i-lucide-trash-2",
+        color: "",
+        class: "bg-red-600 text-white cursor-pointer",
+        variant: "ghost",
+        size: "xs",
+        onClick: () => {
+          console.log("Click");
+        },
+      });
+    },
+  },
+];
+
+const singleSlots = ref<GetSingleSlotsResponseInterface[]>([]);
 
 const slots = ref<SlotItem[]>([
   {
@@ -244,6 +325,10 @@ const slots = ref<SlotItem[]>([
     isError: false,
   },
 ]);
+
+function openCreateSingleSlotModal() {
+  isCreateSingleSlotModalOpen.value = true;
+}
 
 function deleteTimeFromSlot(weekday: number, timeId: number) {
   const slot = slots.value[weekday - 1];
@@ -442,6 +527,161 @@ async function getTemplateSlots() {
   }
 }
 
+function setInitialValueToSlots() {
+  slots.value = [
+    {
+      weekday: 1,
+      intervals: [
+        {
+          id: 1,
+          timeFrom: new Time(10, 0, 0),
+          timeTo: new Time(12, 0, 0),
+        },
+      ],
+      enabled: false,
+      errorMessage: "",
+      isError: false,
+    },
+    {
+      weekday: 2,
+      intervals: [
+        {
+          id: 2,
+          timeFrom: new Time(10, 0, 0),
+          timeTo: new Time(12, 0, 0),
+        },
+      ],
+      enabled: false,
+      errorMessage: "",
+      isError: false,
+    },
+    {
+      weekday: 3,
+      intervals: [
+        {
+          id: 3,
+          timeFrom: new Time(10, 0, 0),
+          timeTo: new Time(12, 0, 0),
+        },
+      ],
+      enabled: false,
+      errorMessage: "",
+      isError: false,
+    },
+    {
+      weekday: 4,
+      intervals: [
+        {
+          id: 4,
+          timeFrom: new Time(10, 0, 0),
+          timeTo: new Time(12, 0, 0),
+        },
+      ],
+      enabled: false,
+      errorMessage: "",
+      isError: false,
+    },
+    {
+      weekday: 5,
+      intervals: [
+        {
+          id: 5,
+          timeFrom: new Time(10, 0, 0),
+          timeTo: new Time(12, 0, 0),
+        },
+      ],
+      enabled: false,
+      errorMessage: "",
+      isError: false,
+    },
+    {
+      weekday: 6,
+      intervals: [
+        {
+          id: 6,
+          timeFrom: new Time(10, 0, 0),
+          timeTo: new Time(12, 0, 0),
+        },
+      ],
+      enabled: false,
+      errorMessage: "",
+      isError: false,
+    },
+    {
+      weekday: 7,
+      intervals: [
+        {
+          id: 7,
+          timeFrom: new Time(10, 0, 0),
+          timeTo: new Time(12, 0, 0),
+        },
+      ],
+      enabled: false,
+      errorMessage: "",
+      isError: false,
+    },
+  ];
+}
+
+async function saveSingleSlot(data: {
+  timeTo: Time;
+  timeFrom: Time;
+  date: CalendarDate;
+}) {
+  if (selectedSubjectId.value) {
+    isSaveSingleSlotButtonLoading.value = true;
+
+    await slotsStore.createSingleSlot({
+      subjectId: selectedSubjectId.value,
+      startTime: DateTime.fromFormat(
+        data.date.toString() + " " + data.timeFrom.toString().substring(0, 5),
+        "yyyy-MM-dd HH:mm",
+      ).toJSDate(),
+      endTime: DateTime.fromFormat(
+        data.date.toString() + " " + data.timeTo.toString().substring(0, 5),
+        "yyyy-MM-dd HH:mm",
+      ).toJSDate(),
+    });
+
+    if (slotsStore.isError) {
+      toast.add({
+        title: "Error",
+        description: slotsStore.errorMessage,
+        progress: {
+          color: "error",
+        },
+      });
+    } else {
+      toast.add({
+        title: "Success",
+        description: "Slot created successfully",
+        progress: {
+          color: "success",
+        },
+      });
+
+      isCreateSingleSlotModalOpen.value = false;
+    }
+    isSaveSingleSlotButtonLoading.value = false;
+  }
+}
+
+async function getSingleSlots() {
+  if (selectedSubjectId.value) {
+    const response = await slotsStore.getSingleSlots(
+      selectedSubjectId.value,
+      singleSlotsDateFrom.value,
+      singleSlotsDateTo.value,
+      singleSlotsPage.value,
+      singleSlotsLimit.value,
+    );
+
+    if (response) {
+      singleSlots.value = response;
+    }
+  }
+}
+
 function mapToWatcher(slots: Array<SlotItem>) {
   return slots.map((item) => ({
     weekday: item.weekday,
@@ -459,15 +699,36 @@ watch(
 );
 
 watch(selectedCategoryId, () => {
+  if (selectedSubjectId.value && selectedCategoryId.value) {
+    isSaveSingleSlotButtonDisabled.value = false;
+  } else {
+    isSaveSingleSlotButtonDisabled.value = true;
+  }
+  setInitialValueToSlots();
   validateCategoryAndSubject();
+  getSingleSlots();
 });
 
 watch(selectedSubjectId, () => {
+  if (selectedSubjectId.value && selectedCategoryId.value) {
+    isSaveSingleSlotButtonDisabled.value = false;
+  } else {
+    isSaveSingleSlotButtonDisabled.value = true;
+  }
+  setInitialValueToSlots();
   validateCategoryAndSubject();
   getTemplateSlots();
+  getSingleSlots();
 });
 
 onMounted(() => {
   appStore.setIsLoading(false);
+
+  const now = new Date();
+
+  singleSlotsDateFrom.value = DateTime.fromJSDate(now).toFormat("yyyy-MM-dd");
+  singleSlotsDateTo.value = DateTime.fromJSDate(now)
+    .plus({ days: 7 })
+    .toFormat("yyyy-MM-dd");
 });
 </script>

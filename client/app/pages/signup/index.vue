@@ -62,12 +62,20 @@ const fields: Array<PropsFieldItemInterface> = [
     htmlTag: "input",
     label: "Password",
   },
+  {
+    name: "timezone",
+    placeholder: "Timezone",
+    type: "timezone",
+    htmlTag: "select",
+    label: "Timezone"
+  }
 ];
 
 const formSchema = z.object({
   username: z.string().trim().min(6).max(50),
   email: z.email(),
   password: z.string().trim().min(8).max(50),
+  timezone: z.string().min(1).max(50)
 });
 
 async function signup(data: SignupRequestInterface) {

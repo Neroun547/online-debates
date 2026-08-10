@@ -1,5 +1,5 @@
 import { BadRequestException, ForbiddenException, Inject, Injectable, InternalServerErrorException, NotFoundException } from "@nestjs/common";
-import { UserInterface } from "src/db/user/interfaces/user.interfaces";
+import { UpdateUserInterface, UserInterface } from "src/db/user/interfaces/user.interfaces";
 import { UserServiceDb } from "src/db/user/user.service";
 import { createHmac } from "crypto";
 import { ConfigService } from "@nestjs/config";
@@ -64,15 +64,19 @@ export class UserService {
         userId: number;
         email?: string; 
         username?: string;
+        timezone?: string;
         oldUsername: string;
         oldEmail: string;
-    }): Promise<string> {
+        oldTimeZone: string;
+    }): Promise<{ token: string; isMailSent: boolean; }> {
         const userInDb = await this.usersServiceDb.findById(params.userId);
 
         if(!userInDb) {
             throw new NotFoundException({ message: "User not found" });
         }
-        if(params.email) {
+        let isMailSent: boolean = false;
+
+        if(params.email && params.email !== params.oldEmail) {
             const userWithTheSameEmailInDb = await this.usersServiceDb.findByEmailAndNotId(params.email, params.userId);
 
             if(userWithTheSameEmailInDb) {
@@ -93,29 +97,41 @@ export class UserService {
                     subject: mailSubject,
                     html: `<p>Confirm your new email by link. <a href="${newEmailConfirmLink + randomHash}">Click here</a>`
                 });
+                isMailSent = true;
             } catch(error) {
                 console.log("Error", error);
                 throw new InternalServerErrorException({ message: "Send mail error" });
             }
         }
-        if(params.username) {
-            const userWithTheSameUsernameInDb = await this.usersServiceDb.findByUsernameAndNotId(params.username, params.userId);
+        let updateData: UpdateUserInterface = {};
 
-            if(userWithTheSameUsernameInDb) {
-                throw new BadRequestException({ message: "User with the same username already exists" });
+        if(params.username && params.username !== params.oldUsername) {
+            updateData.username = params.username;
+        }
+        if(params.timezone && params.timezone !== params.oldTimeZone) {
+            updateData.timezone = params.timezone;
+        }
+        if(Object.keys(updateData).length) {
+            if(updateData.username) {
+                const userWithTheSameUsernameInDb = await this.usersServiceDb.findByUsernameAndNotId(updateData.username, params.userId);
+
+                if(userWithTheSameUsernameInDb) {
+                    throw new BadRequestException({ message: "User with the same username already exists" });
+                }
             }
-            await this.usersServiceDb.updateById(params.userId, { username: params.username });
+            await this.usersServiceDb.updateById(params.userId, updateData);
         }
         const newToken = await this.jwtService.signAsync({
             id: params.userId,
             username: (params.username && params.username !== params.oldUsername) ? params.username : params.oldUsername,
-            email: params.oldEmail
+            email: params.oldEmail,
+            timezone: (params.timezone && params.timezone !== params.oldTimeZone) ? params.timezone : params.oldTimeZone
         }, {
             secret: this.configService.getOrThrow("USER_AUTH_JWT_SECRET"),
             expiresIn: this.configService.getOrThrow("USER_AUTH_JWT_EXPIRES_IN") 
         });
 
-        return newToken;
+        return { token: newToken, isMailSent: isMailSent };
     }
     async confirmNewEmail(hash: string): Promise<string> {
         let parsedDataFromCache: { userId: number, email: string } | undefined = undefined;
@@ -142,7 +158,8 @@ export class UserService {
         const newToken = await this.jwtService.signAsync({
             id: userInDb.id, 
             email: parsedDataFromCache.email, 
-            username: userInDb.email 
+            username: userInDb.username,
+            timezone: userInDb.timezone
         }, {
             secret: this.configService.getOrThrow("USER_AUTH_JWT_SECRET"),
             expiresIn: this.configService.getOrThrow("USER_AUTH_JWT_EXPIRES_IN") 

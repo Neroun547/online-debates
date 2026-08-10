@@ -1,19 +1,22 @@
-import { Injectable } from "@nestjs/common";
+import { ConflictException, Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { SlotsTemplates } from "./slots-templates.entity";
 import { EntityManager, IsNull, Not, Repository } from "typeorm";
-import { SlotsTemplatesDomainInterface, SlotsTemplatesInterface } from "./interfaces/slots-templates.interface";
+import { SlotsTemplatesInterface } from "./interfaces/slots-templates.interface";
 import { SlotsTemplatesMapper } from "./slots-templates.mapper";
 import { Slots } from "../slots/slots.entity";
 import { DateTime } from "luxon";
 import { SlotsMapper } from "../slots/slots.mapper";
 import { Sessions } from "../sessions/sessions.entity";
+import { SlotsServiceDb } from "../slots/slots.service";
 
 @Injectable()
 export class SlotsTemplatesServiceDb {
     constructor(
         @InjectRepository(SlotsTemplates) private repository: Repository<SlotsTemplates>,
-        private em: EntityManager
+        private em: EntityManager,
+
+        private slotsServiceDb: SlotsServiceDb
     ) {
 
     }
@@ -27,7 +30,7 @@ export class SlotsTemplatesServiceDb {
         const templatesSlotsModelsArr = templateSlots.map(item => SlotsTemplatesMapper.toSave(item));
 
         return this.em.transaction("READ COMMITTED", async (tx) => {
-            const luxonDateNow = DateTime.fromJSDate(new Date()).toFormat("yyyy-MM-dd");
+            const now = new Date();
             // Delete prev slots and templates if exists ...
             const slotsInDb = await tx.find(Slots, { where: { userId: userId, subjectId: subjectId, slotsTemplateId: Not(IsNull()) } });
             const promisesDeleteSlots: Array<Promise<any>> = [];
@@ -47,12 +50,24 @@ export class SlotsTemplatesServiceDb {
                 await Promise.all(promisesDeleteSlots);
                 await Promise.all(templatesId.map(id => tx.delete(SlotsTemplates, { id: id })));
             }
+            // Re-run slots template delete
+            await tx.delete(SlotsTemplates, { userId: userId, subjectId: subjectId });
+
             for(const templateSlot of templatesSlotsModelsArr) {
                 const savedTemplate = await tx.save(templateSlot);
                 
+                const dateForTemplateSlot = this.getDateForSlot(templateSlot.weekday, now.getDay(), now);
+                const countConflictSlotByDateRange = await this.slotsServiceDb.countConflictSlotByDateRange(
+                    dateForTemplateSlot + " " + templateSlot.startTime, 
+                    dateForTemplateSlot + " " + templateSlot.endTime, 
+                tx);
+          
+                if(countConflictSlotByDateRange > 0) {
+                    continue;
+                }
                 const slot = SlotsMapper.toSave({
-                    startTime: DateTime.fromFormat(luxonDateNow + " " + templateSlot.startTime, "yyyy-MM-dd HH:mm").toJSDate(),
-                    endTime: DateTime.fromFormat(luxonDateNow + " " + templateSlot.endTime, "yyyy-MM-dd HH:mm").toJSDate(),
+                    startTime: DateTime.fromFormat(dateForTemplateSlot + " " + templateSlot.startTime, "yyyy-MM-dd HH:mm").toJSDate(),
+                    endTime: DateTime.fromFormat(dateForTemplateSlot + " " + templateSlot.endTime, "yyyy-MM-dd HH:mm").toJSDate(),
                     userId: savedTemplate.userId,
                     subjectId: savedTemplate.subjectId,
                     slotsTemplateId: savedTemplate.id
@@ -85,6 +100,18 @@ export class SlotsTemplatesServiceDb {
             }
         }
         return weekdayArr;
+    }
+
+    private getDateForSlot(weekday: number, currentDayOfTheWeek: number, now: Date): string | undefined {
+        if(weekday > currentDayOfTheWeek) {
+            return DateTime.fromJSDate(now).plus({ days: weekday - currentDayOfTheWeek }).toFormat("yyyy-MM-dd");
+        }
+        if(currentDayOfTheWeek === weekday) {
+            return DateTime.fromJSDate(now).toFormat("yyyy-MM-dd");
+        }
+        if(weekday < currentDayOfTheWeek) {
+            return DateTime.fromJSDate(now).plus({ weeks: 1 }).minus({ days: currentDayOfTheWeek - weekday }).toFormat("yyyy-MM-dd");
+        }
     }
 }
 

@@ -19,6 +19,10 @@
         v-model="formState[value.name]"
         class="w-full"
       />
+      <TimezoneSelect
+        v-if="value.htmlTag === 'select' && value.type === 'timezone'"
+        v-model="formState[value.name]"
+      />
     </UFormField>
 
     <UAlert
@@ -56,8 +60,8 @@ import { z } from "zod";
 export interface PropsFieldItemInterface {
   name: string;
   placeholder: string;
-  type: "text" | "password" | "email";
-  htmlTag: "input";
+  type: "text" | "password" | "email" | "timezone";
+  htmlTag: "input" | "select";
   label: string;
 }
 

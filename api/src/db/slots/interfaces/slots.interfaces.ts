@@ -4,7 +4,7 @@ export interface SlotsInterface {
     endTime: Date;
     userId: number;
     subjectId: number;
-    slotsTemplateId: number;
+    slotsTemplateId: number | null;
 }
 
 export interface SlotDomainInterface {

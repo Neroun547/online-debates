@@ -28,12 +28,13 @@ export class SlotsServiceDb {
 
         return data.map(item => SlotsMapper.toDomain(item));
     }
-    async countConflictSlotByDateRange(startTime: string, endTime: string, tx?: EntityManager): Promise<number> {
+    async countConflictSlotByDateRange(startTime: string, endTime: string, userId: number, tx?: EntityManager): Promise<number> {
         if(!tx) {
             const data = await this.slotsRepository
                 .createQueryBuilder("s")
                 .select("*")
-                .where("s.startTime >= :startTime AND s.endTime <= :endTime", { startTime: startTime, endTime: endTime })
+                .where({ userId: userId })
+                .andWhere("s.startTime >= :startTime AND s.endTime <= :endTime", { startTime: startTime, endTime: endTime })
                 .orWhere("s.startTime <= :startTime AND s.endTime >= :endTime", { startTime: startTime, endTime: endTime })
                 .orWhere("s.startTime >= :startTime AND s.endTime <= :endTime", { startTime: startTime, endTime: endTime })
                 .orWhere("s.startTime <= :endTime AND s.endTime >= :endTime", { startTime: startTime, endTime: endTime })
@@ -44,7 +45,8 @@ export class SlotsServiceDb {
         return await tx.getRepository(Slots)
             .createQueryBuilder("s")
             .select("*")
-            .where("s.startTime >= :startTime AND s.endTime <= :endTime", { startTime: startTime, endTime: endTime })
+            .where({ userId: userId })
+            .andWhere("s.startTime >= :startTime AND s.endTime <= :endTime", { startTime: startTime, endTime: endTime })
             .orWhere("s.startTime <= :startTime AND s.endTime >= :endTime", { startTime: startTime, endTime: endTime })
             .orWhere("s.startTime >= :startTime AND s.endTime <= :endTime", { startTime: startTime, endTime: endTime })
             .orWhere("s.startTime <= :endTime AND s.endTime >= :endTime", { startTime: startTime, endTime: endTime })

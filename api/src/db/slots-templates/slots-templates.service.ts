@@ -60,7 +60,9 @@ export class SlotsTemplatesServiceDb {
                 const countConflictSlotByDateRange = await this.slotsServiceDb.countConflictSlotByDateRange(
                     dateForTemplateSlot + " " + templateSlot.startTime, 
                     dateForTemplateSlot + " " + templateSlot.endTime, 
-                tx);
+                    userId,
+                    tx
+                );
           
                 if(countConflictSlotByDateRange > 0) {
                     continue;

@@ -6,7 +6,7 @@ import type { Request } from "express";
 import { GetSingleSlotsDto } from "./dto/get-single-slots-request.dto";
 
 @UseGuards(AuthGuard)
-@Controller("users/slots")
+@Controller("user/slots")
 export class UsersSlotsController {
     constructor(private slotsService: SlotsService) {}
 

@@ -33,7 +33,7 @@ export const useSlotsStore = defineStore("slotsStore", {
             try {
                 this.clearError();
 
-                const response = await useApiFetch<Array<GetSlotsTemplatesResponseInterface>>(`/users/slots/templates/?subjectId=${subjectId}`)
+                const response = await useApiFetch<Array<GetSlotsTemplatesResponseInterface>>(`/user/slots/templates/?subjectId=${subjectId}`)
 
                 if(!response) return [];
 
@@ -77,7 +77,7 @@ export const useSlotsStore = defineStore("slotsStore", {
             try {
                 this.clearError();
 
-                return await useApiFetch<GetSingleSlotsResponseInterface[]>(`/users/slots/single-slots?subjectId=${subjectId}&dateFrom=${dateFrom}&dateTo=${dateTo}&page=${page}&limit=${limit}`);
+                return await useApiFetch<GetSingleSlotsResponseInterface[]>(`/user/slots/single-slots?subjectId=${subjectId}&dateFrom=${dateFrom}&dateTo=${dateTo}&page=${page}&limit=${limit}`);
             } catch(error: any) {
                 this.setError(error.response._data.message);
             }

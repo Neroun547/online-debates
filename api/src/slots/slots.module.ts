@@ -5,7 +5,7 @@ import { SlotsModuleDb } from "src/db/slots/slots.module";
 import { SlotsTemplatesModuleDb } from "src/db/slots-templates/slots-templates.module";
 import { CategoryModuleDb } from "src/db/category/category.module";
 import { SubjectModuleDb } from "src/db/subjects/subject.module";
-import { UsersSlotsController } from "./users-slots.controller";
+import { UsersSlotsController } from "./user-slots.controller";
 import { UserModuleDb } from "src/db/user/user.module";
 
 @Module({

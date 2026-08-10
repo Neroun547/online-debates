@@ -3,7 +3,7 @@ import { SubjectsController } from "./subjects.controller";
 import { SubjectsService } from "./service/subjects.service";
 import { SubjectModuleDb } from "src/db/subjects/subject.module";
 import { CategoryModuleDb } from "src/db/category/category.module";
-import { UsersSubjectsController } from "./users-subjects.controller";
+import { UsersSubjectsController } from "./user-subjects.controller";
 
 @Module({
     imports: [SubjectModuleDb, CategoryModuleDb],

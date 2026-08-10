@@ -5,7 +5,7 @@ import { SubjectsService } from "./service/subjects.service";
 import type { Request } from "express";
 
 @UseGuards(AuthGuard)
-@Controller("users/subjects")
+@Controller("user/subjects")
 export class UsersSubjectsController {
     constructor(private subjectsService: SubjectsService) {
 

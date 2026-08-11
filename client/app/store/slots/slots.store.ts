@@ -5,7 +5,8 @@ import type { SlotItem } from "~/pages/user/slots.vue";
 import { Time } from "@internationalized/date";
 import type { GetSlotsTemplatesResponseInterface } from "./interfaces/get-slots-templates-response.interface";
 import type { CreateSingleSlotRequestInterface } from "./interfaces/create-single-slot-request.interface";
-import type { GetSingleSlotsResponseInterface } from "./interfaces/get-single-slots-response.interface";
+import type { GetSingleSlotsResponseDataItemInterface, GetSingleSlotsResponseInterface } from "./interfaces/get-single-slots-response.interface";
+import type { GetSingleSlotsCountResponseInterface } from "./interfaces/get-single-slots-count-response.interface";
 
 function getHoursAndMinutesFromStr(time: string) {
     const arr = time.split(":");
@@ -19,6 +20,30 @@ export const useSlotsStore = defineStore("slotsStore", {
         isError: false
     }),
     actions: {
+        async getSingleSlotsCount(params: {
+            dateFrom: string;
+            dateTo: string;
+            subjectId: number,
+        }): Promise<number | undefined> {    
+            try {
+                this.clearError();
+
+                const data = await useApiFetch<GetSingleSlotsCountResponseInterface>(`/user/slots/single-slots/count?dateFrom=${params.dateFrom}&dateTo=${params.dateTo}&subjectId=${params.subjectId}`);
+                
+                return data?.count;
+            } catch(error) {
+                this.clearError();
+            }
+        },
+        async deleteSingleSlot(id: number) {
+            try {
+                this.clearError();
+
+                await useApiFetch(`/slots/single-slot/${id}`, { method: "DELETE" });
+            } catch(error: any) {
+                this.setError(error.response._data.message);
+            }
+        },
         async saveSlotsTemplates(data: CreateSlotsTemplatesRequestInterface): Promise<void> {
             try {
                 this.clearError();
@@ -77,7 +102,7 @@ export const useSlotsStore = defineStore("slotsStore", {
             try {
                 this.clearError();
 
-                return await useApiFetch<GetSingleSlotsResponseInterface[]>(`/user/slots/single-slots?subjectId=${subjectId}&dateFrom=${dateFrom}&dateTo=${dateTo}&page=${page}&limit=${limit}`);
+                return await useApiFetch<GetSingleSlotsResponseInterface>(`/user/slots/single-slots?subjectId=${subjectId}&dateFrom=${dateFrom}&dateTo=${dateTo}&page=${page}&limit=${limit}`);
             } catch(error: any) {
                 this.setError(error.response._data.message);
             }

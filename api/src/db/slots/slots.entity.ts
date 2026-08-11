@@ -36,7 +36,7 @@ export class Slots {
     @JoinColumn({ name: "slotsTemplateId" })
     slotsTemplate!: SlotsTemplates;
 
-    @OneToOne(() => Sessions, (session) => session.id)
+    @OneToOne(() => Sessions, (session) => session.slot)
     session!: Sessions;
 }
 

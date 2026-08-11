@@ -10,6 +10,24 @@ export class SlotsServiceDb {
     constructor(@InjectRepository(Slots) private slotsRepository: Repository<Slots>) {
 
     }
+
+    async deleteSlotByUserIdAndId(userId: number, slotId: number): Promise<void> {
+        await this.slotsRepository.delete({ userId: userId, id: slotId });
+    }
+    async findSingleSlotByUserIdAndSlotIdWithSession(userId: number, slotId: number): Promise<SlotDomainInterface | null> {
+        const data = await this.slotsRepository
+            .createQueryBuilder("s")
+            .leftJoinAndSelect("s.session", "session")
+            .where("s.id = :id", { id: slotId })
+            .andWhere("s.userId = :userId", { userId: userId })
+            .andWhere("s.slotsTemplateId IS NULL")
+            .getOne();
+
+        if(!data) {
+            return null;
+        }
+        return SlotsMapper.toDomain(data);
+    }
     async findSingleSlots(params: {
         userId: number;
         dateFrom: string;
@@ -28,6 +46,18 @@ export class SlotsServiceDb {
 
         return data.map(item => SlotsMapper.toDomain(item));
     }
+    async getTotalSingleSlots(params: {
+        userId: number;
+        dateFrom: string;
+        dateTo: string;
+        subjectId: number;
+    }): Promise<number> { 
+        return await this.slotsRepository
+            .createQueryBuilder("s")
+            .where({ userId: params.userId, subjectId: params.subjectId, slotsTemplateId: IsNull() })
+            .andWhere("s.startTime >= :startTime AND s.endTime <= :endTime", { startTime: params.dateFrom, endTime: params.dateTo })
+            .getCount();
+    }
     async countConflictSlotByDateRange(startTime: string, endTime: string, userId: number, tx?: EntityManager): Promise<number> {
         if(!tx) {
             const data = await this.slotsRepository
@@ -36,8 +66,8 @@ export class SlotsServiceDb {
                 .where({ userId: userId })
                 .andWhere("s.startTime >= :startTime AND s.endTime <= :endTime", { startTime: startTime, endTime: endTime })
                 .orWhere("s.startTime <= :startTime AND s.endTime >= :endTime", { startTime: startTime, endTime: endTime })
-                .orWhere("s.startTime >= :startTime AND s.endTime <= :endTime", { startTime: startTime, endTime: endTime })
-                .orWhere("s.startTime <= :endTime AND s.endTime >= :endTime", { startTime: startTime, endTime: endTime })
+                .orWhere("s.startTime <= :endTime AND s.endTime >= :endTime", { endTime: endTime })
+                .orWhere("s.startTime <= :startTime AND s.endTime <= :endTime AND s.endTime >= :startTime", { startTime: startTime, endTime: endTime })
                 .getCount();
 
             return data;
@@ -48,8 +78,8 @@ export class SlotsServiceDb {
             .where({ userId: userId })
             .andWhere("s.startTime >= :startTime AND s.endTime <= :endTime", { startTime: startTime, endTime: endTime })
             .orWhere("s.startTime <= :startTime AND s.endTime >= :endTime", { startTime: startTime, endTime: endTime })
-            .orWhere("s.startTime >= :startTime AND s.endTime <= :endTime", { startTime: startTime, endTime: endTime })
-            .orWhere("s.startTime <= :endTime AND s.endTime >= :endTime", { startTime: startTime, endTime: endTime })
+            .orWhere("s.startTime <= :endTime AND s.endTime >= :endTime", { endTime: endTime })
+            .orWhere("s.startTime <= :startTime AND s.endTime <= :endTime AND s.endTime >= :startTime", { startTime: startTime, endTime: endTime })
             .getCount();
     }
     async save(data: SlotsInterface) {

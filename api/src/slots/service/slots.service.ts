@@ -21,6 +21,30 @@ export class SlotsService {
     ) {
 
     }
+    async getTotalSingleSlots(userId: number, dateFrom: string, dateTo: string, subjectId: number): Promise<number> {
+        return await this.slotsServiceDb.getTotalSingleSlots({
+            userId: userId,
+            dateFrom: dateFrom,
+            dateTo: dateTo,
+            subjectId: subjectId
+        });
+    }
+    async deleteSingleSlot(slotId: number, userId: number) {
+        const userInDb = await this.usersServiceDb.findById(userId);
+
+        if(!userInDb) {
+            throw new NotFoundException({ message: "User not found" });
+        }
+        const slotInDb = await this.slotsServiceDb.findSingleSlotByUserIdAndSlotIdWithSession(userId, slotId);
+
+        if(!slotInDb) {
+            throw new NotFoundException({ message: "Slot not found" });
+        }
+        if(slotInDb.session) {
+            throw new BadRequestException({ message: "Cannot delete slot with booked session" });
+        }
+        await this.slotsServiceDb.deleteSlotByUserIdAndId(userId, slotId);
+    }
 
     async saveSingleSlot(body: CreateSingleSlotDto, userId: number) {
         const subjectInDb = await this.subjectServiceDb.findById(body.subjectId);
@@ -30,7 +54,11 @@ export class SlotsService {
         }
         this.validateSingleSlotTime(new Date(body.startTime), new Date(body.endTime));
 
-        const countConflictSlots = await this.slotsServiceDb.countConflictSlotByDateRange(body.startTime, body.endTime, userId);
+        const countConflictSlots = await this.slotsServiceDb.countConflictSlotByDateRange(
+            DateTime.fromJSDate(new Date(body.startTime)).toFormat("yyyy-MM-dd HH:mm"), 
+            DateTime.fromJSDate(new Date(body.endTime)).toFormat("yyyy-MM-dd HH:mm"), 
+            userId
+        );
 
         if(countConflictSlots > 0) {
             throw new ConflictException({ message: "The selected time period overlaps with another slot" });
@@ -102,6 +130,12 @@ export class SlotsService {
         if(!userInDb) {
             throw new NotFoundException({ message: "User not found" });
         }
+        const count = await this.slotsServiceDb.getTotalSingleSlots({
+            userId: params.userId,
+            dateFrom: params.dateFrom,
+            dateTo: params.dateTo,
+            subjectId: params.subjectId
+        });
         const slots = await this.slotsServiceDb.findSingleSlots({
             userId: params.userId,
             dateFrom: params.dateFrom,
@@ -110,7 +144,7 @@ export class SlotsService {
             page: params.page,
             limit: params.limit
         });
-        return slots.map(slot => {
+        const data = slots.map(slot => {
             const startTime = DateTime.fromJSDate(new Date(slot.startTime)).setZone(userInDb.timezone).toFormat("yyyy-MM-dd HH:mm");
             const endTime = DateTime.fromJSDate(new Date(slot.endTime)).setZone(userInDb.timezone).toFormat("yyyy-MM-dd HH:mm");
 
@@ -120,6 +154,10 @@ export class SlotsService {
                 endTime: endTime
             }
         });
+        return {
+            data: data,
+            isLoadMoreAvailable: count > (params.page * params.limit)
+        }
     }
 
     private validateSlotTime(startTime: string, endTime: string): void {

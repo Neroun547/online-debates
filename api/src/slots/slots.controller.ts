@@ -1,4 +1,4 @@
-import { Body, Controller, Get, HttpCode, HttpStatus, Post, Put, Req, UseGuards } from "@nestjs/common";
+import { Body, Controller, Delete, Get, HttpCode, HttpStatus, Param, ParseIntPipe, Post, Put, Req, UseGuards } from "@nestjs/common";
 import { AuthGuard } from "src/user/auth/auth.guard";
 import { CreateSlotsTemplateDto } from "./dto/create-slots-template.dto";
 import { SlotsService } from "./service/slots.service";
@@ -23,6 +23,14 @@ export class SlotsController {
     @Post("single-slot")
     async createSingleSlot(@Body() body: CreateSingleSlotDto, @Req() req: Request) {
         await this.slotsService.saveSingleSlot(body, req["user"].id);
+
+        return;
+    }
+
+    @HttpCode(HttpStatus.OK)
+    @Delete("single-slot/:id")
+    async deleteSingleSlotById(@Param("id", new ParseIntPipe()) id: number, @Req() req: Request) {
+        await this.slotsService.deleteSingleSlot(id, req["user"].id);
 
         return;
     }

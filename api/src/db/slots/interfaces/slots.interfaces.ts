@@ -1,3 +1,5 @@
+import { SessionsDomainInterface } from "src/db/sessions/interfaces/sessions.interfaces";
+
 export interface SlotsInterface {
     id?: number;
     startTime: Date;
@@ -14,5 +16,6 @@ export interface SlotDomainInterface {
     userId: number;
     subjectId: number;
     slotsTemplateId: number | null;
+    session?: SessionsDomainInterface;
 }
 

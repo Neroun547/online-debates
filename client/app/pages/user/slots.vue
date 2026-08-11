@@ -8,6 +8,12 @@
           saveSingleSlot(data)
       "
     />
+    <DeleteSingleSlotModal
+      v-model:is-modal-open="isDeleteSingleSlotModalOpen"
+      :start-time="activeDeleteSingleSlot?.startTime"
+      :end-time="activeDeleteSingleSlot?.endTime"
+      @confirm="deleteSingleSlot"
+    />
     <h2 class="text-4xl">My slots</h2>
     <div class="max-w-[300px]">
       <div class="mt-5">
@@ -124,8 +130,16 @@
               <input type="date" class="ml-2" v-model="singleSlotsDateTo" />
             </div>
           </div>
-          <div class="mt-10">
-            <UTable :columns="singleSlotsTableColumns" :data="singleSlots" />
+          <div
+            class="mt-10 max-h-[500px] overflow-y-auto"
+            ref="singleSlotsScrollContainer"
+          >
+            <UTable
+              :columns="singleSlotsTableColumns"
+              :data="singleSlots"
+              ref="singleSlotsTable"
+              :loading="isSingleSlotsTableLoading"
+            />
           </div>
         </div>
       </div>
@@ -141,8 +155,10 @@ import { useSlotsStore } from "~/store/slots/slots.store";
 import type { SlotItemInTemplateDto } from "~/store/slots/interfaces/create-slots-templates-request.interface";
 import CreateSingleSlotModal from "~/components/slots/CreateSingleSlotModal.vue";
 import { DateTime } from "luxon";
-import type { GetSingleSlotsResponseInterface } from "~/store/slots/interfaces/get-single-slots-response.interface";
+import type { GetSingleSlotsResponseDataItemInterface } from "~/store/slots/interfaces/get-single-slots-response.interface";
 import type { TableColumn } from "@nuxt/ui";
+import DeleteSingleSlotModal from "~/components/slots/DeleteSingleSlotModal.vue";
+import { useInfiniteScroll } from "@vueuse/core";
 
 const UButton = resolveComponent("UButton");
 
@@ -193,44 +209,52 @@ const isSlotsBlockDisabled = computed(() => {
 
 const isCreateSingleSlotModalOpen = ref(false);
 const isSaveSingleSlotButtonLoading = ref(false);
+const isDeleteSingleSlotModalOpen = ref(false);
+const activeDeleteSingleSlot = ref<GetSingleSlotsResponseDataItemInterface>();
 
 const singleSlotsDateFrom = ref();
 const singleSlotsDateTo = ref();
 const singleSlotsPage = ref(1);
 const singleSlotsLimit = ref(20);
 
-const singleSlotsTableColumns: TableColumn<any>[] = [
-  {
-    accessorKey: "startTime",
-    header: "Date from",
-  },
-  {
-    accessorKey: "endTime",
-    header: "Date to",
-  },
-  {
-    id: "actions",
-    meta: {
-      class: {
-        td: "text-right",
+const singleSlotsTableColumns: TableColumn<GetSingleSlotsResponseDataItemInterface>[] =
+  [
+    {
+      accessorKey: "startTime",
+      header: "Date from",
+    },
+    {
+      accessorKey: "endTime",
+      header: "Date to",
+    },
+    {
+      id: "actions",
+      meta: {
+        class: {
+          td: "text-right",
+        },
+      },
+      cell: ({ row }) => {
+        return h(UButton, {
+          icon: "i-lucide-trash-2",
+          color: "",
+          class: "bg-red-600 text-white cursor-pointer",
+          variant: "ghost",
+          size: "xs",
+          "aria-label": "Delete single slot",
+          onClick: () => {
+            openDeleteSingleSlotModal(row.original);
+          },
+        });
       },
     },
-    cell: () => {
-      return h(UButton, {
-        icon: "i-lucide-trash-2",
-        color: "",
-        class: "bg-red-600 text-white cursor-pointer",
-        variant: "ghost",
-        size: "xs",
-        onClick: () => {
-          console.log("Click");
-        },
-      });
-    },
-  },
-];
+  ];
 
-const singleSlots = ref<GetSingleSlotsResponseInterface[]>([]);
+const singleSlotsScrollContainer = useTemplateRef("singleSlotsScrollContainer");
+const singleSlots = ref<GetSingleSlotsResponseDataItemInterface[]>([]);
+const singleSlotsCount = ref<number>();
+const isSingleSlotsTableLoading = ref<boolean>(false);
+const isSingleSlotsLoadMoreAvailable = ref<boolean>(false);
 
 const slots = ref<SlotItem[]>([
   {
@@ -328,6 +352,39 @@ const slots = ref<SlotItem[]>([
 
 function openCreateSingleSlotModal() {
   isCreateSingleSlotModalOpen.value = true;
+}
+
+function openDeleteSingleSlotModal(
+  slot: GetSingleSlotsResponseDataItemInterface,
+) {
+  activeDeleteSingleSlot.value = slot;
+  isDeleteSingleSlotModalOpen.value = true;
+}
+
+async function deleteSingleSlot() {
+  if (activeDeleteSingleSlot.value) {
+    await slotsStore.deleteSingleSlot(activeDeleteSingleSlot.value.id);
+
+    if (slotsStore.isError) {
+      toast.add({
+        title: "Error",
+        description: slotsStore.errorMessage,
+        progress: {
+          color: "error",
+        },
+      });
+    } else {
+      toast.add({
+        title: "Success",
+        description: "Deleted successfully",
+        progress: {
+          color: "success",
+        },
+      });
+    }
+    getSingleSlots();
+  }
+  isDeleteSingleSlotModalOpen.value = false;
 }
 
 function deleteTimeFromSlot(weekday: number, timeId: number) {
@@ -659,15 +716,31 @@ async function saveSingleSlot(data: {
           color: "success",
         },
       });
-
+      getSingleSlots();
       isCreateSingleSlotModalOpen.value = false;
     }
     isSaveSingleSlotButtonLoading.value = false;
   }
 }
 
+async function getSingleSlotsCount() {
+  if (selectedSubjectId.value) {
+    const count = await slotsStore.getSingleSlotsCount({
+      subjectId: selectedSubjectId.value,
+      dateFrom: singleSlotsDateFrom.value,
+      dateTo: singleSlotsDateTo.value,
+    });
+
+    if (typeof count === "number") {
+      singleSlotsCount.value = count;
+    }
+  }
+}
+
 async function getSingleSlots() {
   if (selectedSubjectId.value) {
+    isSingleSlotsTableLoading.value = true;
+
     const response = await slotsStore.getSingleSlots(
       selectedSubjectId.value,
       singleSlotsDateFrom.value,
@@ -677,9 +750,18 @@ async function getSingleSlots() {
     );
 
     if (response) {
-      singleSlots.value = response;
+      singleSlots.value.push(...response.data);
+      isSingleSlotsLoadMoreAvailable.value = response.isLoadMoreAvailable;
     }
+    isSingleSlotsTableLoading.value = false;
   }
+}
+
+function clearSingleSlotsState() {
+  singleSlotsPage.value = 1;
+  isSingleSlotsLoadMoreAvailable.value = false;
+  singleSlotsCount.value = 0;
+  singleSlots.value = [];
 }
 
 function mapToWatcher(slots: Array<SlotItem>) {
@@ -721,6 +803,21 @@ watch(selectedSubjectId, () => {
   getSingleSlots();
 });
 
+watch(singleSlotsDateFrom, () => {
+  clearSingleSlotsState();
+  getSingleSlotsCount().then(() => {
+    getSingleSlots();
+  });
+});
+
+watch(singleSlotsDateTo, () => {
+  clearSingleSlotsState();
+
+  getSingleSlotsCount().then(() => {
+    getSingleSlots();
+  });
+});
+
 onMounted(() => {
   appStore.setIsLoading(false);
 
@@ -730,5 +827,26 @@ onMounted(() => {
   singleSlotsDateTo.value = DateTime.fromJSDate(now)
     .plus({ days: 7 })
     .toFormat("yyyy-MM-dd");
+
+  useInfiniteScroll(
+    singleSlotsScrollContainer,
+    async () => {
+      singleSlotsPage.value += 1;
+      await getSingleSlots();
+    },
+    {
+      distance: 0,
+      canLoadMore: () => {
+        console.log(
+          isSingleSlotsTableLoading.value,
+          isSingleSlotsLoadMoreAvailable.value,
+        );
+        return (
+          !isSingleSlotsTableLoading.value &&
+          isSingleSlotsLoadMoreAvailable.value
+        );
+      },
+    },
+  );
 });
 </script>

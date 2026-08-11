@@ -1,7 +1,7 @@
 import { Type } from "class-transformer";
 import { IsDateString, IsInt, Max, Min } from "class-validator";
 
-export class GetSingleSlotsDto {
+export class GetUserSingleSlotsDto {
     @IsDateString()
     dateFrom!: string;
 

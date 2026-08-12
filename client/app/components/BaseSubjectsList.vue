@@ -25,8 +25,21 @@
       v-bind:key="item.id"
       class="text-primary text-xl text-center mt-3"
     >
-      <div class="flex justify-between">
-        <ULink class="text-primary cursor-pointer">
+      <div
+        :class="[
+          props.isEditButtonVisible || props.isDeleteButtonVisible
+            ? 'flex justify-between'
+            : 'text-center',
+        ]"
+      >
+        <ULink
+          class="text-primary cursor-pointer"
+          :to="'/categories/' + categoryId + '/subjects/' + item.id"
+          v-if="categoryId"
+        >
+          {{ item.name }}
+        </ULink>
+        <ULink class="text-primary cursor-pointer" v-if="!categoryId">
           {{ item.name }}
         </ULink>
         <div class="ml-10">
@@ -56,6 +69,7 @@ import EditSubjectModal from "./subjects/EditSubjectModal.vue";
 
 interface Props {
   data: Array<SubjectItem>;
+  categoryId?: number;
   isEditButtonVisible?: boolean;
   isDeleteButtonVisible?: boolean;
 }

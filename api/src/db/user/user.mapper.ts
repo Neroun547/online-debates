@@ -7,7 +7,6 @@ export class UserMapper {
             id: user.id ?? 0,
             email: user.email,
             username: user.username,
-            isConfirmed: user.isConfirmed,
             status: user.status,
             timezone: user.timezone
         }

@@ -7,6 +7,7 @@ import type { GetSlotsTemplatesResponseInterface } from "./interfaces/get-slots-
 import type { CreateSingleSlotRequestInterface } from "./interfaces/create-single-slot-request.interface";
 import type { GetSingleSlotsResponseDataItemInterface, GetSingleSlotsResponseInterface } from "./interfaces/get-single-slots-response.interface";
 import type { GetSingleSlotsCountResponseInterface } from "./interfaces/get-single-slots-count-response.interface";
+import type { GetSlotsForBookingResponseInterface } from "./interfaces/get-slots-for-booking-response.interface";
 
 function getHoursAndMinutesFromStr(time: string) {
     const arr = time.split(":");
@@ -105,6 +106,20 @@ export const useSlotsStore = defineStore("slotsStore", {
                 return await useApiFetch<GetSingleSlotsResponseInterface>(`/user/slots/single-slots?subjectId=${subjectId}&dateFrom=${dateFrom}&dateTo=${dateTo}&page=${page}&limit=${limit}`);
             } catch(error: any) {
                 this.setError(error.response._data.message);
+            }
+        },
+        async getSlotsForBooking(params: {
+            dateFrom: string;
+            dateTo: string;
+            subjectId: number;
+            userId: number;
+        }): Promise<GetSlotsForBookingResponseInterface[] | undefined> {
+            try {
+                this.clearError();
+
+                return await useApiFetch<GetSlotsForBookingResponseInterface[]>(`/booking/slots?dateFrom=${params.dateFrom}&dateTo=${params.dateTo}&userId=${params.userId}&subjectId=${params.subjectId}`);             
+            } catch(error: any) {
+                this.setError(error);
             }
         },
         clearError() {

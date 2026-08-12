@@ -27,7 +27,6 @@ export interface UserDomainInterface {
     id: number;
     username: string;
     email: string;
-    isConfirmed: boolean;
     status: UserStatus;
     timezone: string;
 }

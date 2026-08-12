@@ -1,8 +1,9 @@
 import { useApiFetch } from "~/libs/useApiFetch";
 import type { CategoriesStore } from "./interfaces/categories-store.interface";
 import type { CategoryItem, GetCategoriesResponseInterface } from "./interfaces/get-categories-response.interface";
-import type { GetSubjectsResponseInterface, SubjectItem } from "./interfaces/get-subjects-response.interface";
+import type { GetSubjectsResponseInterface } from "./interfaces/get-subjects-response.interface";
 import type { CreateSubjectRequestInterface } from "./interfaces/create-subject-request.interface";
+import type { GetSubjectByIdResponseInterface } from "./interfaces/get-subject-by-id-response.interface";
 
 export const useCategoriesStore = defineStore("categories", {
     state: (): CategoriesStore => ({
@@ -10,6 +11,15 @@ export const useCategoriesStore = defineStore("categories", {
         isError: false
     }),
     actions: {
+        async getSubjectById(subjectId: number): Promise<GetSubjectByIdResponseInterface | undefined> {
+            try {
+                this.clearError();
+
+                return await useApiFetch<GetSubjectByIdResponseInterface>("/subjects/" + subjectId);
+            } catch(error: any) {
+                this.setError(error.response._data.message);
+            }
+        },
         async updateSubject(subject: { name: string, categoryId: number, id: number }) {
             try {
                 this.clearError();

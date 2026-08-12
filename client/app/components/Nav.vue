@@ -21,7 +21,7 @@
   </nav>
 </template>
 <script setup>
-import { useUserStore } from "~/store/auth/user.store";
+import { useUserStore } from "~/store/user/user.store";
 
 const emit = defineEmits(["toggleMenu"]);
 const userStore = useUserStore();

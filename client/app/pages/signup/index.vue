@@ -29,8 +29,8 @@
 <script setup lang="ts">
 import type { PropsFieldItemInterface } from "~/components/BaseUserCredentialsForm.vue";
 import { z } from "zod";
-import { useUserStore } from "~/store/auth/user.store";
-import type { SignupRequestInterface } from "~/store/auth/interfaces/signup-request.interface";
+import { useUserStore } from "~/store/user/user.store";
+import type { SignupRequestInterface } from "~/store/user/interfaces/signup-request.interface";
 
 const isFormLoading = ref(false);
 
@@ -67,15 +67,15 @@ const fields: Array<PropsFieldItemInterface> = [
     placeholder: "Timezone",
     type: "timezone",
     htmlTag: "select",
-    label: "Timezone"
-  }
+    label: "Timezone",
+  },
 ];
 
 const formSchema = z.object({
   username: z.string().trim().min(6).max(50),
   email: z.email(),
   password: z.string().trim().min(8).max(50),
-  timezone: z.string().min(1).max(50)
+  timezone: z.string().min(1).max(50),
 });
 
 async function signup(data: SignupRequestInterface) {

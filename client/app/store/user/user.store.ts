@@ -9,6 +9,7 @@ import type { GetUserInfoResponseInterface } from "./interfaces/get-user-data-re
 import type { UpdateUsernameResponseInterface } from "./interfaces/update-username-response.interface";
 import type { UpdateUserDataResponseInterface } from "./interfaces/update-user-data-response.interface";
 import type { UpdatePersonalInfoRequestInterface } from "./interfaces/update-personal-info-request.interface";
+import type { GetUsersBySubjectResponseInterface } from "./interfaces/get-users-by-subject-response.interface";
 
 export enum UserStatus {
     ONLINE="online",
@@ -22,7 +23,8 @@ export const useUserStore = defineStore("user", {
         errorMessage: undefined,
         isAuth: false,
         token: "",
-        isOnline: false
+        isOnline: false,
+        userId: undefined
     }),
     getters: {
         getToken: (state: UserStore): string | null => {
@@ -127,6 +129,9 @@ export const useUserStore = defineStore("user", {
         setIsAuth(value: boolean) {
           this.isAuth = value;
         },
+        setUserId(value: number) {
+            this.userId = value;
+        },
         async getUserInfo(): Promise<GetUserInfoResponseInterface | undefined> {
             try {
                 this.clearErrorState();
@@ -152,6 +157,7 @@ export const useUserStore = defineStore("user", {
                 const response = await useApiFetch<AuthResponseInterface>("/users/auth", { method: "POST", body: data });
 
                 if(response) {
+                    this.setUserId(response.userId);
                     this.setToken(response.token);
                     this.setIsAuth(true);
                 }
@@ -181,11 +187,23 @@ export const useUserStore = defineStore("user", {
             } catch(error: any) {
                 this.setError(error.response._data.message);
             }
-        }
+        },
+        async getUsersSubjectId(params: {
+            subjectId: number;
+            page: number;
+            limit: number;
+        }): Promise<GetUsersBySubjectResponseInterface[] | undefined> {
+            try {
+                return await useApiFetch<GetUsersBySubjectResponseInterface[]>(`/subjects/${params.subjectId}/users?limit=${params.limit}&page=${params.page}&subjectId=${params.subjectId}`);
+            } catch(error: any) {
+                this.setError(error);
+            }
+        },
     },
     persist: {
         storage: piniaPluginPersistedstate.localStorage(),
         pick: [
+            "userId",
             "token",
             "isAuth",
             "isOnline"

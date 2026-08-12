@@ -2,7 +2,7 @@
 import PageLoader from "./components/PageLoader.vue";
 import SideNav from "./components/SideNav.vue";
 import Nav from "./components/Nav.vue";
-import { useUserStore } from "./store/auth/user.store";
+import { useUserStore } from "./store/user/user.store.ts";
 import { useAppStore } from "./store/app-store.ts";
 
 const route = useRoute();

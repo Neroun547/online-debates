@@ -3,14 +3,44 @@ import { CategoryServiceDb } from "src/db/category/category.service";
 import { SubjectServiceDb } from "src/db/subjects/subject.service";
 import { UpdateSubjectDto } from "../dto/update-subject.dto";
 import { GetByCategoryIdWithCategoryAndUserResponseDto } from "../dto/get-by-category-id-with-category-and-user-response.dto";
+import { GetSubjectByIdWithCategoryAndUserResponseDto } from "../dto/get-subject-by-id-with-category-and-user-response.interface";
+import { UserServiceDb } from "src/db/user/user.service";
+import { UserDomainInterface } from "src/db/user/interfaces/user.interfaces";
 
 @Injectable()
 export class SubjectsService {
     constructor(
         private subjectsServiceDb: SubjectServiceDb,
-        private categoryServiceDb: CategoryServiceDb
+        private categoryServiceDb: CategoryServiceDb,
+        private usersServiceDb: UserServiceDb
     ) {}
 
+    async getUsersBySubjectId(subjectId: number, page: number, limit: number, userId: number) {
+        const subjectInDb = await this.subjectsServiceDb.findById(subjectId);
+
+        if(!subjectInDb) {
+            throw new NotFoundException({ message: "Subject not found" });
+        }
+        const data = await this.usersServiceDb.findInSubject(subjectId, page, limit);
+
+        return data.map((user: UserDomainInterface) => {
+            if(user.id === userId) {
+                return {
+                    ...user,
+                    isTheSameUser: true
+                }
+            }
+            return user;
+        });
+    }
+    async getSubjectWithUserAndCategoryById(id: number): Promise<GetSubjectByIdWithCategoryAndUserResponseDto> {
+        const subjectInDb = await this.subjectsServiceDb.findByIdWithCategoryAndUser(id);
+
+        if(!subjectInDb) {
+            throw new NotFoundException({ message: "Subject not found" });
+        }
+        return subjectInDb;
+    }
     async getByCategoryIdWithCategoryAndUser(params: {
         page: number; 
         limit: number; 

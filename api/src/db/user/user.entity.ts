@@ -1,5 +1,6 @@
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 import { Subject } from "../subjects/subject.entity";
+import { Slots } from "../slots/slots.entity";
 
 export enum UserStatus {
     ONLINE="online",
@@ -36,5 +37,8 @@ export class User {
 
     @OneToMany(() => Subject, (subject: Subject) => subject.user)
     subjects?: Subject[];
+
+    @OneToMany(() => Slots, (slot: Slots) => slot.user)
+    slots?: Slots[];
 }
 

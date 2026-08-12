@@ -29,8 +29,8 @@
 import { z } from "zod";
 import type { PropsFieldItemInterface } from "~/components/BaseUserCredentialsForm.vue";
 import BaseUserCredentialsForm from "~/components/BaseUserCredentialsForm.vue";
-import type { AuthRequestInterface } from "~/store/auth/interfaces/auth-request.interface";
-import { useUserStore } from "~/store/auth/user.store";
+import type { AuthRequestInterface } from "~/store/user/interfaces/auth-request.interface";
+import { useUserStore } from "~/store/user/user.store";
 
 const userStore = useUserStore();
 

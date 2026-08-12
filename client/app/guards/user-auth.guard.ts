@@ -1,4 +1,4 @@
-import { useUserStore } from "~/store/auth/user.store";
+import { useUserStore } from "~/store/user/user.store";
 
 export function userAuthGuard() {
     if(window) {

@@ -9,9 +9,9 @@ export class AuthController {
 
     @Post()
     async auth(@Body() body: AuthDto): Promise<AuthResponseDto> {
-        const token: string = await this.authService.auth(body);
+        const result = await this.authService.auth(body);
 
-        return { token: token };
+        return { token: result.token, userId: result.userId };
     }
 }
 

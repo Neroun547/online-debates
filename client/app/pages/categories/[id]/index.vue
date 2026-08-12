@@ -1,9 +1,15 @@
 <template>
-  <div>
+  <div v-if="currentCategory">
     <div class="mt-15">
       <div v-if="subjects.length">
         <h2 class="text-4xl text-center">{{ currentCategory?.name }}</h2>
-        <BaseSubjectsList :data="subjects" class="mt-10" />
+        <div class="mt-15">
+          <BaseSubjectsList
+            :data="subjects"
+            class="mt-10"
+            :category-id="currentCategory.id"
+          />
+        </div>
 
         <LoadMoreButton
           v-if="isLoadMoreAvailable"

@@ -21,6 +21,46 @@ export class SlotsService {
     ) {
 
     }
+
+    async getSlotsForBooking(params: {
+        dateFrom: string;
+        dateTo: string;
+        subjectId: number;
+        authorId: number;
+        customerId: number;
+    }) {
+        if(params.authorId === params.customerId) {
+            throw new BadRequestException({ message: "Customer id and author id cannot be the same" });    
+        }
+        const customerInDb = await this.usersServiceDb.findById(params.customerId);
+
+        if(!customerInDb) {
+            throw new NotFoundException({ message: "User not found" });
+        }
+        const authorInDb = await this.usersServiceDb.findById(params.authorId);
+
+        if(!authorInDb) {
+            throw new NotFoundException({ message: "User not found" });
+        }
+        const data = await this.slotsServiceDb.findForBooking({
+            dateFrom: params.dateFrom,
+            dateTo: params.dateTo,
+            userId: params.authorId,
+            subjectId: params.subjectId
+        });
+        return data.map(item => {
+            // Parse to customer timezone
+            const startTime = DateTime.fromJSDate(item.startTime, { zone: authorInDb.timezone }).setZone(customerInDb.timezone).toFormat("yyyy-MM-dd HH:mm");
+            const endTime = DateTime.fromJSDate(item.endTime, { zone: authorInDb.timezone }).setZone(customerInDb.timezone).toFormat("yyyy-MM-dd HH:mm");
+
+            return {
+                ...item,
+                startTime: startTime,
+                endTime: endTime
+            }
+        });
+    }
+
     async getTotalSingleSlots(userId: number, dateFrom: string, dateTo: string, subjectId: number): Promise<number> {
         return await this.slotsServiceDb.getTotalSingleSlots({
             userId: userId,

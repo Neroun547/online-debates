@@ -119,8 +119,8 @@
 </template>
 <script setup lang="ts">
 import { useAppStore } from "~/store/app-store";
-import type { GetUserInfoResponseInterface } from "~/store/auth/interfaces/get-user-data-response.interface";
-import { useUserStore } from "~/store/auth/user.store";
+import type { GetUserInfoResponseInterface } from "~/store/user/interfaces/get-user-data-response.interface";
+import { useUserStore } from "~/store/user/user.store";
 import DeleteAccountModal from "~/components/settings/DeleteAccountModal.vue";
 import { z } from "zod";
 import ConfirmYourNewEmailModal from "~/components/settings/ConfirmYourNewEmailModal.vue";

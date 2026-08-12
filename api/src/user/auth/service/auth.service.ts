@@ -13,7 +13,7 @@ export class AuthService {
         private configService: ConfigService
     ) {}
 
-    async auth(body: AuthDto): Promise<string> {
+    async auth(body: AuthDto): Promise<{ token: string; userId: number; }> {
         const userInDb = await this.usersServiceDb.findByEmailOrUsernameWithSecureParams(body.usernameOrEmail);
 
         if(!userInDb) {
@@ -38,7 +38,10 @@ export class AuthService {
             }
         );
 
-        return token;
+        return {
+            token: token,
+            userId: userInDb.id ?? 0
+        };
     }
     private checkPassword(hash: string, password: string): boolean {
         const hashKey = this.configService.getOrThrow("PASSWORD_HASH_KEY");

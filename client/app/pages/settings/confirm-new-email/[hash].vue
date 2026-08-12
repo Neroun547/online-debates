@@ -1,5 +1,5 @@
 <template>
-  <div class="mt-15"> 
+  <div class="mt-15">
     <UAlert
       v-if="isUserNewEmailConfirmedSuccess"
       title="Confirmed success"
@@ -17,7 +17,7 @@
 </template>
 <script setup>
 import { useAppStore } from "~/store/app-store";
-import { useUserStore } from "~/store/auth/user.store";
+import { useUserStore } from "~/store/user/user.store";
 
 const route = useRoute();
 const userStore = useUserStore();

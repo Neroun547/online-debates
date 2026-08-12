@@ -4,6 +4,7 @@ import { Slots } from "./slots.entity";
 import { EntityManager, IsNull, Repository } from "typeorm";
 import { SlotDomainInterface, SlotsInterface } from "./interfaces/slots.interfaces";
 import { SlotsMapper } from "./slots.mapper";
+import { SessionsStatus } from "../sessions/sessions.entity";
 
 @Injectable()
 export class SlotsServiceDb {
@@ -11,6 +12,24 @@ export class SlotsServiceDb {
 
     }
 
+    async findForBooking(params: {
+        dateFrom: string;
+        dateTo: string;
+        userId: number;
+        subjectId: number;
+    }): Promise<SlotDomainInterface[]> {
+        const data = await this.slotsRepository
+            .createQueryBuilder("s")
+            .leftJoinAndSelect("s.session", "session")
+            .where("s.userId = :userId", { userId: params.userId })
+            .andWhere("s.subjectId = :subjectId", { subjectId: params.subjectId })
+            .andWhere("s.startTime >= :startTime", { startTime: params.dateFrom })
+            .andWhere("s.endTime <= :endTime", { endTime: params.dateTo })
+            .andWhere("session.id IS NULL OR session.status = :sessionStatus", { sessionStatus: SessionsStatus.CANCELLED })
+            .getMany();
+
+        return data.map(slot => SlotsMapper.toDomain(slot));
+    }
     async deleteSlotByUserIdAndId(userId: number, slotId: number): Promise<void> {
         await this.slotsRepository.delete({ userId: userId, id: slotId });
     }

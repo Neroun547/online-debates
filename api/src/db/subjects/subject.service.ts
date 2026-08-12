@@ -9,6 +9,14 @@ import { SubjectMapper } from "./subject.mapper";
 export class SubjectServiceDb {
     constructor(@InjectRepository(Subject) private repository: Repository<Subject>) {}
 
+    async findByIdWithCategoryAndUser(id: number): Promise<SubjectDomainInterface | null> {
+        const data = await this.repository.findOne({ where: { id: id }, relations: { user: true, category: true } });
+
+        if(!data) {
+            return null;
+        }
+        return SubjectMapper.toDomain(data);
+    }
     async countByCategoryIdAndId(categoryId: number, subjectId: number): Promise<number> {
         return await this.repository.count({ where: { categoryId: categoryId, id: subjectId } });
     }

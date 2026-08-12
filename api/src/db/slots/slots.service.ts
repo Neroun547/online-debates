@@ -25,9 +25,9 @@ export class SlotsServiceDb {
             .andWhere("s.subjectId = :subjectId", { subjectId: params.subjectId })
             .andWhere("s.startTime >= :startTime", { startTime: params.dateFrom })
             .andWhere("s.endTime <= :endTime", { endTime: params.dateTo })
-            .andWhere("session.id IS NULL OR session.status = :sessionStatus", { sessionStatus: SessionsStatus.CANCELLED })
+            .andWhere("(session.id IS NULL OR session.status = :sessionStatus)", { sessionStatus: SessionsStatus.CANCELLED })
             .getMany();
-
+            
         return data.map(slot => SlotsMapper.toDomain(slot));
     }
     async deleteSlotByUserIdAndId(userId: number, slotId: number): Promise<void> {

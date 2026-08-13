@@ -382,7 +382,7 @@ async function deleteSingleSlot() {
         },
       });
     }
-    getSingleSlots();
+    getSingleSlots(true);
   }
   isDeleteSingleSlotModalOpen.value = false;
 }
@@ -678,6 +678,8 @@ function setInitialValueToSlots() {
       isError: false,
     },
   ];
+
+  singleSlots.value = [];
 }
 
 async function saveSingleSlot(data: {
@@ -690,14 +692,8 @@ async function saveSingleSlot(data: {
 
     await slotsStore.createSingleSlot({
       subjectId: selectedSubjectId.value,
-      startTime: DateTime.fromFormat(
-        data.date.toString() + " " + data.timeFrom.toString().substring(0, 5),
-        "yyyy-MM-dd HH:mm",
-      ).toJSDate(),
-      endTime: DateTime.fromFormat(
-        data.date.toString() + " " + data.timeTo.toString().substring(0, 5),
-        "yyyy-MM-dd HH:mm",
-      ).toJSDate(),
+      startTime: data.date.toString() + " " + data.timeFrom.toString().substring(0, 5),
+      endTime: data.date.toString() + " " + data.timeTo.toString().substring(0, 5),
     });
 
     if (slotsStore.isError) {
@@ -716,7 +712,7 @@ async function saveSingleSlot(data: {
           color: "success",
         },
       });
-      getSingleSlots();
+      getSingleSlots(true);
       isCreateSingleSlotModalOpen.value = false;
     }
     isSaveSingleSlotButtonLoading.value = false;
@@ -737,7 +733,7 @@ async function getSingleSlotsCount() {
   }
 }
 
-async function getSingleSlots() {
+async function getSingleSlots(reload?: boolean) {
   if (selectedSubjectId.value) {
     isSingleSlotsTableLoading.value = true;
 
@@ -748,9 +744,12 @@ async function getSingleSlots() {
       singleSlotsPage.value,
       singleSlotsLimit.value,
     );
-
     if (response) {
-      singleSlots.value.push(...response.data);
+      if (!reload) {
+        singleSlots.value.push(...response.data);
+      } else {
+        singleSlots.value = response.data;
+      }
       isSingleSlotsLoadMoreAvailable.value = response.isLoadMoreAvailable;
     }
     isSingleSlotsTableLoading.value = false;
@@ -788,7 +787,6 @@ watch(selectedCategoryId, () => {
   }
   setInitialValueToSlots();
   validateCategoryAndSubject();
-  getSingleSlots();
 });
 
 watch(selectedSubjectId, () => {
@@ -800,13 +798,15 @@ watch(selectedSubjectId, () => {
   setInitialValueToSlots();
   validateCategoryAndSubject();
   getTemplateSlots();
-  getSingleSlots();
+  getSingleSlotsCount().then(() => {
+    getSingleSlots(true);
+  })
 });
 
 watch(singleSlotsDateFrom, () => {
   clearSingleSlotsState();
   getSingleSlotsCount().then(() => {
-    getSingleSlots();
+    getSingleSlots(true);
   });
 });
 
@@ -814,7 +814,7 @@ watch(singleSlotsDateTo, () => {
   clearSingleSlotsState();
 
   getSingleSlotsCount().then(() => {
-    getSingleSlots();
+    getSingleSlots(true);
   });
 });
 
@@ -837,10 +837,6 @@ onMounted(() => {
     {
       distance: 0,
       canLoadMore: () => {
-        console.log(
-          isSingleSlotsTableLoading.value,
-          isSingleSlotsLoadMoreAvailable.value,
-        );
         return (
           !isSingleSlotsTableLoading.value &&
           isSingleSlotsLoadMoreAvailable.value

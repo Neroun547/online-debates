@@ -36,7 +36,7 @@ export class Sessions {
     @JoinColumn({ name: "customerId" })
     customer!: User; 
     
-    @OneToOne(() => Slots, (slot) => slot.id)
+    @OneToOne(() => Slots, (slot) => slot.id, { onDelete: "CASCADE" })
     @JoinColumn({ name: "slotId" })
     slot!: Slots;
 }

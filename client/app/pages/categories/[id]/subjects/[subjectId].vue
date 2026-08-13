@@ -131,9 +131,11 @@ async function bookSession(params: {
 async function loadSlots(date: string) {
   if (activeBookingUser.value) {
     isSlotsLoading.value = true;
+    
+    const currentDate = DateTime.fromJSDate(new Date()).toFormat("yyyy-MM-dd");
 
     const response = await slotsStore.getSlotsForBooking({
-      dateFrom: date + " " + DateTime.now().toFormat("HH:mm:ss"),
+      dateFrom: date + " " + (currentDate === date ? DateTime.now().toFormat("HH:mm:ss") : "00:00:00"),
       dateTo: date + " 23:59:59",
       subjectId: Number(route.params.subjectId),
       userId: activeBookingUser.value.id,

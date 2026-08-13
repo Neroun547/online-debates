@@ -1,4 +1,4 @@
-import { IsDate, IsDateString, IsInt } from "class-validator";
+import { IsDateString, IsInt } from "class-validator";
 
 export class CreateSingleSlotDto {
     @IsInt()

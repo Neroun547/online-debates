@@ -1,4 +1,4 @@
-import { ConflictException, Injectable } from "@nestjs/common";
+import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { SlotsTemplates } from "./slots-templates.entity";
 import { EntityManager, IsNull, Not, Repository } from "typeorm";
@@ -9,6 +9,7 @@ import { DateTime } from "luxon";
 import { SlotsMapper } from "../slots/slots.mapper";
 import { Sessions } from "../sessions/sessions.entity";
 import { SlotsServiceDb } from "../slots/slots.service";
+import { getDateForSlot } from "src/slots/utils/utils";
 
 @Injectable()
 export class SlotsTemplatesServiceDb {
@@ -31,6 +32,7 @@ export class SlotsTemplatesServiceDb {
 
         return this.em.transaction("READ COMMITTED", async (tx) => {
             const now = new Date();
+            const currentDatePlusThreeMonthMillis = DateTime.fromJSDate(now).plus({ months: 3 }).toMillis();
             // Delete prev slots and templates if exists ...
             const slotsInDb = await tx.find(Slots, { where: { userId: userId, subjectId: subjectId, slotsTemplateId: Not(IsNull()) } });
             const promisesDeleteSlots: Array<Promise<any>> = [];
@@ -53,28 +55,39 @@ export class SlotsTemplatesServiceDb {
             // Re-run slots template delete
             await tx.delete(SlotsTemplates, { userId: userId, subjectId: subjectId });
 
-            for(const templateSlot of templatesSlotsModelsArr) {
-                const savedTemplate = await tx.save(templateSlot);
+
+            let nowDateTmp = now;
+            let nowDateMillisTmp = DateTime.fromJSDate(nowDateTmp).toMillis();
+
+            while(nowDateMillisTmp < currentDatePlusThreeMonthMillis) {
+                for(const templateSlot of templatesSlotsModelsArr) {
+                    const savedTemplate = await tx.save(templateSlot);
                 
-                const dateForTemplateSlot = this.getDateForSlot(templateSlot.weekday, now.getDay(), now);
-                const countConflictSlotByDateRange = await this.slotsServiceDb.countConflictSlotByDateRange(
-                    dateForTemplateSlot + " " + templateSlot.startTime, 
-                    dateForTemplateSlot + " " + templateSlot.endTime, 
-                    userId,
-                    tx
-                );
+                    const dateForTemplateSlot = getDateForSlot(templateSlot.weekday, nowDateTmp.getDay(), nowDateTmp);
+                    const countConflictSlotByDateRange = await this.slotsServiceDb.countConflictSlotByDateRange(
+                        dateForTemplateSlot + " " + templateSlot.startTime, 
+                        dateForTemplateSlot + " " + templateSlot.endTime, 
+                        userId,
+                        subjectId,
+                        tx
+                    );
           
-                if(countConflictSlotByDateRange > 0) {
-                    continue;
+                    if(countConflictSlotByDateRange > 0) {
+                        continue;
+                    }
+                    const slot = SlotsMapper.toSave({
+                        startTime: DateTime.fromFormat(dateForTemplateSlot + " " + templateSlot.startTime, "yyyy-MM-dd HH:mm").toJSDate(),
+                        endTime: DateTime.fromFormat(dateForTemplateSlot + " " + templateSlot.endTime, "yyyy-MM-dd HH:mm").toJSDate(),
+                        userId: savedTemplate.userId,
+                        subjectId: savedTemplate.subjectId,
+                        slotsTemplateId: savedTemplate.id
+                    });
+                    await tx.save(slot);
                 }
-                const slot = SlotsMapper.toSave({
-                    startTime: DateTime.fromFormat(dateForTemplateSlot + " " + templateSlot.startTime, "yyyy-MM-dd HH:mm").toJSDate(),
-                    endTime: DateTime.fromFormat(dateForTemplateSlot + " " + templateSlot.endTime, "yyyy-MM-dd HH:mm").toJSDate(),
-                    userId: savedTemplate.userId,
-                    subjectId: savedTemplate.subjectId,
-                    slotsTemplateId: savedTemplate.id
-                });
-                await tx.save(slot);
+                const dateNowPlusWeek = DateTime.fromJSDate(nowDateTmp).plus({ weeks: 1 });
+
+                nowDateTmp = dateNowPlusWeek.toJSDate();
+                nowDateMillisTmp = dateNowPlusWeek.toMillis();
             }
         });
     }
@@ -102,18 +115,6 @@ export class SlotsTemplatesServiceDb {
             }
         }
         return weekdayArr;
-    }
-
-    private getDateForSlot(weekday: number, currentDayOfTheWeek: number, now: Date): string | undefined {
-        if(weekday > currentDayOfTheWeek) {
-            return DateTime.fromJSDate(now).plus({ days: weekday - currentDayOfTheWeek }).toFormat("yyyy-MM-dd");
-        }
-        if(currentDayOfTheWeek === weekday) {
-            return DateTime.fromJSDate(now).toFormat("yyyy-MM-dd");
-        }
-        if(weekday < currentDayOfTheWeek) {
-            return DateTime.fromJSDate(now).plus({ weeks: 1 }).minus({ days: currentDayOfTheWeek - weekday }).toFormat("yyyy-MM-dd");
-        }
     }
 }
 

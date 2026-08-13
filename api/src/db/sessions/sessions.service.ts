@@ -1,16 +1,30 @@
 import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Sessions, SessionsStatus } from "./sessions.entity";
-import { EntityManager, Repository } from "typeorm";
+import { Repository } from "typeorm";
 import { SessionsMapper } from "./sessions.mapper";
 
 @Injectable()
 export class SessionsServiceDb {
     constructor(
-        @InjectRepository(Sessions) private sessionsRepository: Repository<Sessions>,
-        private em: EntityManager
+        @InjectRepository(Sessions) private sessionsRepository: Repository<Sessions>
     ) {}
 
+    async deleteSessionsBeforeDate(sixthMonthBefore: string) {
+        await this.sessionsRepository
+            .createQueryBuilder()
+            .delete()
+            .from(Sessions)
+            .where(`
+                "slotId" IN (
+                    SELECT id
+                    FROM slots
+                    WHERE "startTime" <= :date
+                )
+            `)
+            .setParameter('date', sixthMonthBefore)
+            .execute()
+    }
     async saveSession(params: {
         slotId: number;
         userId: number;

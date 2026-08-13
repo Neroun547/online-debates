@@ -95,9 +95,10 @@ export class SlotsService {
         this.validateSingleSlotTime(new Date(body.startTime), new Date(body.endTime));
 
         const countConflictSlots = await this.slotsServiceDb.countConflictSlotByDateRange(
-            DateTime.fromJSDate(new Date(body.startTime)).toFormat("yyyy-MM-dd HH:mm"), 
-            DateTime.fromJSDate(new Date(body.endTime)).toFormat("yyyy-MM-dd HH:mm"), 
-            userId
+            body.startTime, 
+            body.endTime, 
+            userId,
+            subjectInDb.id
         );
 
         if(countConflictSlots > 0) {
@@ -185,8 +186,8 @@ export class SlotsService {
             limit: params.limit
         });
         const data = slots.map(slot => {
-            const startTime = DateTime.fromJSDate(new Date(slot.startTime)).setZone(userInDb.timezone).toFormat("yyyy-MM-dd HH:mm");
-            const endTime = DateTime.fromJSDate(new Date(slot.endTime)).setZone(userInDb.timezone).toFormat("yyyy-MM-dd HH:mm");
+            const startTime = DateTime.fromJSDate(new Date(slot.startTime)).toFormat("yyyy-MM-dd HH:mm");
+            const endTime = DateTime.fromJSDate(new Date(slot.endTime)).toFormat("yyyy-MM-dd HH:mm");
 
             return {
                 ...slot,

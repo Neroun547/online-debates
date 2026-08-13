@@ -17,6 +17,7 @@ import { SlotsModule } from './slots/slots.module';
 import { Slots } from './db/slots/slots.entity';
 import { SlotsTemplates } from './db/slots-templates/slots-templates.entity';
 import { Sessions } from './db/sessions/sessions.entity';
+import { ScheduleModule } from '@nestjs/schedule';
 
 @Module({
   imports: [
@@ -36,6 +37,7 @@ import { Sessions } from './db/sessions/sessions.entity';
       entities: [User, Category, Subject, Admin, Slots, SlotsTemplates, Sessions],
       type: "mariadb"
     }),
+    ScheduleModule.forRoot(),
     UserModule,
     CategoriesModule,
     AdminModule,

@@ -1,13 +1,14 @@
-import { Injectable } from "@nestjs/common";
+import { ConflictException, Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Slots } from "./slots.entity";
 import { EntityManager, IsNull, Repository } from "typeorm";
-import { SlotDomainInterface, SlotsInterface } from "./interfaces/slots.interfaces";
+import { CreateSingleSlotInterface, SlotDomainInterface, SlotsInterface } from "./interfaces/slots.interfaces";
 import { SlotsMapper } from "./slots.mapper";
 import { SessionsStatus } from "../sessions/sessions.entity";
 import { SlotsTemplates } from "../slots-templates/slots-templates.entity";
 import { DateTime } from "luxon";
 import { getDateForSlot } from "src/slots/utils/utils";
+import { User } from "../user/user.entity";
 
 @Injectable()
 export class SlotsServiceDb {
@@ -161,10 +162,27 @@ export class SlotsServiceDb {
             .orWhere("s.userId = :userId AND s.subjectId = :subjectId AND s.startTime <= :startTime AND s.endTime <= :endTime AND s.endTime >= :startTime", { startTime: startTime, endTime: endTime, userId: userId, subjectId: subjectId })
             .getCount();
     }
-    async save(data: SlotsInterface) {
-        const model = SlotsMapper.toSave(data);
+    saveSingleSlot(data: CreateSingleSlotInterface) {
+        return this.em.transaction("READ COMMITTED", async (tx) => {
+            await tx.createQueryBuilder(User, "user")
+                .setLock('pessimistic_write')
+                .where("user.id = :userId", { userId: data.userId })
+                .getOneOrFail();
+            
+            const conflictsCount = await this.countConflictSlotByDateRange(data.startTime, data.endTime, data.userId, data.subjectId, tx);
 
-        await this.slotsRepository.save(model);
+            if(conflictsCount > 0) {
+                throw new ConflictException({ message: "The selected time period overlaps with another slot" });
+            }
+            const model = SlotsMapper.toSave({
+                startTime: DateTime.fromFormat(data.startTime, "yyyy-MM-dd HH:mm").toJSDate(),
+                endTime: DateTime.fromFormat(data.endTime, "yyyy-MM-dd HH:mm").toJSDate(),
+                userId: data.userId,
+                subjectId: data.subjectId,
+                slotsTemplateId: data.slotsTemplateId
+            });
+            await tx.save(model);
+        });
     }
 
     async saveMany(data: SlotsInterface[]) {

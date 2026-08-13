@@ -10,6 +10,15 @@ export interface SlotsInterface {
     slotsTemplateId: number | null;
 }
 
+export interface CreateSingleSlotInterface {
+    id?: number;
+    startTime: string;
+    endTime: string;
+    userId: number;
+    subjectId: number;
+    slotsTemplateId: number | null;
+}
+
 export interface SlotDomainInterface {
     id: number;
     startTime: Date;

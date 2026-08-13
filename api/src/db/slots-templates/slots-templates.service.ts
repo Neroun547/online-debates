@@ -10,6 +10,7 @@ import { SlotsMapper } from "../slots/slots.mapper";
 import { Sessions } from "../sessions/sessions.entity";
 import { SlotsServiceDb } from "../slots/slots.service";
 import { getDateForSlot } from "src/slots/utils/utils";
+import { User } from "../user/user.entity";
 
 @Injectable()
 export class SlotsTemplatesServiceDb {
@@ -31,6 +32,12 @@ export class SlotsTemplatesServiceDb {
         const templatesSlotsModelsArr = templateSlots.map(item => SlotsTemplatesMapper.toSave(item));
 
         return this.em.transaction("READ COMMITTED", async (tx) => {
+            await tx
+                .createQueryBuilder(User, "user")
+                .where("user.id = :id", { id: userId })
+                .setLock("pessimistic_write")
+                .getOneOrFail();
+
             const now = new Date();
             const currentDatePlusThreeMonthMillis = DateTime.fromJSDate(now).plus({ months: 3 }).toMillis();
             // Delete prev slots and templates if exists ...

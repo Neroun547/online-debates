@@ -94,19 +94,9 @@ export class SlotsService {
         }
         this.validateSingleSlotTime(new Date(body.startTime), new Date(body.endTime));
 
-        const countConflictSlots = await this.slotsServiceDb.countConflictSlotByDateRange(
-            body.startTime, 
-            body.endTime, 
-            userId,
-            subjectInDb.id
-        );
-
-        if(countConflictSlots > 0) {
-            throw new ConflictException({ message: "The selected time period overlaps with another slot" });
-        }
-        await this.slotsServiceDb.save({
-            startTime: new Date(body.startTime),
-            endTime: new Date(body.endTime),
+        await this.slotsServiceDb.saveSingleSlot({
+            startTime: body.startTime,
+            endTime: body.endTime,
             userId: userId,
             subjectId: body.subjectId,
             slotsTemplateId: null

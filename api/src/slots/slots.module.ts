@@ -8,10 +8,12 @@ import { SubjectModuleDb } from "src/db/subjects/subject.module";
 import { UsersSlotsController } from "./user-slots.controller";
 import { UserModuleDb } from "src/db/user/user.module";
 import { BookingSlotsController } from "./booking-slots.controller";
+import { SessionsService } from "./service/sessions.service";
+import { SessionsModuleDb } from "src/db/sessions/sessions.module";
 
 @Module({
-    imports: [SlotsModuleDb, SlotsTemplatesModuleDb, CategoryModuleDb, SubjectModuleDb, UserModuleDb],
+    imports: [SlotsModuleDb, SlotsTemplatesModuleDb, CategoryModuleDb, SubjectModuleDb, UserModuleDb, SessionsModuleDb],
     controllers: [SlotsController, UsersSlotsController, BookingSlotsController],
-    providers: [SlotsService]
+    providers: [SlotsService, SessionsService]
 })
 export class SlotsModule {}

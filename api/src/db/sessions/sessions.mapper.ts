@@ -1,4 +1,4 @@
-import { SessionsDomainInterface } from "./interfaces/sessions.interfaces";
+import { SessionsDomainInterface, SessionsInterface } from "./interfaces/sessions.interfaces";
 import { Sessions, SessionsStatus } from "./sessions.entity";
 
 export class SessionsMapper {
@@ -10,6 +10,15 @@ export class SessionsMapper {
             creatorId: 0,
             customerId: 0
         }
+    }
+
+    static toSave(data: SessionsInterface): Sessions {
+        const model = new Sessions();
+
+        for(let key in data) {
+            model[key] = data[key];
+        }
+        return model;
     }
 }
 

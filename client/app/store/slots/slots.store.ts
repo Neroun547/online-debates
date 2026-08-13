@@ -122,6 +122,24 @@ export const useSlotsStore = defineStore("slotsStore", {
                 this.setError(error);
             }
         },
+        async bookSession(params: {
+            slot: GetSlotsForBookingResponseInterface,
+            currentUserDateTime: string
+        }) {
+            try {
+                this.clearError();
+
+                await useApiFetch(`/booking/slots/session`, { 
+                    method: "POST", 
+                    body: { 
+                        slotId: params.slot.id,
+                        currentUserDateTime: params.currentUserDateTime
+                    } 
+                });
+            } catch(error: any) {
+                this.setError(error);
+            }
+        },
         clearError() {
             this.isError = false;
             this.errorMessage = undefined;

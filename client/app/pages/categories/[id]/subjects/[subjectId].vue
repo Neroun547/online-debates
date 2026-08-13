@@ -1,9 +1,15 @@
 <template>
   <div class="mt-15">
     <BookSessionModal
+      :is-loading="isSlotsLoading"
+      :is-booking-button-loading="isBookingButtonLoading"
       v-model:isModalOpen="isBookSessionModalOpen"
       @date-change="(date: string) => loadSlots(date)"
       :available-slots="bookingSlots"
+      @book="
+        (data: { date: string; slot: GetSlotsForBookingResponseInterface }) =>
+          bookSession(data)
+      "
     />
     <div v-if="currentSubject">
       <h2 class="text-4xl text-center">{{ currentSubject.name }}</h2>
@@ -24,6 +30,9 @@ import BookSessionModal from "~/components/subjects/BookSessionModal.vue";
 import { useSlotsStore } from "~/store/slots/slots.store";
 import type { UserInterface } from "~/store/user/interfaces/user-response.interface";
 import type { GetSlotsForBookingResponseInterface } from "~/store/slots/interfaces/get-slots-for-booking-response.interface";
+import { DateTime } from "luxon";
+
+const toast = useToast();
 
 const UButton = resolveComponent("UButton");
 
@@ -41,6 +50,8 @@ const users = ref<GetUsersBySubjectResponseInterface[]>([]);
 const page = ref(1);
 const limit = ref(20);
 
+const isSlotsLoading = ref<boolean>(false);
+const isBookingButtonLoading = ref<boolean>(false);
 const isBookSessionModalOpen = ref<boolean>(false);
 
 const activeBookingUser = ref<UserInterface>();
@@ -83,18 +94,55 @@ const usersTableColumns = [
   },
 ];
 
+async function bookSession(params: {
+  date: string;
+  slot: GetSlotsForBookingResponseInterface;
+}) {
+  isBookingButtonLoading.value = true;
+
+  const currentUserDateTime = DateTime.now().toFormat("yyyy-MM-dd HH:mm");
+  await slotsStore.bookSession({
+    slot: params.slot,
+    currentUserDateTime: currentUserDateTime,
+  });
+
+  if (slotsStore.isError) {
+    toast.add({
+      title: "Error",
+      description: slotsStore.errorMessage,
+      progress: {
+        color: "error",
+      },
+    });
+  } else {
+    toast.add({
+      title: "Success",
+      description: "Session booked successfully",
+      progress: {
+        color: "success",
+      },
+    });
+
+    isBookSessionModalOpen.value = false;
+  }
+  isBookingButtonLoading.value = false;
+}
+
 async function loadSlots(date: string) {
   if (activeBookingUser.value) {
+    isSlotsLoading.value = true;
+
     const response = await slotsStore.getSlotsForBooking({
-      dateFrom: date + " 00:00:00",
+      dateFrom: date + " " + DateTime.now().toFormat("HH:mm:ss"),
       dateTo: date + " 23:59:59",
       subjectId: Number(route.params.subjectId),
       userId: activeBookingUser.value.id,
     });
 
-    if(response) {
+    if (response) {
       bookingSlots.value = response;
     }
+    isSlotsLoading.value = false;
   }
 }
 

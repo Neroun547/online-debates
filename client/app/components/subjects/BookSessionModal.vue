@@ -164,6 +164,7 @@
             icon="i-lucide-calendar-check-2"
             class="cursor-pointer"
             :disabled="!selectedSlot"
+            :loading="props.isBookingButtonLoading"
             @click="bookSession"
           />
         </div>
@@ -174,7 +175,6 @@
 
 <script setup lang="ts">
 import { getLocalTimeZone, today } from '@internationalized/date'
-import type { CalendarDate } from '@internationalized/date'
 import { DateTime } from 'luxon'
 import type { GetSlotsForBookingResponseInterface } from '~/store/slots/interfaces/get-slots-for-booking-response.interface'
 
@@ -182,16 +182,18 @@ interface Props {
   availableSlots?: GetSlotsForBookingResponseInterface[]
   isLoading?: boolean
   timezone?: string
+  isBookingButtonLoading?: boolean
 }
 
 const props = withDefaults(defineProps<Props>(), {
   availableSlots: () => [],
   isLoading: false,
-  timezone: 'Your local time'
+  timezone: 'Your local time',
+  isBookingButtonLoading: false
 })
 
 const emit = defineEmits<{
-  book: [payload: { date: CalendarDate, slot: GetSlotsForBookingResponseInterface }]
+  book: [payload: { date: string, slot: GetSlotsForBookingResponseInterface }]
   dateChange: [date: string]
 }>()
 
@@ -245,7 +247,7 @@ function bookSession() {
   if (!selectedSlot.value) return
 
   emit('book', {
-    date: selectedDate.value,
+    date: selectedDate.value.toString(),
     slot: selectedSlot.value
   })
 }

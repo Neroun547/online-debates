@@ -1,13 +1,17 @@
-import { Controller, Get, Query, Req, UseGuards } from "@nestjs/common";
+import { Body, Controller, Get, Post, Query, Req, UseGuards } from "@nestjs/common";
 import { AuthGuard } from "src/user/auth/auth.guard";
 import { GetSlotsForBookingRequestDto } from "./dto/get-slots-for-booking-request.dto";
+import { BookSessionDto } from "./dto/book-session.dto";
+import { SessionsService } from "./service/sessions.service";
 import { SlotsService } from "./service/slots.service";
-import { SlotDomainInterface } from "src/db/slots/interfaces/slots.interfaces";
 
 @UseGuards(AuthGuard)
 @Controller("booking/slots")
 export class BookingSlotsController {
-    constructor(private slotsService: SlotsService) {
+    constructor(
+        private slotsService: SlotsService,
+        private sessionsService: SessionsService
+    ) {
 
     }
     
@@ -20,6 +24,13 @@ export class BookingSlotsController {
             dateTo: query.dateTo,
             customerId: req["user"].id
         });
+    }
+
+    @Post("session")
+    async bookSession(@Body() body: BookSessionDto, @Req() req: Request) {
+        await this.sessionsService.bookSession(body.slotId, req["user"].id, body.currentUserDateTime);
+
+        return;
     }
 }
 

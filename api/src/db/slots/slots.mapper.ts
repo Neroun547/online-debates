@@ -1,4 +1,5 @@
 import { SessionsMapper } from "../sessions/sessions.mapper";
+import { UserMapper } from "../user/user.mapper";
 import { SlotsInterface, type SlotDomainInterface } from "./interfaces/slots.interfaces";
 import { Slots } from "./slots.entity";
 
@@ -11,7 +12,8 @@ export class SlotsMapper {
             userId: model.userId,
             subjectId: model.subjectId,
             slotsTemplateId: model.slotsTemplateId,
-            session: model.session ? SessionsMapper.toDomain(model.session) : undefined
+            session: model.session ? SessionsMapper.toDomain(model.session) : undefined,
+            user: model.user ? UserMapper.toDomain(model.user) : undefined
         }
     }
     static toSave(data: SlotsInterface): Slots {

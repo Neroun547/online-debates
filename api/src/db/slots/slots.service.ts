@@ -12,6 +12,14 @@ export class SlotsServiceDb {
 
     }
 
+    async findByIdWithUser(slotId: number): Promise<SlotDomainInterface | null> {
+        const data = await this.slotsRepository.findOne({ where: { id: slotId }, relations: { user: true } });
+
+        if(!data) {
+            return null;
+        }
+        return SlotsMapper.toDomain(data);
+    }
     async findForBooking(params: {
         dateFrom: string;
         dateTo: string;
@@ -27,7 +35,7 @@ export class SlotsServiceDb {
             .andWhere("s.endTime <= :endTime", { endTime: params.dateTo })
             .andWhere("(session.id IS NULL OR session.status = :sessionStatus)", { sessionStatus: SessionsStatus.CANCELLED })
             .getMany();
-            
+
         return data.map(slot => SlotsMapper.toDomain(slot));
     }
     async deleteSlotByUserIdAndId(userId: number, slotId: number): Promise<void> {

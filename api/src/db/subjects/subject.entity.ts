@@ -1,6 +1,7 @@
-import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 import { User } from "../user/user.entity";
 import { Category } from "../category/category.entity";
+import { SlotsLock } from "../slots-lock/slots-lock.entity";
 
 @Entity({ name: "subjects" })
 export class Subject {
@@ -23,5 +24,8 @@ export class Subject {
     @ManyToOne(() => Category, (category) => category.subjects, { onDelete: "CASCADE", onUpdate: "CASCADE" })
     @JoinColumn({ name: "categoryId" })
     category!: Category;
+
+    @OneToMany(() => SlotsLock, (slotsLock) => slotsLock.subject)
+    slotsLock!: SlotsLock[];
 }
 

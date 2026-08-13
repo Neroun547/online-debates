@@ -1,13 +1,17 @@
 import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Subject } from "./subject.entity";
-import { Repository } from "typeorm";
+import { EntityManager, Repository } from "typeorm";
 import { SubjectDomainInterface, SubjectInterface } from "./interfaces/subject.interfaces";
 import { SubjectMapper } from "./subject.mapper";
+import { SlotsLockMapper } from "../slots-lock/slots-lock.mapper";
 
 @Injectable()
 export class SubjectServiceDb {
-    constructor(@InjectRepository(Subject) private repository: Repository<Subject>) {}
+    constructor(
+        @InjectRepository(Subject) private repository: Repository<Subject>,
+        private em: EntityManager
+    ) {}
 
     async findByIdWithCategoryAndUser(id: number): Promise<SubjectDomainInterface | null> {
         const data = await this.repository.findOne({ where: { id: id }, relations: { user: true, category: true } });
@@ -35,10 +39,17 @@ export class SubjectServiceDb {
     async deleteByIdAndUserId(id: number, userId: number): Promise<void> {
         await this.repository.delete({ id: id, userId: userId });
     }
-    async save(data: SubjectInterface) {
-        const model = SubjectMapper.toSave(data);
+    save(data: SubjectInterface) {
+        return this.em.transaction("READ COMMITTED", async (tx) => {
+            const subjectModel = SubjectMapper.toSave(data);
+            const savedSubject = await tx.save(subjectModel);
 
-        await this.repository.save(model);
+            const slotsLockModel = SlotsLockMapper.toSave({
+                userId: data.userId,
+                subjectId: savedSubject.id
+            });
+            await tx.save(slotsLockModel);
+        });
     }    
     async findWithCategoryAndUserByCategoryIdAndUserId(page: number, limit: number, categoryId?: number, userId?: number): Promise<SubjectDomainInterface[]> {
         const data = await this.repository.find({ 

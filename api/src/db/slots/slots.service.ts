@@ -8,7 +8,8 @@ import { SessionsStatus } from "../sessions/sessions.entity";
 import { SlotsTemplates } from "../slots-templates/slots-templates.entity";
 import { DateTime } from "luxon";
 import { getDateForSlot } from "src/slots/utils/utils";
-import { User } from "../user/user.entity";
+import { SlotsLock } from "../slots-lock/slots-lock.entity";
+import { SlotsLockMapper } from "../slots-lock/slots-lock.mapper";
 
 @Injectable()
 export class SlotsServiceDb {
@@ -18,44 +19,87 @@ export class SlotsServiceDb {
     ) {
 
     }
-    generateNewSlots(dateTo: string) {
-        return this.em.transaction("READ COMMITTED", async (tx) => {
-            const currentDate = new Date();
+    async generateNewSlots(dateTo: string): Promise<void> {
+        const currentDate = DateTime.now().startOf("day");
+        const generationEndDate = DateTime.fromFormat(dateTo, "yyyy-MM-dd").startOf("day");
+        const templateOwners = await this.em
+            .createQueryBuilder(SlotsTemplates, "template")
+            .select("template.userId", "userId")
+            .addSelect("template.subjectId", "subjectId")
+            .distinct(true)
+            .orderBy("template.userId", "ASC")
+            .addOrderBy("template.subjectId", "ASC")
+            .getRawMany<{ userId: number; subjectId: number }>();
 
-            const allTemplates = await tx.find(SlotsTemplates, {});
-            const dateToMillis = DateTime.fromFormat(dateTo, "yyyy-MM-dd").toMillis();
-            
-            let currentDateTmp = currentDate;
-            let currentDateTmpLuxon = DateTime.fromJSDate(currentDateTmp);
-            let currentDateTmpMillis = DateTime.fromJSDate(currentDate).toMillis();
+        for(const templateOwner of templateOwners) {
+            const userId = Number(templateOwner.userId);
+            const subjectId = Number(templateOwner.subjectId);
 
-            while(currentDateTmpMillis < dateToMillis) {
-                for(const template of allTemplates) {
-                    const dateForSlot = getDateForSlot(template.weekday, currentDateTmpLuxon.weekday, currentDateTmp);
+            await this.em.transaction("READ COMMITTED", async (tx) => {
+                await tx
+                    .createQueryBuilder()
+                    .insert()
+                    .into(SlotsLock)
+                    .values({ userId: userId, subjectId: subjectId })
+                    .orIgnore()
+                    .execute();
 
-                    const dateStart = dateForSlot + " " + template.startTime;
-                    const dateTo = dateForSlot + " " + template.endTime;
-                    
-                    const countConflicts = await this.countConflictSlotByDateRange(dateStart, dateTo, template.userId, template.subjectId, tx);
+                await tx
+                    .createQueryBuilder(SlotsLock, "slotsLock")
+                    .setLock("pessimistic_write")
+                    .where("slotsLock.userId = :userId AND slotsLock.subjectId = :subjectId", { userId: userId, subjectId: subjectId })
+                    .getOneOrFail();
 
-                    if(countConflicts <= 0) {
-                        const model = SlotsMapper.toSave({
-                            startTime: DateTime.fromFormat(dateStart, "yyyy-MM-dd HH:mm").toJSDate(),
-                            endTime: DateTime.fromFormat(dateTo, "yyyy-MM-dd HH:mm").toJSDate(),
-                            userId: template.userId,
-                            subjectId: template.subjectId,
-                            slotsTemplateId: template.id
-                        });
-                        await tx.save(model);
+                const templates = await tx.find(SlotsTemplates, {
+                    where: { userId: userId, subjectId: subjectId }
+                });
+
+                for(const template of templates) {
+                    const firstSlotDate = getDateForSlot(
+                        template.weekday,
+                        currentDate.weekday,
+                        currentDate.toJSDate()
+                    );
+
+                    if(!firstSlotDate) {
+                        continue;
+                    }
+                    let slotDate = DateTime.fromFormat(firstSlotDate, "yyyy-MM-dd");
+                    let isSlotCreated = false;
+
+                    while(slotDate.toMillis() < generationEndDate.toMillis()) {
+                        const slotDateString = slotDate.toFormat("yyyy-MM-dd");
+                        const startTime = `${slotDateString} ${template.startTime}`;
+                        const endTime = `${slotDateString} ${template.endTime}`;
+                        const countConflicts = await this.countConflictSlotByDateRange(
+                            startTime,
+                            endTime,
+                            userId,
+                            subjectId,
+                            tx
+                        );
+
+                        if(countConflicts <= 0) {
+                            const model = SlotsMapper.toSave({
+                                startTime: DateTime.fromFormat(startTime, "yyyy-MM-dd HH:mm").toJSDate(),
+                                endTime: DateTime.fromFormat(endTime, "yyyy-MM-dd HH:mm").toJSDate(),
+                                userId: userId,
+                                subjectId: subjectId,
+                                slotsTemplateId: template.id
+                            });
+
+                            await tx.save(model);
+                            isSlotCreated = true;
+                        }
+                        slotDate = slotDate.plus({ weeks: 1 });
+                    }
+
+                    if(isSlotCreated) {
                         await tx.update(SlotsTemplates, { id: template.id }, { lastSlotCreation: new Date() });
                     }
                 }
-                const nextWeekLuxon = DateTime.fromJSDate(currentDateTmp).plus({ weeks: 1 });
-
-                currentDateTmp = nextWeekLuxon.toJSDate();
-                currentDateTmpMillis = nextWeekLuxon.toMillis();
-            }
-        });
+            });
+        }
     }
 
     async deleteSlotsBeforeDate(date: string): Promise<void> {
@@ -162,11 +206,27 @@ export class SlotsServiceDb {
             .orWhere("s.userId = :userId AND s.subjectId = :subjectId AND s.startTime <= :startTime AND s.endTime <= :endTime AND s.endTime >= :startTime", { startTime: startTime, endTime: endTime, userId: userId, subjectId: subjectId })
             .getCount();
     }
-    saveSingleSlot(data: CreateSingleSlotInterface) {
+    async saveSingleSlot(data: CreateSingleSlotInterface) {
+        const slotsLockInDb = await this.em.findOne(SlotsLock, { where: { userId: data.userId, subjectId: data.subjectId } });
+
+        if(!slotsLockInDb) {
+            const slotsLockModel = SlotsLockMapper.toSave({
+                userId: data.userId,
+                subjectId: data.subjectId
+            });
+            await this.em
+                .createQueryBuilder()
+                .insert()
+                .into(SlotsLock)
+                .values({ ...slotsLockModel })
+                .orIgnore()
+                .execute();
+        }
         return this.em.transaction("READ COMMITTED", async (tx) => {
-            await tx.createQueryBuilder(User, "user")
-                .setLock('pessimistic_write')
-                .where("user.id = :userId", { userId: data.userId })
+            await tx
+                .createQueryBuilder(SlotsLock, "slotsLock")
+                .setLock("pessimistic_write")
+                .where("slotsLock.userId = :userId AND slotsLock.subjectId = :subjectId", { userId: data.userId, subjectId: data.subjectId })
                 .getOneOrFail();
             
             const conflictsCount = await this.countConflictSlotByDateRange(data.startTime, data.endTime, data.userId, data.subjectId, tx);
@@ -191,4 +251,3 @@ export class SlotsServiceDb {
         await this.slotsRepository.insert(modelsArr);
     }
 }
-

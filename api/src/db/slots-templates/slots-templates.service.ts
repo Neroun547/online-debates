@@ -10,7 +10,8 @@ import { SlotsMapper } from "../slots/slots.mapper";
 import { Sessions } from "../sessions/sessions.entity";
 import { SlotsServiceDb } from "../slots/slots.service";
 import { getDateForSlot } from "src/slots/utils/utils";
-import { User } from "../user/user.entity";
+import { SlotsLock } from "../slots-lock/slots-lock.entity";
+import { SlotsLockMapper } from "../slots-lock/slots-lock.mapper";
 
 @Injectable()
 export class SlotsTemplatesServiceDb {
@@ -28,15 +29,29 @@ export class SlotsTemplatesServiceDb {
 
         await this.repository.save(model);
     }
-    saveWithSlots(templateSlots: Array<SlotsTemplatesInterface>, userId: number, subjectId: number): Promise<void> {
+    async saveWithSlots(templateSlots: Array<SlotsTemplatesInterface>, userId: number, subjectId: number): Promise<void> {
+        const slotsLockInDb = await this.em.findOne(SlotsLock, { where: { userId: userId, subjectId: subjectId } });
+        
+        if(!slotsLockInDb) {
+            const slotsLockModel = SlotsLockMapper.toSave({
+                userId: userId,
+                subjectId: subjectId
+            });
+            await this.em
+                .createQueryBuilder()
+                .insert()
+                .into(SlotsLock)
+                .values({ ...slotsLockModel })
+                .orIgnore()
+                .execute();
+        }
         const templatesSlotsModelsArr = templateSlots.map(item => SlotsTemplatesMapper.toSave(item));
 
         return this.em.transaction("READ COMMITTED", async (tx) => {
-            await tx
-                .createQueryBuilder(User, "user")
-                .where("user.id = :id", { id: userId })
-                .setLock("pessimistic_write")
-                .getOneOrFail();
+            await tx.createQueryBuilder(SlotsLock, "slotsLock")
+                    .setLock("pessimistic_write")
+                    .where("slotsLock.userId = :userId AND slotsLock.subjectId = :subjectId", { userId: userId, subjectId: subjectId })
+                    .getOneOrFail();
 
             const now = new Date();
             const currentDatePlusThreeMonthMillis = DateTime.fromJSDate(now).plus({ months: 3 }).toMillis();

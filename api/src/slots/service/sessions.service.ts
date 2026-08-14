@@ -26,8 +26,8 @@ export class SessionsService {
             throw new NotFoundException({ message: "User not found" });
         }
         const currentUserDateTimeMillis = DateTime.fromFormat(
-            "yyyy-MM-dd HH:mm", 
             currentUserDateTime, 
+            "yyyy-MM-dd HH:mm", 
             { zone: userInDb.timezone }
         ).toMillis();
         const slotDateTimeMillis = DateTime.fromJSDate(slotInDb.startTime, { zone: slotInDb.user.timezone }).toMillis();

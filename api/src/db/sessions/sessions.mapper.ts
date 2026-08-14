@@ -1,14 +1,19 @@
+import { SlotsMapper } from "../slots/slots.mapper";
+import { UserMapper } from "../user/user.mapper";
 import { SessionsDomainInterface, SessionsInterface } from "./interfaces/sessions.interfaces";
 import { Sessions, SessionsStatus } from "./sessions.entity";
 
 export class SessionsMapper {
     static toDomain(model: Sessions): SessionsDomainInterface {
         return {
-            id: 0,
-            slotId: 0,
+            id: model.id,
+            slotId: model.slotId,
             status: SessionsStatus.BOOKED,
-            creatorId: 0,
-            customerId: 0
+            creatorId: model.creatorId,
+            customerId: model.customerId,
+            slot: model.slot ? SlotsMapper.toDomain(model.slot) : undefined,
+            creator: model.creator ? UserMapper.toDomain(model.creator) : undefined,
+            customer: model.customer ? UserMapper.toDomain(model.customer) : undefined
         }
     }
 

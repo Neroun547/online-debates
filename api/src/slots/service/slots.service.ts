@@ -1,6 +1,6 @@
 import { BadRequestException, ConflictException, Injectable, InternalServerErrorException, NotFoundException } from "@nestjs/common";
 import { CreateSlotsTemplateDto } from "../dto/create-slots-template.dto";
-import { getSecondsFromTime } from "../utils/utils";
+import { getSecondsFromTime, parseStartTimeAndEndTimeForCustomer } from "../utils/utils";
 import { CategoryServiceDb } from "src/db/category/category.service";
 import { SubjectServiceDb } from "src/db/subjects/subject.service";
 import { SlotsTemplatesServiceDb } from "src/db/slots-templates/slots-templates.service";
@@ -38,7 +38,7 @@ export class SlotsService {
             throw new NotFoundException({ message: "User not found" });
         }
         const authorInDb = await this.usersServiceDb.findById(params.authorId);
-
+   
         if(!authorInDb) {
             throw new NotFoundException({ message: "User not found" });
         }
@@ -49,14 +49,12 @@ export class SlotsService {
             subjectId: params.subjectId
         });
         return data.map(item => {
-            // Parse to customer timezone
-            const startTime = DateTime.fromJSDate(item.startTime, { zone: authorInDb.timezone }).setZone(customerInDb.timezone).toFormat("yyyy-MM-dd HH:mm");
-            const endTime = DateTime.fromJSDate(item.endTime, { zone: authorInDb.timezone }).setZone(customerInDb.timezone).toFormat("yyyy-MM-dd HH:mm");
+            const parsedDate = parseStartTimeAndEndTimeForCustomer(item.startTime, item.endTime, customerInDb.timezone);
 
             return {
                 ...item,
-                startTime: startTime,
-                endTime: endTime
+                startTime: parsedDate.startTime,
+                endTime: parsedDate.endTime
             }
         });
     }
@@ -103,6 +101,11 @@ export class SlotsService {
         });
     }
     async getTemplatesByUserIdAndSubjectId(userId: number, subjectId: number) {
+        const userInDb = await this.usersServiceDb.findById(userId);
+
+        if(!userInDb) {
+            throw new NotFoundException({ message: "User not found" });
+        }
         return await this.slotsTemplatesServiceDb.findByUserIdAndSubjectId(userId, subjectId);
     }
 

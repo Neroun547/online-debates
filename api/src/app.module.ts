@@ -19,6 +19,7 @@ import { SlotsTemplates } from './db/slots-templates/slots-templates.entity';
 import { Sessions } from './db/sessions/sessions.entity';
 import { ScheduleModule } from '@nestjs/schedule';
 import { SlotsLock } from './db/slots-lock/slots-lock.entity';
+import { SessionsModule } from './sessions/sessions.module';
 
 @Module({
   imports: [
@@ -36,14 +37,15 @@ import { SlotsLock } from './db/slots-lock/slots-lock.entity';
       port: Number(process.env.DB_PORT),
       host: process.env.DB_HOST,
       entities: [User, Category, Subject, Admin, Slots, SlotsTemplates, Sessions, SlotsLock],
-      type: "mariadb"
+      type: "mariadb"  
     }),
     ScheduleModule.forRoot(),
     UserModule,
     CategoriesModule,
     AdminModule,
     SubjectsModule,
-    SlotsModule
+    SlotsModule,
+    SessionsModule
   ],
   controllers: [AppController],
   providers: [AppService],

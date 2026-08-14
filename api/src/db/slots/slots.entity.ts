@@ -10,10 +10,10 @@ export class Slots {
     id!: number;
 
     @Column({ type: "datetime" })
-    startTime!: Date;
+    startTime!: Date | string;
 
     @Column({ type: "datetime" })
-    endTime!: Date;
+    endTime!: Date | string;
 
     @Column()
     userId!: number;

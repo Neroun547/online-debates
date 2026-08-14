@@ -8,13 +8,13 @@ import { SubjectModuleDb } from "src/db/subjects/subject.module";
 import { UsersSlotsController } from "./user-slots.controller";
 import { UserModuleDb } from "src/db/user/user.module";
 import { BookingSlotsController } from "./booking-slots.controller";
-import { SessionsService } from "./service/sessions.service";
-import { SessionsModuleDb } from "src/db/sessions/sessions.module";
 import { SlotsSchedule } from "./slots.schedule";
+import { SessionsModule } from "src/sessions/sessions.module";
+import { SessionsModuleDb } from "src/db/sessions/sessions.module";
 
 @Module({
-    imports: [SlotsModuleDb, SlotsTemplatesModuleDb, CategoryModuleDb, SubjectModuleDb, UserModuleDb, SessionsModuleDb],
+    imports: [SlotsModuleDb, SlotsTemplatesModuleDb, CategoryModuleDb, SubjectModuleDb, UserModuleDb, SessionsModule, SessionsModuleDb],
     controllers: [SlotsController, UsersSlotsController, BookingSlotsController],
-    providers: [SlotsService, SessionsService, SlotsSchedule]
+    providers: [SlotsService, SlotsSchedule]
 })
 export class SlotsModule {}

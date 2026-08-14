@@ -1,5 +1,5 @@
 import { Injectable } from "@nestjs/common";
-import { Cron, Interval } from "@nestjs/schedule";
+import { Interval } from "@nestjs/schedule";
 import { DateTime } from "luxon";
 import { SessionsServiceDb } from "src/db/sessions/sessions.service";
 import { SlotsServiceDb } from "src/db/slots/slots.service";

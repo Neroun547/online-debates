@@ -1,12 +1,12 @@
 import type { UserStatus } from "~/store/user/user.store";
-import type { GetCategoriesResponseInterface } from "./get-categories-response.interface";
+import type { CategoryItem } from "./get-categories-response.interface";
 
 export interface SubjectItem {
     id: number;
     name: string;
     categoryId: number;
     userId: number;
-    category?: GetCategoriesResponseInterface;
+    category?: CategoryItem;
     user?: UserStatus;
 }
 

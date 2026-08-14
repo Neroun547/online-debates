@@ -37,6 +37,17 @@
         </ULink>
       </div>
       <div class="block m-auto mt-5">
+        <ULink 
+          to="/my-sessions"
+          active-class="text-primary"
+          inactive-class="text-black"
+          class="flex items-center"  
+        >
+          <UIcon name="lucide:clipboard-clock" class="block mr-2" />
+          <div>My sessions</div>
+        </ULink>
+      </div>
+      <div class="block m-auto mt-5">
         <ULink
           to="/settings"
           active-class="text-primary"

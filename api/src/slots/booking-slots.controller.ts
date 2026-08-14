@@ -2,7 +2,7 @@ import { Body, Controller, Get, Post, Query, Req, UseGuards } from "@nestjs/comm
 import { AuthGuard } from "src/user/auth/auth.guard";
 import { GetSlotsForBookingRequestDto } from "./dto/get-slots-for-booking-request.dto";
 import { BookSessionDto } from "./dto/book-session.dto";
-import { SessionsService } from "./service/sessions.service";
+import { SessionsService } from "../sessions/service/sessions.service";
 import { SlotsService } from "./service/slots.service";
 
 @UseGuards(AuthGuard)

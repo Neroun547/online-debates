@@ -12,6 +12,7 @@ import { SlotsServiceDb } from "../slots/slots.service";
 import { getDateForSlot } from "src/slots/utils/utils";
 import { SlotsLock } from "../slots-lock/slots-lock.entity";
 import { SlotsLockMapper } from "../slots-lock/slots-lock.mapper";
+import { User } from "../user/user.entity";
 
 @Injectable()
 export class SlotsTemplatesServiceDb {
@@ -81,6 +82,8 @@ export class SlotsTemplatesServiceDb {
             let nowDateTmp = now;
             let nowDateMillisTmp = DateTime.fromJSDate(nowDateTmp).toMillis();
 
+            const userInDb = await tx.findOne(User, { where: { id: userId } });
+
             while(nowDateMillisTmp < currentDatePlusThreeMonthMillis) {
                 for(const templateSlot of templatesSlotsModelsArr) {
                     const savedTemplate = await tx.save(templateSlot);
@@ -98,8 +101,8 @@ export class SlotsTemplatesServiceDb {
                         continue;
                     }
                     const slot = SlotsMapper.toSave({
-                        startTime: DateTime.fromFormat(dateForTemplateSlot + " " + templateSlot.startTime, "yyyy-MM-dd HH:mm").toJSDate(),
-                        endTime: DateTime.fromFormat(dateForTemplateSlot + " " + templateSlot.endTime, "yyyy-MM-dd HH:mm").toJSDate(),
+                        startTime: DateTime.fromFormat(dateForTemplateSlot + " " + templateSlot.startTime, "yyyy-MM-dd HH:mm", { zone: userInDb?.timezone }).toUTC().toFormat("yyyy-MM-dd HH:mm:ss"),
+                        endTime: DateTime.fromFormat(dateForTemplateSlot + " " + templateSlot.endTime, "yyyy-MM-dd HH:mm", { zone: userInDb?.timezone }).toUTC().toFormat("yyyy-MM-dd HH:mm:ss"),
                         userId: savedTemplate.userId,
                         subjectId: savedTemplate.subjectId,
                         slotsTemplateId: savedTemplate.id

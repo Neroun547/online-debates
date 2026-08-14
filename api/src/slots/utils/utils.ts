@@ -18,3 +18,15 @@ export function getDateForSlot(weekday: number, currentDayOfTheWeek: number, now
     }
 }
 
+export function parseStartTimeAndEndTimeForCustomer(startTime: Date, endTime: Date, customerTimezone: string): {
+    startTime: string;
+    endTime: string;
+} {
+    const parsedStartTime = DateTime.fromJSDate(startTime).toFormat("yyyy-MM-dd HH:mm");
+    const parsedEndTime = DateTime.fromJSDate(endTime).toFormat("yyyy-MM-dd HH:mm");
+    
+    return {
+        startTime: DateTime.fromFormat(parsedStartTime, "yyyy-MM-dd HH:mm", { zone: "UTC" }).setZone(customerTimezone).toFormat("yyyy-MM-dd HH:mm"),
+        endTime: DateTime.fromFormat(parsedEndTime, "yyyy-MM-dd HH:mm", { zone: "UTC" }).setZone(customerTimezone).toFormat("yyyy-MM-dd HH:mm"),
+    }
+}

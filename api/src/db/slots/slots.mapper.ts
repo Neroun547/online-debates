@@ -1,4 +1,5 @@
 import { SessionsMapper } from "../sessions/sessions.mapper";
+import { SubjectMapper } from "../subjects/subject.mapper";
 import { UserMapper } from "../user/user.mapper";
 import { SlotsInterface, type SlotDomainInterface } from "./interfaces/slots.interfaces";
 import { Slots } from "./slots.entity";
@@ -7,13 +8,14 @@ export class SlotsMapper {
     static toDomain(model: Slots): SlotDomainInterface {
         return {
             id: model.id,
-            startTime: model.startTime,
-            endTime: model.endTime,
+            startTime: new Date(model.startTime),
+            endTime: new Date(model.endTime),
             userId: model.userId,
             subjectId: model.subjectId,
             slotsTemplateId: model.slotsTemplateId,
             session: model.session ? SessionsMapper.toDomain(model.session) : undefined,
-            user: model.user ? UserMapper.toDomain(model.user) : undefined
+            user: model.user ? UserMapper.toDomain(model.user) : undefined,
+            subject: model.subject ? SubjectMapper.toDomain(model.subject) : undefined,
         }
     }
     static toSave(data: SlotsInterface): Slots {

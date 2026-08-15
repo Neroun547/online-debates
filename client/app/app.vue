@@ -28,7 +28,7 @@ onMounted(() => {
           @toggle-menu="(value) => (isMenuOpen = value)"
         />
         <SideNav
-          v-if="userStore.getIsAuth"
+          v-if="userStore.getIsAuth && !appStore.isSideNavHidden"
           style="transition: 0.3s ease"
           :class="[
             'w-[15%] max-[1300px]:w-[300px]',

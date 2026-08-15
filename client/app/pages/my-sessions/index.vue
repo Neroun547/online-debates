@@ -115,14 +115,30 @@
         </div>
 
         <div
-          class="mt-4 flex flex-wrap gap-x-6 gap-y-2 border-t border-default pt-4 text-sm text-muted"
+          class="mt-4 flex flex-wrap gap-x-6 gap-y-2 border-t border-default pt-4 text-sm text-muted items-center"
         >
-          <span v-if="session.slot">{{
-            session.slot.subject?.category?.name
-          }}</span>
-          <span v-if="session.slot"
-            >{{ session.slot.subject?.name }}</span
-          >
+          <div class="max-w-[200px] w-full">
+            <span v-if="session.slot">{{
+              session.slot.subject?.category?.name
+            }}</span>
+            <span v-if="session.slot" class="ml-5">{{
+              session.slot.subject?.name
+            }}</span>
+          </div>
+          <div class="ml-auto">
+            <UTooltip
+              :text="'Start at ' + session.slot?.startTime"
+              v-if="!isSessionStarted(session.slot?.startTime ?? '') && session.status === 'booked'"
+            >
+              <UButton label="Start" class="cursor-pointer" :disabled="true" />
+            </UTooltip>
+            <UTooltip
+              v-if="isSessionStarted(session.slot?.startTime ?? '') && session.status === 'booked'"
+              :text="'Start now'"
+            >
+              <UButton label="Start" class="cursor-pointer" @click="startSession(session.id)" />
+            </UTooltip>
+          </div>
         </div>
       </article>
     </div>
@@ -164,6 +180,8 @@ import type {
 } from "~/store/sessions/interfaces/get-user-sessions.interface";
 import { useSessionsStore } from "~/store/sessions/sessions.store";
 import { useUserStore } from "~/store/user/user.store";
+
+const router = useRouter();
 
 const appStore = useAppStore();
 const sessionsStore = useSessionsStore();
@@ -209,6 +227,14 @@ const isDateRangeValid = computed(() => {
 });
 const isInitialLoading = computed(() => isLoading.value && page.value === 0);
 const isLoadingMore = computed(() => isLoading.value && page.value > 0);
+
+function startSession(sessionId: number) {
+  router.push("/my-sessions/" + sessionId);
+}
+
+function isSessionStarted(date: string): boolean {
+  return DateTime.fromFormat(date, "yyyy-MM-dd HH:mm").toMillis() <= Date.now();
+}
 
 function toApiDate(value: string, endOfDay = false): string {
   const date = DateTime.fromISO(value);

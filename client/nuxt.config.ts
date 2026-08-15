@@ -1,11 +1,30 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
-  modules: ['@nuxt/eslint', '@nuxt/ui', '@pinia/nuxt', 'pinia-plugin-persistedstate/nuxt'],
+  modules: [
+    '@nuxt/eslint', 
+    '@nuxt/ui', 
+    '@pinia/nuxt', 
+    'pinia-plugin-persistedstate/nuxt',
+    [
+      "nuxt-socket-io",
+      {
+        sockets: [
+          {
+            name: "sessions",
+            url: process.env.NUXT_PUBLIC_WS_HOST ?? "http://192.168.1.103:8082",
+            default: true,
+          },
+        ],
+        server: false,
+      },
+    ],
+  ],
   colorMode: {
     preference: 'light',
   },
   devServer: {
-    port: Number(process.env.DEV_PORT)
+    port: Number(process.env.DEV_PORT),
+    host: process.env.APP_HOST_NAME ?? '0.0.0.0',
   },
   devtools: {
     enabled: false

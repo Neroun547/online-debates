@@ -1,0 +1,196 @@
+import { ConfigService } from '@nestjs/config';
+import { JwtService } from '@nestjs/jwt';
+import {
+  ConnectedSocket,
+  MessageBody,
+  OnGatewayConnection,
+  OnGatewayDisconnect,
+  SubscribeMessage,
+  WebSocketGateway,
+  WebSocketServer,
+  WsException,
+} from '@nestjs/websockets';
+import { Server, Socket } from 'socket.io';
+import { SessionsServiceDb } from 'src/db/sessions/sessions.service';
+import { WebRTCService } from 'src/integrations/webRTC/webRTC.service';
+
+interface UserJwtPayload {
+  id: number;
+  email: string;
+  username: string;
+  timezone: string;
+}
+
+interface SessionPayload {
+  sessionId: number;
+}
+
+interface NewProducerPayload {
+  sessionId: number;
+  producerId: string;
+  producerUserId: number;
+  kind: 'audio' | 'video';
+}
+
+interface ClientToServerEvents {
+  'session:join': (payload: SessionPayload) => void;
+  'session:leave': (payload: SessionPayload) => void;
+}
+
+interface ServerToClientEvents {
+  'session:error': (payload: { message: string }) => void;
+  'session:new-producer': (payload: NewProducerPayload) => void;
+}
+
+interface InterServerEvents {
+  ping: () => void;
+}
+
+interface SessionSocketData {
+  user?: UserJwtPayload;
+  sessionsIds?: Array<number>;
+}
+
+type SessionSocket = Socket<
+  ClientToServerEvents,
+  ServerToClientEvents,
+  InterServerEvents,
+  SessionSocketData
+>;
+
+type SessionServer = Server<
+  ClientToServerEvents,
+  ServerToClientEvents,
+  InterServerEvents,
+  SessionSocketData
+>;
+
+@WebSocketGateway({
+  namespace: '/sessions',
+  cors: {
+    origin: process.env.CLIENT_CORS_ORIGIN ?? 'http://192.168.1.103:3103',
+  },
+})
+export class SessionsGateway implements OnGatewayConnection, OnGatewayDisconnect {
+  @WebSocketServer()
+  private server!: SessionServer;
+
+  constructor(
+    private readonly jwtService: JwtService,
+    private readonly configService: ConfigService,
+    private readonly sessionsServiceDb: SessionsServiceDb,
+    private readonly webRTCService: WebRTCService
+  ) {}
+
+    handleDisconnect(client: SessionSocket) {
+        if(client.data.user && client.data.sessionsIds) {
+            this.webRTCService.disconnectAllUserTransports(client.data.user.id, client.data.sessionsIds);
+        }
+    }
+
+  async handleConnection(client: SessionSocket): Promise<void> {
+    try {
+      const token = this.extractToken(client);
+
+      if (!token) {
+        throw new Error('Missing access token');
+      }
+      const user = await this.jwtService.verifyAsync<UserJwtPayload>(token, {
+        secret: this.configService.getOrThrow('USER_AUTH_JWT_SECRET'),
+      });
+
+      client.data.user = user;
+      
+      await client.join(this.getUserRoomName(user.id));
+    } catch {
+      client.emit('session:error', { message: 'Unauthorized' });
+      client.disconnect(true);
+    }
+  }
+
+  @SubscribeMessage('session:join')
+  async joinSession(
+    @ConnectedSocket() client: SessionSocket,
+    @MessageBody() payload: SessionPayload,
+  ): Promise<{ sessionId: number }> {
+    const sessionId = this.validateSessionId(payload?.sessionId);
+    const user = this.getAuthenticatedUser(client);
+    const isParticipant = await this.sessionsServiceDb.isUserParticipant(
+      sessionId,
+      user.id,
+    );
+
+    if (!isParticipant) {
+      throw new WsException('Session not found');
+    }
+    await client.join(this.getSessionRoomName(sessionId));
+
+    if(client.data.sessionsIds) {
+        client.data.sessionsIds.push(sessionId);
+    } else {
+        client.data.sessionsIds = [sessionId];
+    }    
+    return { sessionId };
+  }
+
+  @SubscribeMessage('session:leave')
+  async leaveSession(
+    @ConnectedSocket() client: SessionSocket,
+    @MessageBody() payload: SessionPayload,
+  ): Promise<{ sessionId: number }> {
+    const sessionId = this.validateSessionId(payload?.sessionId);
+
+    this.getAuthenticatedUser(client);
+    await client.leave(this.getSessionRoomName(sessionId));
+
+    return { sessionId };
+  }
+ 
+
+
+  emitNewProducer(payload: NewProducerPayload): void {
+    this.server
+      .to(this.getSessionRoomName(payload.sessionId))
+      .except(this.getUserRoomName(payload.producerUserId))
+      .emit('session:new-producer', payload);
+  }
+
+  private extractToken(client: SessionSocket): string | null {
+    const handshakeAuth = client.handshake.auth as Record<string, unknown>;
+    const handshakeToken = handshakeAuth.token;
+
+    if (typeof handshakeToken === 'string' && handshakeToken) {
+      return handshakeToken.replace(/^Bearer\s+/i, '');
+    }
+    const authorization = client.handshake.headers.authorization;
+
+    if (typeof authorization !== 'string') {
+      return null;
+    }
+    return authorization.replace(/^Bearer\s+/i, '');
+  }
+
+  private getAuthenticatedUser(client: SessionSocket): UserJwtPayload {
+    const user = client.data.user;
+
+    if (!user) {
+      throw new WsException('Unauthorized');
+    }
+    return user;
+  }
+
+  private validateSessionId(sessionId: number): number {
+    if (!Number.isInteger(sessionId) || sessionId < 1) {
+      throw new WsException('Invalid session id');
+    }
+    return sessionId;
+  }
+
+  private getSessionRoomName(sessionId: number): string {
+    return `session:${sessionId}`;
+  }
+
+  private getUserRoomName(userId: number): string {
+    return `user:${userId}`;
+  }
+}

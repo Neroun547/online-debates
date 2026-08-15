@@ -13,6 +13,15 @@ export class SessionsServiceDb {
         private em: EntityManager
     ) {}
 
+    async isUserParticipant(sessionId: number, userId: number): Promise<boolean> {
+        return await this.sessionsRepository.exists({
+            where: [
+                { id: sessionId, creatorId: userId },
+                { id: sessionId, customerId: userId }
+            ]
+        });
+    }
+
     async getSessionsByDateRangeAndUserId(params: {
         dateFrom: string; 
         dateTo: string;
@@ -129,4 +138,3 @@ export class SessionsServiceDb {
         });
     }
 }
-

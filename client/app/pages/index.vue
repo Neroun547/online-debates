@@ -12,19 +12,7 @@
         categories on the "My Topics" page. Enjoy!
       </p>
     </div>
-    <ul class="list-disc mt-10">
-      <li
-        v-for="category in categories"
-        class="text-primary text-xl text-center mt-3"
-      >
-        <ULink
-          class="text-primary cursor-pointer"
-          :to="'/categories/' + category.id"
-        >
-          {{ category.name }}
-        </ULink>
-      </li>
-    </ul>
+    <BaseList :items="categories" />
     <LoadMoreButton
       @load-more="incrementPage"
       :is-loading="isLoadMoreButtonLoading"
@@ -36,16 +24,16 @@
 <script setup lang="ts">
 import { userAuthGuard } from "~/guards/user-auth.guard";
 import { useCategoriesStore } from "~/store/categories/categories.store";
-import type { CategoryItem } from "~/store/categories/interfaces/get-categories-response.interface";
 import LoadMoreButton from "~/components/LoadMoreButton.vue";
 import { useAppStore } from "~/store/app-store";
+import type { ListItem } from "~/components/BaseList.vue";
 
 const appStore = useAppStore();
 const categoriesStore = useCategoriesStore();
 
 const page = ref(1);
 const limit = ref(20);
-const categories = ref<Array<CategoryItem>>([]);
+const categories = ref<Array<ListItem>>([]);
 
 const isLoadMoreButtonLoading = ref(false);
 const isLoadMoreButtonShow = ref(false);
@@ -54,7 +42,13 @@ async function getCategories() {
   const response = await categoriesStore.getCategories(page.value, limit.value);
 
   if (response) {
-    categories.value.push(...response.data);
+    categories.value.push(
+      ...response.data.map((item) => ({
+        isLink: true,
+        title: item.name,
+        link: "/categories/" + item.id,
+      })),
+    );
     isLoadMoreButtonShow.value = response.isLoadMoreAvailable;
   }
 }

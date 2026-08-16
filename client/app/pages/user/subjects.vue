@@ -19,7 +19,7 @@
     </div>
 
     <div class="mt-10">
-      <BaseSubjectsList
+      <UserSubjectsList
         :data="subjects"
         :is-delete-button-visible="true"
         :is-edit-button-visible="true"
@@ -40,7 +40,7 @@
   </div>
 </template>
 <script setup lang="ts">
-import BaseSubjectsList from "~/components/BaseSubjectsList.vue";
+import UserSubjectsList from "~/components/UserSubjectsList.vue";
 import LoadMoreButton from "~/components/LoadMoreButton.vue";
 import CreateSubjectModal from "~/components/subjects/CreateSubjectModal.vue";
 import { useAppStore } from "~/store/app-store";

@@ -4,13 +4,8 @@
       <div v-if="subjects.length">
         <h2 class="text-4xl text-center">{{ currentCategory?.name }}</h2>
         <div class="mt-15">
-          <BaseSubjectsList
-            :data="subjects"
-            class="mt-10"
-            :category-id="currentCategory.id"
-          />
+          <BaseList :items="subjects" />
         </div>
-
         <LoadMoreButton
           v-if="isLoadMoreAvailable"
           @load-more="incrementPage"
@@ -25,12 +20,12 @@
   </div>
 </template>
 <script setup lang="ts">
+import type { ListItem } from "~/components/BaseList.vue";
 import { useAppStore } from "~/store/app-store";
 import { useCategoriesStore } from "~/store/categories/categories.store";
 import type { CategoryItem } from "~/store/categories/interfaces/get-categories-response.interface";
-import type { SubjectItem } from "~/store/categories/interfaces/get-subjects-response.interface";
 
-const subjects = ref<SubjectItem[]>([]);
+const subjects = ref<ListItem[]>([]);
 const route = useRoute();
 
 const page = ref(1);
@@ -56,7 +51,13 @@ async function getSubjects() {
   });
 
   if (response) {
-    subjects.value.push(...response.data);
+    subjects.value.push(
+      ...response.data.map((item) => ({
+        title: item.name,
+        isLink: true,
+        link: "/categories/" + Number(route.params.id) + "/subjects/" + item.id,
+      })),
+    );
     isLoadMoreAvailable.value = response.isLoadMoreAvailable;
   }
 }

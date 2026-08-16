@@ -17,6 +17,7 @@ export interface NewProducerPayload {
 
 import * as mediasoupClient from "mediasoup-client";
 import { useAppStore } from "~/store/app-store";
+import type { InitWebRTCSessionResponseInterface } from "~/store/sessions/interfaces/init-webRTC-session.response.interface";
 import { useSessionsStore } from "~/store/sessions/sessions.store";
 import type { SessionsSocket } from "~/types/sessions-socket.interface";
 
@@ -183,7 +184,7 @@ async function getRecvTransport(
 
 async function createSendTransport() {
   try {
-    const response = await sessionsStore.initSession(
+    const response: InitWebRTCSessionResponseInterface | undefined = await sessionsStore.initSession(
       Number(route.params.id),
       "send",
     );

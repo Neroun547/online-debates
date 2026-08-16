@@ -2,6 +2,10 @@ import { Body, Controller, Get, Param, ParseIntPipe, Post, Req, UseGuards } from
 import { WebRTCService } from "src/integrations/webRTC/webRTC.service";
 import { AuthGuard } from "src/user/auth/auth.guard";
 import { SessionsGateway } from "./sessions.gateway";
+import { InitWebRTCSessionResponseInterface } from "./dto/init-webRTC-session-response.dto";
+import { InitWebRTCSessionRequestDto } from "./dto/init-webRTC-session-request.dto";
+import { TransportConnectRequestDto } from "./dto/transport-connect-request.dto";
+import { TransportProduceDataRequestDto } from "./dto/transport-produce-data-request.dto";
 
 @UseGuards(AuthGuard)
 @Controller("/user/sessions/:sessionId/webRTC")
@@ -19,21 +23,21 @@ export class WebRTCController {
     }
 
     @Post("init")
-    async startWebRTCSession(@Param("sessionId", new ParseIntPipe()) sessionId: number, @Body() body, @Req() req: Request) {
+    async startWebRTCSession(@Param("sessionId", new ParseIntPipe()) sessionId: number, @Body() body: InitWebRTCSessionRequestDto, @Req() req: Request): Promise<InitWebRTCSessionResponseInterface> {
         const transport = await this.webRTCService.initSession(sessionId, body.direction, req["user"].id);
 
         return transport;
     }
 
     @Post("transport-connect")
-    async transportConnect(@Param("sessionId", new ParseIntPipe()) sessionId: number, @Req() req: Request, @Body() body) {
+    async transportConnect(@Param("sessionId", new ParseIntPipe()) sessionId: number, @Req() req: Request, @Body() body: TransportConnectRequestDto) {
         await this.webRTCService.transportConnect(body, sessionId, body.direction, req["user"].id);
 
         return;
     }
 
     @Post("transport-produce-data")
-    async transportProduceData(@Param("sessionId", new ParseIntPipe()) sessionId: number, @Req() req: Request, @Body() body) {
+    async transportProduceData(@Param("sessionId", new ParseIntPipe()) sessionId: number, @Req() req: Request, @Body() body: TransportProduceDataRequestDto) {
         const result = await this.webRTCService.produceData(body, sessionId, req["user"].id);
 
         return { id: result };

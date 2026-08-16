@@ -1,5 +1,6 @@
 import { BadRequestException, Injectable, NotFoundException } from "@nestjs/common";
 import * as mediasoup from "mediasoup";
+import { InitWebRTCSessionResponseInterface } from "src/sessions/dto/init-webRTC-session-response.dto";
 
 interface UserTransporters {
     consumeTransporter?: mediasoup.types.WebRtcTransport;
@@ -77,7 +78,7 @@ export class WebRTCService {
         return worker;
     }
 
-    async initSession(sessionId: number, direction: "send" | "recv", userId: number) {
+    async initSession(sessionId: number, direction: "send" | "recv", userId: number): Promise<InitWebRTCSessionResponseInterface> {
         if(!this.worker) {
             this.worker = await this.createWorker();
         }
@@ -156,7 +157,7 @@ export class WebRTCService {
         };
     }
 
-    async transportConnect(body, sessionId: number, direction: "send" | "recv", userId: number) {
+    async transportConnect(body, sessionId: number, direction: "send" | "recv", userId: number): Promise<void> {
         const transporters = this.getTransporters(userId, sessionId);
         
         if(!transporters) {

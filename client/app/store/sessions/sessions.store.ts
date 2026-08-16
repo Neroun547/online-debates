@@ -6,23 +6,16 @@ import type {
 } from './interfaces/get-user-sessions.interface'
 import type {
   MediaKind,
-  RtpCapabilities,
   RtpParameters
 } from 'mediasoup-client/types'
-import type { NewProducerPayload } from '~/pages/my-sessions/[id]/index.vue'
-
-type ErrorValue = Parameters<typeof getErrorMessage>[0]
-
-function getApiErrorValue(error: unknown): ErrorValue {
-  const apiError = error as {
-    response?: { _data?: ErrorValue }
-    data?: ErrorValue
-  }
-
-  return apiError.response?._data
-    ?? apiError.data
-    ?? (error instanceof Error ? error.message : undefined)
-}
+import type { InitWebRTCSessionResponseInterface } from './interfaces/init-webRTC-session.response.interface'
+import type { GetProducerDataResponseInterface } from './interfaces/get-producer-data-response.interface'
+import type { TransportProduceDataResponseInterface } from './interfaces/transport-produce-data-response.interface'
+import type { ConsumeRequestInterface } from './interfaces/consume-request.interface'
+import type { ResumeConsumeRequestInterface } from './interfaces/resume-consumer-request.interface'
+import type { TransportProduceDataRequestInterface } from './interfaces/transport-produce-data-request.interface'
+import type { TransportProduceRequestInterface } from './interfaces/transport-produce-request.interface'
+import type { TransportConnectRequestInterface } from './interfaces/transport-connect-request.interface'
 
 interface ConsumeResponseInterface {
   id: string
@@ -37,11 +30,7 @@ export const useSessionsStore = defineStore('sessions', {
     isError: false
   }),
   actions: {
-    async consume(params: {
-      sessionId: number
-      producerId: string
-      rtpCapabilities: RtpCapabilities
-    }): Promise<ConsumeResponseInterface | undefined> {
+    async consume(params: ConsumeRequestInterface): Promise<ConsumeResponseInterface | undefined> {
       try {
         this.clearErrorState()
 
@@ -55,14 +44,11 @@ export const useSessionsStore = defineStore('sessions', {
             }
           }
         )
-      } catch (error: unknown) {
-        this.setError(getApiErrorValue(error))
+      } catch (error: any) {
+        this.setError(getErrorMessage(error))
       }
     },
-    async resumeConsumer(params: {
-      sessionId: number
-      consumerId: string
-    }): Promise<void> {
+    async resumeConsumer(params: ResumeConsumeRequestInterface): Promise<void> {
       try {
         this.clearErrorState()
 
@@ -75,8 +61,8 @@ export const useSessionsStore = defineStore('sessions', {
             }
           }
         )
-      } catch (error: unknown) {
-        this.setError(getApiErrorValue(error))
+      } catch (error: any) {
+        this.setError(getErrorMessage(error))
       }
     },
     async getUserSessions(
@@ -89,21 +75,15 @@ export const useSessionsStore = defineStore('sessions', {
           method: 'GET',
           query: params
         })
-      } catch (error: unknown) {
-        this.setError(getApiErrorValue(error))
+      } catch (error: any) {
+        this.setError(getErrorMessage(error))
       }
     },
-    async transportProduceData(params: {
-        transportId: string;
-        sctpStreamParameters: any;
-        label: any;
-        protocol: any;
-        sessionId: number;
-    }): Promise<{ id: string } | undefined> {
+    async transportProduceData(params: TransportProduceDataRequestInterface): Promise<TransportProduceDataResponseInterface | undefined> {
         try {
             this.clearErrorState();
 
-            return await useApiFetch<{ id: string }>("/user/sessions/" + params.sessionId + "/webRTC/transport-produce-data", {
+            return await useApiFetch<TransportProduceDataResponseInterface>("/user/sessions/" + params.sessionId + "/webRTC/transport-produce-data", {
                 method: "POST",
                 body: {
                     transportId: params.transportId,
@@ -117,12 +97,7 @@ export const useSessionsStore = defineStore('sessions', {
             this.setError(error);
         }
     },
-    async transportProduce(params: {
-        sessionId: number;
-        kind: string;
-        rtpParameters: any;
-        appData: any;
-    }): Promise<{ id: string } | undefined> {
+    async transportProduce(params: TransportProduceRequestInterface): Promise<{ id: string } | undefined> {
         try {
             this.clearErrorState();
 
@@ -138,12 +113,7 @@ export const useSessionsStore = defineStore('sessions', {
             this.setError(error);
         }
     },  
-    async transportConnect(params: {
-        transportId: any;
-        dtlsParameters: any;
-        sessionId: number;
-        direction: "send" | "recv"
-    }) {
+    async transportConnect(params: TransportConnectRequestInterface): Promise<void> {
         try {   
             this.clearErrorState();
 
@@ -159,11 +129,11 @@ export const useSessionsStore = defineStore('sessions', {
             this.setError(error);
         }
     },
-    async initSession(sessionId: number, direction: "send" | "recv"): Promise<any> {
+    async initSession(sessionId: number, direction: "send" | "recv"): Promise<InitWebRTCSessionResponseInterface | undefined> {
         try {
             this.clearErrorState();
 
-            return await useApiFetch(
+            return await useApiFetch<InitWebRTCSessionResponseInterface>(
                 "/user/sessions/" + sessionId + "/webRTC/init", { 
                     method: "POST",
                     body: {
@@ -175,30 +145,18 @@ export const useSessionsStore = defineStore('sessions', {
             this.setError(error);
         }
     },
-    async getProducerData(sessionId: number): Promise<{
-        sessionId: number;
-        producerAudioId: string;
-        producerVideoId: string;
-        producerUserId: number;
-        kind: "audio" | "video";
-    } | undefined> {
+    async getProducerData(sessionId: number): Promise<GetProducerDataResponseInterface | undefined> {
         try {
             this.clearErrorState();
 
-            return await useApiFetch<{
-                sessionId: number;
-                producerAudioId: string;
-                producerVideoId: string;
-                producerUserId: number;
-                kind: "audio" | "video";
-            }>("/user/sessions/" + sessionId + "/webRTC/producer-data", {
+            return await useApiFetch<GetProducerDataResponseInterface>("/user/sessions/" + sessionId + "/webRTC/producer-data", {
                 method: "GET"
             });
         } catch(error: any) {
             this.setError(error);
         }
     },
-    setError(value: ErrorValue) {
+    setError(value: any) {
       this.isError = true
       this.errorMessage = getErrorMessage(value)
     },

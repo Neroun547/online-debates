@@ -6,6 +6,10 @@ import { InitWebRTCSessionResponseInterface } from "./dto/init-webRTC-session-re
 import { InitWebRTCSessionRequestDto } from "./dto/init-webRTC-session-request.dto";
 import { TransportConnectRequestDto } from "./dto/transport-connect-request.dto";
 import { TransportProduceDataRequestDto } from "./dto/transport-produce-data-request.dto";
+import { TransportProduceRequestDto } from "./dto/transport-produce-request.dto";
+import { ConsumeRequestDto } from "./dto/consume-request.dto";
+import type { Request } from "express";
+import { ConsumerResumeRequestDto } from "./dto/consumer-resume-request.dto";
 
 @UseGuards(AuthGuard)
 @Controller("/user/sessions/:sessionId/webRTC")
@@ -44,7 +48,7 @@ export class WebRTCController {
     }
 
     @Post("transport-produce")
-    async produce(@Param("sessionId", new ParseIntPipe()) sessionId: number, @Req() req: Request, @Body() body) {
+    async produce(@Param("sessionId", new ParseIntPipe()) sessionId: number, @Req() req: Request, @Body() body: TransportProduceRequestDto) {
         const result = await this.webRTCService.produce(body, sessionId, req["user"].id);
 
         if(result) {
@@ -60,7 +64,7 @@ export class WebRTCController {
     }
 
     @Post("consume")
-    async consume(@Body() body, @Req() req, @Param("sessionId", new ParseIntPipe()) sessionId: number) {
+    async consume(@Body() body: ConsumeRequestDto, @Req() req, @Param("sessionId", new ParseIntPipe()) sessionId: number) {
         return await this.webRTCService.consume({
             producerId: body.producerId,
             rtpCapabilities: body.rtpCapabilities,
@@ -70,7 +74,7 @@ export class WebRTCController {
     }
 
     @Post("consumer-resume")
-    async resumeConsume(@Body() body, @Req() req, @Param("sessionId", new ParseIntPipe()) sessionId: number) {
+    async resumeConsume(@Body() body: ConsumerResumeRequestDto, @Req() req: Request, @Param("sessionId", new ParseIntPipe()) sessionId: number) {
         await this.webRTCService.resumeConsume({
             consumerId: body.consumerId,
             sessionId: sessionId,

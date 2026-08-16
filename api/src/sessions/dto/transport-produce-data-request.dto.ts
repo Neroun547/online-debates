@@ -1,4 +1,4 @@
-import { IsInt, IsNotEmpty, IsOptional, IsString } from "class-validator";
+import { IsNotEmpty, IsOptional, IsString } from "class-validator";
 import type { SctpStreamParameters } from "mediasoup/types";
 
 export class TransportProduceDataRequestDto {
@@ -14,9 +14,6 @@ export class TransportProduceDataRequestDto {
     
     @IsOptional()
     @IsString()
-    protocol?: string | undefined;
-    
-    @IsInt()
-    sessionId!: number;    
+    protocol?: string | undefined; 
 }
 

@@ -1,4 +1,4 @@
-import { ConflictException, Injectable } from "@nestjs/common";
+import { ConflictException, Injectable, NotFoundException } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Slots } from "./slots.entity";
 import { EntityManager, IsNull, Repository } from "typeorm";
@@ -7,9 +7,10 @@ import { SlotsMapper } from "./slots.mapper";
 import { SessionsStatus } from "../sessions/sessions.entity";
 import { SlotsTemplates } from "../slots-templates/slots-templates.entity";
 import { DateTime } from "luxon";
-import { getDateForSlot } from "src/slots/utils/utils";
+import { getDateForSlot, getDateStringForSaveSlot } from "src/slots/utils/utils";
 import { SlotsLock } from "../slots-lock/slots-lock.entity";
 import { SlotsLockMapper } from "../slots-lock/slots-lock.mapper";
+import { User } from "../user/user.entity";
 
 @Injectable()
 export class SlotsServiceDb {
@@ -229,14 +230,19 @@ export class SlotsServiceDb {
                 .where("slotsLock.userId = :userId AND slotsLock.subjectId = :subjectId", { userId: data.userId, subjectId: data.subjectId })
                 .getOneOrFail();
             
+            const userInDb = await tx.findOne(User, { where: { id: data.userId } });
+
+            if(!userInDb) {
+                throw new NotFoundException({ message: "User not found" });
+            }
             const conflictsCount = await this.countConflictSlotByDateRange(data.startTime, data.endTime, data.userId, data.subjectId, tx);
 
             if(conflictsCount > 0) {
                 throw new ConflictException({ message: "The selected time period overlaps with another slot" });
             }
             const model = SlotsMapper.toSave({
-                startTime: DateTime.fromFormat(data.startTime, "yyyy-MM-dd HH:mm").toJSDate(),
-                endTime: DateTime.fromFormat(data.endTime, "yyyy-MM-dd HH:mm").toJSDate(),
+                startTime: getDateStringForSaveSlot(DateTime.fromFormat(data.startTime, "yyyy-MM-dd HH:mm").toFormat("yyyy-MM-dd"), DateTime.fromFormat(data.startTime, "yyyy-MM-dd HH:mm").toFormat("HH:mm"), userInDb.timezone),
+                endTime: getDateStringForSaveSlot(DateTime.fromFormat(data.endTime, "yyyy-MM-dd HH:mm").toFormat("yyyy-MM-dd"), DateTime.fromFormat(data.endTime, "yyyy-MM-dd HH:mm").toFormat("HH:mm"), userInDb.timezone),
                 userId: data.userId,
                 subjectId: data.subjectId,
                 slotsTemplateId: data.slotsTemplateId

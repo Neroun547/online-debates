@@ -1,6 +1,7 @@
-import { Column, Entity, JoinColumn, ManyToMany, ManyToOne, OneToOne, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, JoinColumn, ManyToMany, ManyToOne, OneToMany, OneToOne, PrimaryGeneratedColumn } from "typeorm";
 import { User } from "../user/user.entity";
 import { Slots } from "../slots/slots.entity";
+import { Messages } from "../messages/messages.entity";
 
 export enum SessionsStatus {
     BOOKED = "booked",
@@ -39,5 +40,8 @@ export class Sessions {
     @OneToOne(() => Slots, (slot) => slot.id, { onDelete: "CASCADE" })
     @JoinColumn({ name: "slotId" })
     slot!: Slots;
+
+    @OneToMany(() => Messages, (messages: Messages) => messages.session)
+    messages!: Messages[];
 }
 

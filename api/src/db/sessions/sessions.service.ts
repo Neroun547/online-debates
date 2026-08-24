@@ -5,6 +5,7 @@ import { EntityManager, Repository } from "typeorm";
 import { SessionsMapper } from "./sessions.mapper";
 import { Slots } from "../slots/slots.entity";
 import { GetAllUserSessionsStatus } from "src/sessions/dto/get-all-user-sessions-request.dto";
+import { SessionsDomainInterface } from "./interfaces/sessions.interfaces";
 
 @Injectable()
 export class SessionsServiceDb {
@@ -13,6 +14,9 @@ export class SessionsServiceDb {
         private em: EntityManager
     ) {}
 
+    async existsById(id: number): Promise<boolean> {
+        return await this.sessionsRepository.exists({ where: { id: id } });
+    }
     async isUserParticipant(sessionId: number, userId: number): Promise<boolean> {
         return await this.sessionsRepository.exists({
             where: [
@@ -20,6 +24,15 @@ export class SessionsServiceDb {
                 { id: sessionId, customerId: userId }
             ]
         });
+    }
+
+    async findByIdAndUserIdWithSenderAndRecipient(id: number, userId: number): Promise<null | SessionsDomainInterface> {
+        const data = await this.sessionsRepository.findOne({ where: [{ id: id, creatorId: userId }, { id: id, customerId: userId }], relations: { creator: true, customer: true } });
+
+        if(!data) {
+            return null;
+        }
+        return SessionsMapper.toDomain(data);
     }
 
     async getSessionsByDateRangeAndUserId(params: {

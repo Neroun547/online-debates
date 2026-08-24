@@ -16,6 +16,9 @@ export class UserServiceDb {
         private em: EntityManager
     ) {}
 
+    async existsById(id: number): Promise<boolean> {
+        return await this.repository.exists({ where: { id: id } });
+    }
     async findInSubject(subjectId: number, page: number, limit: number): Promise<UserDomainInterface[]> {
         const data = await this.repository.query(`SELECT * FROM users LEFT JOIN slots ON users.id = slots.userId WHERE slots.id IS NOT NULL AND slots.subjectId=${subjectId} LIMIT ${limit} OFFSET ${(page - 1) * limit};`);
         

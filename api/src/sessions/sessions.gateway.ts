@@ -13,6 +13,12 @@ import {
 import { Server, Socket } from 'socket.io';
 import { SessionsServiceDb } from 'src/db/sessions/sessions.service';
 import { WebRTCService } from 'src/integrations/webRTC/webRTC.service';
+import { SessionsService } from './service/sessions.service';
+import { parseMessageDateForRecipient } from './utils/utils';
+import { MessagesDomainInterface } from 'src/db/messages/interfaces/messages.interfaces';
+import * as dotenv from "dotenv";
+
+dotenv.config();
 
 interface UserJwtPayload {
   id: number;
@@ -23,6 +29,12 @@ interface UserJwtPayload {
 
 interface SessionPayload {
   sessionId: number;
+}
+
+interface SessionChatMessagePayload {
+  sessionId: number;
+  message: string;
+  date: string;
 }
 
 interface NewProducerPayload {
@@ -40,6 +52,8 @@ interface ClientToServerEvents {
 interface ServerToClientEvents {
   'session:error': (payload: { message: string }) => void;
   'session:new-producer': (payload: NewProducerPayload) => void;
+  'session:chat:message': (payload: { message: string; createdAt: string; }) => void;
+  'session:leave': () => void;
 }
 
 interface InterServerEvents {
@@ -79,14 +93,20 @@ export class SessionsGateway implements OnGatewayConnection, OnGatewayDisconnect
     private readonly jwtService: JwtService,
     private readonly configService: ConfigService,
     private readonly sessionsServiceDb: SessionsServiceDb,
+    private readonly sessionsService: SessionsService,
     private readonly webRTCService: WebRTCService
   ) {}
 
-    handleDisconnect(client: SessionSocket) {
-        if(client.data.user && client.data.sessionsIds) {
-            this.webRTCService.disconnectAllUserTransports(client.data.user.id, client.data.sessionsIds);
+  handleDisconnect(client: SessionSocket) {
+      if(client.data.user && client.data.sessionsIds) {
+          this.webRTCService.disconnectAllUserTransports(client.data.user.id, client.data.sessionsIds);
+      }
+      if(client.data.user && client.data.sessionsIds) {
+        for(const sessionId of client.data.sessionsIds) {
+          this.server.to(this.getSessionRoomName(sessionId)).except(this.getUserRoomName(client.data.user.id)).emit("session:leave");
         }
-    }
+      }
+  }
 
   async handleConnection(client: SessionSocket): Promise<void> {
     try {
@@ -106,6 +126,41 @@ export class SessionsGateway implements OnGatewayConnection, OnGatewayDisconnect
       client.emit('session:error', { message: 'Unauthorized' });
       client.disconnect(true);
     }
+  }
+
+  @SubscribeMessage("session:chat:message")
+  async sendMessage(
+    @ConnectedSocket() client: SessionSocket,
+    @MessageBody() payload: SessionChatMessagePayload
+  ) {
+    const sessionId = this.validateSessionId(payload.sessionId);
+    const user = this.getAuthenticatedUser(client);
+    const sessionInDb = await this.sessionsServiceDb.findByIdAndUserIdWithSenderAndRecipient(sessionId, user.id);
+    
+    if(!sessionInDb) {
+      throw new WsException('Session not found');
+    }
+    const recipientUser = sessionInDb.creatorId !== user.id ? user : sessionInDb.customer;
+
+    if(!recipientUser) {
+      throw new WsException("User not found");
+    }
+    let savedMessage: MessagesDomainInterface | undefined;
+
+    try {
+      savedMessage = await this.sessionsService.saveMessageAndReturn({
+        content: payload.message.trim(),
+        senderId: user.id,
+        sessionId: sessionId,
+        date: payload.date
+      });
+    } catch(error) {
+      throw new WsException('Save message error');
+    }
+    this.server
+      .to(this.getSessionRoomName(sessionId))
+      .except(this.getUserRoomName(user.id))
+      .emit("session:chat:message", { message: payload.message, createdAt: parseMessageDateForRecipient(savedMessage.createdAt, recipientUser.timezone) });
   }
 
   @SubscribeMessage('session:join')

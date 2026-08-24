@@ -6,13 +6,18 @@ import { SlotsServiceDb } from "src/db/slots/slots.service";
 import { UserServiceDb } from "src/db/user/user.service";
 import { SessionsDomainInterface } from "src/db/sessions/interfaces/sessions.interfaces";
 import { parseStartTimeAndEndTimeForCustomer } from "src/slots/utils/utils";
+import { MessagesServiceDb } from "src/db/messages/messages.service";
+import type { GetMessagesResponseDto } from "../dto/get-messages-response.dto";
+import { parseMessageDateForRecipient, parseMessageDateToSave } from "../utils/utils";
+import { MessagesDomainInterface } from "src/db/messages/interfaces/messages.interfaces";
 
 @Injectable()
 export class SessionsService {
     constructor(
         private sessionsServiceDb: SessionsServiceDb,
         private slotsServiceDb: SlotsServiceDb,
-        private usersServiceDb: UserServiceDb
+        private usersServiceDb: UserServiceDb,
+        private messagesServiceDb: MessagesServiceDb
     ) {
 
     }
@@ -83,5 +88,55 @@ export class SessionsService {
             slotAuthorId: slotInDb.userId
         });    
     }
-}
 
+    async saveMessageAndReturn(params: {
+        content: string;
+        senderId: number;
+        sessionId: number;
+        date: string;
+    }): Promise<MessagesDomainInterface> {
+        const userInDb = await this.usersServiceDb.findById(params.senderId);
+   
+        if(!userInDb) {
+            throw new NotFoundException({ message: "User not found" });
+        }
+        return await this.messagesServiceDb.saveAndReturn({
+            content: params.content,
+            createdAt: parseMessageDateToSave(params.date, userInDb.timezone),
+            senderId: params.senderId, 
+            sessionId: params.sessionId
+        });
+    }
+
+    async getMessages(params: {
+        skip: number;
+        limit: number;
+        sessionId: number;
+        userId: number;
+    }): Promise<GetMessagesResponseDto> {
+        const sessionInDb = await this.sessionsServiceDb.findByIdAndUserIdWithSenderAndRecipient(params.sessionId, params.userId);
+
+        if(!sessionInDb) {
+            throw new NotFoundException({ message: "User session not found" });
+        }
+        const messages = await this.messagesServiceDb.findBySessionId(params.sessionId, params.skip, params.limit);
+
+        const currentUser = params.userId === sessionInDb.creatorId ? sessionInDb.creator : sessionInDb.customer; 
+        const secondUser = params.userId !== sessionInDb.creatorId ? sessionInDb.creator : sessionInDb.customer;
+
+        if(!currentUser || !secondUser) {
+            throw new NotFoundException({ message: "Users not found" });
+        }
+        const countAllSessionMessages = await this.messagesServiceDb.countBySessionId(params.sessionId);
+
+        return {
+            messages: messages.map(item => ({
+                id: item.id,
+                content: item.content,
+                createdAt: parseMessageDateForRecipient(item.createdAt, currentUser.timezone),
+                isSender: item.senderId === params.userId
+            })).sort((a, b) => a.id - b.id),
+            isLoadMoreAvailable: countAllSessionMessages > (params.skip + params.limit)
+        }
+    }
+}

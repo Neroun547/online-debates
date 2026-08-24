@@ -30,3 +30,7 @@ export function parseStartTimeAndEndTimeForCustomer(startTime: Date, endTime: Da
         endTime: DateTime.fromFormat(parsedEndTime, "yyyy-MM-dd HH:mm", { zone: "UTC" }).setZone(customerTimezone).toFormat("yyyy-MM-dd HH:mm"),
     }
 }
+
+export function getDateStringForSaveSlot(dateForSlot: string, time: string, timezone: string) {
+    return DateTime.fromFormat(dateForSlot + " " + time, "yyyy-MM-dd HH:mm", { zone: timezone }).toUTC().toFormat("yyyy-MM-dd HH:mm:ss");
+}

@@ -12,13 +12,14 @@
         class="w-1/2"
       ></video>
       <video
-        v-if="remoteVideoElement"
+        v-if="isRemoteVideoAvailable"
         ref="remoteVideoElement"
         autoplay
         playsinline
+        class="w-1/2"
       ></video>
       <div
-        v-if="!remoteVideoElement"
+        v-if="!isRemoteVideoAvailable"
         class="bg-gray-400 w-1/2 flex items-center justify-center"
       >
         <div>
@@ -26,12 +27,23 @@
         </div>
       </div>
     </div>
-    <div>
-      <Chat :is-open="isChatOpen" />
+    <div class="mt-10 ml-5">
+      <Chat
+        :is-open="isChatOpen"
+        @sendMessage="(message: string) => sendChatMessage(message)"
+        :messages="chatMessages"
+        :is-load-more-available="isLoadMoreMessagesAvailable"
+        @loadMore="loadMoreChatMessages"
+      />
     </div>
   </div>
 </template>
 <script setup lang="ts">
+export interface NewChatMessagePayload {
+  message: string;
+  createdAt: string;
+}
+
 export interface NewProducerPayload {
   sessionId: number;
   producerId: string;
@@ -39,6 +51,7 @@ export interface NewProducerPayload {
   kind: "audio" | "video";
 }
 
+import { DateTime } from "luxon";
 import * as mediasoupClient from "mediasoup-client";
 import Chat from "~/components/sessions/Chat.vue";
 import { useAppStore } from "~/store/app-store";
@@ -56,7 +69,20 @@ const isError = ref<boolean>(false);
 const errorMessage = ref<string>("");
 const localVideoElement = ref<HTMLVideoElement | null>(null);
 const remoteVideoElement = ref<HTMLVideoElement | null>(null);
+
+const isRemoteVideoAvailable = ref<boolean>(false);
+
+const isLoadMoreMessagesAvailable = ref<boolean>(false);
+const chatMessagesSkip = ref(0);
+const chatMessagesLimit = ref(20);
 const isChatOpen = ref(true);
+const chatMessages = ref<
+  Array<{
+    content: string;
+    createdAt: string;
+    isSender: boolean;
+  }>
+>([]);
 
 const route = useRoute();
 const consumers = new Map<string, mediasoupClient.types.Consumer>();
@@ -70,8 +96,20 @@ let remoteStream: MediaStream | undefined;
 
 let loadedStreamTypes: Array<"audio" | "video"> = [];
 
-function openChat() {
-  isChatOpen.value = true;
+function sendChatMessage(message: string) {
+  const now = new Date();
+
+  $sessionsSocket.emit("session:chat:message", {
+    message: message.trim(),
+    sessionId: Number(route.params.id),
+    date: DateTime.fromJSDate(now).toFormat("yyyy-MM-dd HH:mm"),
+  });
+
+  chatMessages.value.push({
+    content: message.trim(),
+    createdAt: DateTime.fromJSDate(now).toFormat("yyyy-MM-dd HH:mm"),
+    isSender: true,
+  });
 }
 
 async function getDevice(
@@ -107,7 +145,7 @@ async function createConsumer(payload: NewProducerPayload) {
   const response = await sessionsStore.consume({
     sessionId: payload.sessionId,
     producerId: payload.producerId,
-    rtpCapabilities: device.rtpCapabilities,
+    rtpCapabilities: device.recvRtpCapabilities,
   });
 
   if (!response || sessionsStore.isError) {
@@ -136,13 +174,12 @@ async function createConsumer(payload: NewProducerPayload) {
     consumers.delete(consumer.id);
     remoteStream?.removeTrack(consumer.track);
   };
-
   consumer.on("transportclose", removeConsumer);
   consumer.on("trackended", removeConsumer);
 
   await sessionsStore.resumeConsumer({
     sessionId: payload.sessionId,
-    consumerId: consumer.id,
+    consumerId: response.id,
   });
 
   if (sessionsStore.isError) {
@@ -325,7 +362,6 @@ async function createSendTransport() {
 }
 
 function clearStream(type: "audio" | "video") {
-  console.log(loadedStreamTypes, Date.now());
   if (loadedStreamTypes.length < 1) {
     remoteStream = undefined;
   }
@@ -336,31 +372,65 @@ function clearStream(type: "audio" | "video") {
   }
 }
 
-async function handleNewProducer(payload: NewProducerPayload) {
-  try {
-    clearStream(payload.kind);
-    await createConsumer(payload);
-    console.log(payload.kind, loadedStreamTypes, Date.now());
-  } catch (error: unknown) {
-    isError.value = true;
-    errorMessage.value =
-      error instanceof Error ? error.message : "Failed to consume producer";
+async function getChatMessages() {
+  const response = await sessionsStore.getChatMessages({
+    sessionId: Number(route.params.id),
+    limit: chatMessagesLimit.value,
+    skip: chatMessagesSkip.value,
+  });
+
+  if (response) {
+    chatMessages.value.unshift(...response.messages);
+    isLoadMoreMessagesAvailable.value = response.isLoadMoreAvailable;
   }
 }
 
+async function loadMoreChatMessages() {
+  chatMessagesSkip.value += chatMessagesLimit.value;
+
+  await getChatMessages();
+}
+
+async function handleNewProducer(payload: NewProducerPayload) {
+  try {
+    isRemoteVideoAvailable.value = true;
+    clearStream(payload.kind);
+    await createConsumer(payload);
+  } catch (error: unknown) {}
+}
+
+function handleNewChatMessage(payload: NewChatMessagePayload) {
+  chatMessages.value.push({
+    content: payload.message,
+    createdAt: payload.createdAt,
+    isSender: false,
+  });
+
+  chatMessagesSkip.value += 1;
+}
+
 onMounted(async () => {
-  appStore.setIsLoading(false);
   appStore.setIsGoBackButtonVisible(true);
   appStore.setIsSideNavHidden(true);
   appStore.setGoBackAction(function () {
     window.location.href = "/my-sessions";
   });
+
+  await getChatMessages();
+
+  appStore.setIsLoading(false);
+
   $sessionsSocket.emit("session:join", {
     sessionId: Number(route.params.id),
   });
   $sessionsSocket.on("session:new-producer", handleNewProducer);
+  $sessionsSocket.on("session:chat:message", handleNewChatMessage);
+  $sessionsSocket.on("session:leave", () => {
+    isRemoteVideoAvailable.value = false;
+  });
 
   await createSendTransport();
+
   const producerData = await sessionsStore.getProducerData(
     Number(route.params.id),
   );
@@ -370,13 +440,13 @@ onMounted(async () => {
   }
   const audioPayload: NewProducerPayload = {
     sessionId: producerData.sessionId,
-    producerId: producerData.producerAudioId,
+    producerId: String(producerData.producerAudioId),
     producerUserId: producerData.producerUserId,
     kind: "audio",
   };
   const videoPayload: NewProducerPayload = {
     sessionId: producerData.sessionId,
-    producerId: producerData.producerVideoId,
+    producerId: String(producerData.producerVideoId),
     producerUserId: producerData.producerUserId,
     kind: "video",
   };

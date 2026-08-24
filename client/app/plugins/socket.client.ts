@@ -14,7 +14,7 @@ export default defineNuxtPlugin((nuxtApp): SocketPluginResult => {
       this: typeof nuxtApp,
       options: Record<string, unknown>,
     ) => SessionsSocket;
-    const socket = createSocket.call(nuxtApp, {
+    const sessionSocket = createSocket.call(nuxtApp, {
         name: "sessions",
         channel: "/sessions",
         autoConnect: false,
@@ -28,10 +28,10 @@ export default defineNuxtPlugin((nuxtApp): SocketPluginResult => {
     watch(
         () => userStore.getIsAuth,
         (isAuth) => {
-            if (isAuth && userStore.getToken && !socket.connected) {
-                socket.connect();
-            } else if (!isAuth && socket.connected) {
-                socket.disconnect();
+            if (isAuth && userStore.getToken && !sessionSocket.connected) {
+                sessionSocket.connect();
+            } else if (!isAuth && sessionSocket.connected) {
+                sessionSocket.disconnect();
             }
         },
         { immediate: true }
@@ -39,7 +39,7 @@ export default defineNuxtPlugin((nuxtApp): SocketPluginResult => {
 
   return {
     provide: {
-      sessionsSocket: socket,
+      sessionsSocket: sessionSocket,
     },
   };
 });

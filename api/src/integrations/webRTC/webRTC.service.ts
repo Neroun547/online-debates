@@ -1,4 +1,5 @@
 import { BadRequestException, Injectable, NotFoundException } from "@nestjs/common";
+import { ConfigService } from "@nestjs/config";
 import * as mediasoup from "mediasoup";
 import { InitWebRTCSessionResponseInterface } from "src/sessions/dto/init-webRTC-session-response.dto";
 
@@ -52,6 +53,9 @@ export class WebRTCService {
     private worker: mediasoup.types.Worker<mediasoup.types.AppData> | undefined;
     private webRTCServer;
 
+    constructor(private configService: ConfigService) {
+
+    }
 
     disconnectAllUserTransports(userId: number, sessionsIds: Array<number>) {
         for(const sessionId of sessionsIds) {
@@ -88,14 +92,14 @@ export class WebRTCService {
             listenInfos : [
             {
                 protocol: 'udp',
-                ip: '0.0.0.0',
-                announcedAddress: "192.168.1.103",
+                ip: this.configService.getOrThrow("WEB_RTC_UDP_IP"),
+                announcedAddress: this.configService.getOrThrow("WEB_RTC_UDP_ANNOUNCED_ADDRESS"),
                 port: 20000
             },
             {
                 protocol: 'tcp',
-                ip: '0.0.0.0',
-                announcedAddress: "192.168.1.103",
+                ip: this.configService.getOrThrow("WEB_RTC_TCP_IP"),
+                announcedAddress: this.configService.getOrThrow("WEB_RTC_TCP_ANNOUNCED_ADDRESS"),
                 port: 20000
             }
             ]

@@ -9,6 +9,7 @@ import { Slots } from './slots/slots.entity';
 import { SlotsTemplates } from './slots-templates/slots-templates.entity';
 import { Sessions } from './sessions/sessions.entity';
 import { SlotsLock } from './slots-lock/slots-lock.entity';
+import { Messages } from './messages/messages.entity';
 
 dotenv.config();
 
@@ -21,7 +22,7 @@ export default new DataSource({
   password: process.env.DB_PASSWORD,
 
   synchronize: false,
-  entities: [User, Category, Subject, Admin, Slots, SlotsTemplates, Sessions, SlotsLock],
+  entities: [User, Category, Subject, Admin, Slots, SlotsTemplates, Sessions, SlotsLock, Messages],
   migrations: [
     join(process.cwd(), 'src/db/migrations/*{.ts,.js}'),
   ],

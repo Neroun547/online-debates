@@ -9,7 +9,7 @@ import { DateTime } from "luxon";
 import { SlotsMapper } from "../slots/slots.mapper";
 import { Sessions } from "../sessions/sessions.entity";
 import { SlotsServiceDb } from "../slots/slots.service";
-import { getDateForSlot } from "src/slots/utils/utils";
+import { getDateForSlot, getDateStringForSaveSlot } from "src/slots/utils/utils";
 import { SlotsLock } from "../slots-lock/slots-lock.entity";
 import { SlotsLockMapper } from "../slots-lock/slots-lock.mapper";
 import { User } from "../user/user.entity";
@@ -96,13 +96,13 @@ export class SlotsTemplatesServiceDb {
                         subjectId,
                         tx
                     );
-          
-                    if(countConflictSlotByDateRange > 0) {
+                    
+                    if(countConflictSlotByDateRange > 0 || !dateForTemplateSlot || !userInDb) {
                         continue;
                     }
                     const slot = SlotsMapper.toSave({
-                        startTime: DateTime.fromFormat(dateForTemplateSlot + " " + templateSlot.startTime, "yyyy-MM-dd HH:mm", { zone: userInDb?.timezone }).toUTC().toFormat("yyyy-MM-dd HH:mm:ss"),
-                        endTime: DateTime.fromFormat(dateForTemplateSlot + " " + templateSlot.endTime, "yyyy-MM-dd HH:mm", { zone: userInDb?.timezone }).toUTC().toFormat("yyyy-MM-dd HH:mm:ss"),
+                        startTime: getDateStringForSaveSlot(dateForTemplateSlot, templateSlot.startTime, userInDb.timezone),
+                        endTime: getDateStringForSaveSlot(dateForTemplateSlot, templateSlot.endTime, userInDb.timezone),
                         userId: savedTemplate.userId,
                         subjectId: savedTemplate.subjectId,
                         slotsTemplateId: savedTemplate.id

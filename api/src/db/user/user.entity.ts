@@ -2,6 +2,7 @@ import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 import { Subject } from "../subjects/subject.entity";
 import { Slots } from "../slots/slots.entity";
 import { SlotsLock } from "../slots-lock/slots-lock.entity";
+import { Messages } from "../messages/messages.entity";
 
 export enum UserStatus {
     ONLINE="online",
@@ -44,5 +45,8 @@ export class User {
 
     @OneToMany(() => SlotsLock, (slotsLock: SlotsLock) => slotsLock.user)
     slotsLock?: SlotsLock[]; 
+
+    @OneToMany(() => Messages, (messages: Messages) => messages.user)
+    messages?: Messages[];
 }
 

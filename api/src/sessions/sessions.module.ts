@@ -7,11 +7,13 @@ import { SessionsModuleDb } from "src/db/sessions/sessions.module";
 import { WebRTCModule } from "src/integrations/webRTC/webRTC.module";
 import { WebRTCController } from "./webRTC.controller";
 import { SessionsGateway } from "./sessions.gateway";
+import { MessagesModuleDb } from "src/db/messages/messages.module";
+import { UserSessionsChatController } from "./user-sessions-chat.controller";
 
 @Module({
-    imports: [SlotsModuleDb, UserModuleDb, SessionsModuleDb, WebRTCModule],
+    imports: [SlotsModuleDb, UserModuleDb, SessionsModuleDb, WebRTCModule, MessagesModuleDb],
     providers: [SessionsService, SessionsGateway],
-    controllers: [UserSessionsController, WebRTCController],
+    controllers: [UserSessionsController, WebRTCController, UserSessionsChatController],
     exports: [SessionsService]
 })
 export class SessionsModule {}

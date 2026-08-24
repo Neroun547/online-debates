@@ -16,6 +16,7 @@ import type { ResumeConsumeRequestInterface } from './interfaces/resume-consumer
 import type { TransportProduceDataRequestInterface } from './interfaces/transport-produce-data-request.interface'
 import type { TransportProduceRequestInterface } from './interfaces/transport-produce-request.interface'
 import type { TransportConnectRequestInterface } from './interfaces/transport-connect-request.interface'
+import type { GetChatMessagesResponseInterface } from './interfaces/get-chat-messages-response.interface'
 
 interface ConsumeResponseInterface {
   id: string
@@ -155,6 +156,21 @@ export const useSessionsStore = defineStore('sessions', {
         } catch(error: any) {
             this.setError(error);
         }
+    },
+    async getChatMessages(params: {
+      sessionId: number;
+      limit: number;
+      skip: number;
+    }): Promise<GetChatMessagesResponseInterface | undefined> {
+      try {
+        this.clearErrorState();
+
+        return await useApiFetch<GetChatMessagesResponseInterface>("/user/sessions/" + params.sessionId + "/chat/messages?skip=" + params.skip + "&limit=" + params.limit, { 
+          method: "GET"
+        });
+      } catch(error: any) {
+        this.setError(error);
+      }
     },
     setError(value: any) {
       this.isError = true

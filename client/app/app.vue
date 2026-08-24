@@ -8,6 +8,7 @@ import { useAppStore } from "./store/app-store.ts";
 const route = useRoute();
 
 const isCurrentPublicPage = ref<boolean>(false);
+const isCurrentSessionPage = ref<boolean>(false);
 
 const userStore = useUserStore();
 const appStore = useAppStore();
@@ -16,6 +17,7 @@ const isMenuOpen = ref(false);
 
 onMounted(() => {
   isCurrentPublicPage.value = isPublicPage(route.path);
+  isCurrentSessionPage.value = route.path.includes("/my-sessions/");
 });
 </script>
 
@@ -39,7 +41,10 @@ onMounted(() => {
         />
         <div
           :class="[
-            'flex-10 w-[85%] ml-auto max-[1300px]:w-full mt-5',
+            'min-h-[100vh]',
+            !isCurrentSessionPage
+              ? 'flex-10 w-[85%] ml-auto max-[1300px]:w-full mt-5'
+              : 'w-full',
             isMenuOpen ? 'max-[1300px]:blur-sm' : 'max-[1300px]:blur-none',
           ]"
           style="transition: 0.3s all"
@@ -52,7 +57,11 @@ onMounted(() => {
         </div>
         <Footer
           v-if="userStore.getIsAuth"
-          class="w-[85%] ml-auto max-[1300px]:w-full mt-10"
+          :class="[
+            !isCurrentSessionPage
+              ? 'w-[85%] ml-auto max-[1300px]:w-full mt-10'
+              : '',
+          ]"
         />
       </div>
       <div v-if="isCurrentPublicPage">

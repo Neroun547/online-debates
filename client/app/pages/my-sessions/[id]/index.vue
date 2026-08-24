@@ -1,10 +1,34 @@
 <template>
-  <div v-if="isError" class="mt-15">
-    {{ errorMessage }}
-  </div>
-  <div>
-    <video ref="localVideoElement" autoplay muted playsinline></video>
-    <video ref="remoteVideoElement" autoplay playsinline></video>
+  <div class="w-full">
+    <div v-if="isError" class="mt-15">
+      {{ errorMessage }}
+    </div>
+    <div class="flex justify-between w-full m-auto">
+      <video
+        ref="localVideoElement"
+        autoplay
+        muted
+        playsinline
+        class="w-1/2"
+      ></video>
+      <video
+        v-if="remoteVideoElement"
+        ref="remoteVideoElement"
+        autoplay
+        playsinline
+      ></video>
+      <div
+        v-if="!remoteVideoElement"
+        class="bg-gray-400 w-1/2 flex items-center justify-center"
+      >
+        <div>
+          <h2 class="text-2xl text-white text-center">No video</h2>
+        </div>
+      </div>
+    </div>
+    <div>
+      <Chat :is-open="isChatOpen" />
+    </div>
   </div>
 </template>
 <script setup lang="ts">
@@ -16,6 +40,7 @@ export interface NewProducerPayload {
 }
 
 import * as mediasoupClient from "mediasoup-client";
+import Chat from "~/components/sessions/Chat.vue";
 import { useAppStore } from "~/store/app-store";
 import type { InitWebRTCSessionResponseInterface } from "~/store/sessions/interfaces/init-webRTC-session.response.interface";
 import { useSessionsStore } from "~/store/sessions/sessions.store";
@@ -31,6 +56,7 @@ const isError = ref<boolean>(false);
 const errorMessage = ref<string>("");
 const localVideoElement = ref<HTMLVideoElement | null>(null);
 const remoteVideoElement = ref<HTMLVideoElement | null>(null);
+const isChatOpen = ref(true);
 
 const route = useRoute();
 const consumers = new Map<string, mediasoupClient.types.Consumer>();
@@ -42,9 +68,11 @@ let sendTransport: mediasoupClient.types.Transport | undefined;
 let localStream: MediaStream | undefined;
 let remoteStream: MediaStream | undefined;
 
-let isStreamCleared: boolean = false;
-
 let loadedStreamTypes: Array<"audio" | "video"> = [];
+
+function openChat() {
+  isChatOpen.value = true;
+}
 
 async function getDevice(
   routerRtpCapabilities: mediasoupClient.types.RtpCapabilities,
@@ -184,10 +212,8 @@ async function getRecvTransport(
 
 async function createSendTransport() {
   try {
-    const response: InitWebRTCSessionResponseInterface | undefined = await sessionsStore.initSession(
-      Number(route.params.id),
-      "send",
-    );
+    const response: InitWebRTCSessionResponseInterface | undefined =
+      await sessionsStore.initSession(Number(route.params.id), "send");
 
     if (!response || sessionsStore.isError) {
       throw new Error(sessionsStore.errorMessage);
@@ -274,7 +300,6 @@ async function createSendTransport() {
       if (localVideoElement.value) {
         localVideoElement.value.srcObject = localStream;
       }
-
       const videoTrack = localStream.getVideoTracks()[0];
       const audioTrack = localStream.getAudioTracks()[0];
 
@@ -300,15 +325,15 @@ async function createSendTransport() {
 }
 
 function clearStream(type: "audio" | "video") {
-    console.log(loadedStreamTypes, Date.now());
-    if(loadedStreamTypes.length < 1) {
-        remoteStream = undefined;
-    }
-    loadedStreamTypes.push(type);
-    
-    if(loadedStreamTypes.length === 2) {
-        loadedStreamTypes = [];
-    }
+  console.log(loadedStreamTypes, Date.now());
+  if (loadedStreamTypes.length < 1) {
+    remoteStream = undefined;
+  }
+  loadedStreamTypes.push(type);
+
+  if (loadedStreamTypes.length === 2) {
+    loadedStreamTypes = [];
+  }
 }
 
 async function handleNewProducer(payload: NewProducerPayload) {

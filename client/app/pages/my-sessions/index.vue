@@ -229,7 +229,9 @@ const isInitialLoading = computed(() => isLoading.value && page.value === 0);
 const isLoadingMore = computed(() => isLoading.value && page.value > 0);
 
 function startSession(sessionId: number) {
-  router.push("/my-sessions/" + sessionId);
+  // router.push("/my-sessions/" + sessionId);
+
+  window.location.href = "/my-sessions/" + sessionId;
 }
 
 function isSessionStarted(date: string): boolean {

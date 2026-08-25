@@ -1,38 +1,47 @@
 <template>
-  <div class="w-full">
+  <div class="w-full mt-[50px]">
     <div v-if="isError" class="mt-15">
       {{ errorMessage }}
     </div>
-    <div class="flex justify-between w-full m-auto">
+    <div class="flex justify-between w-full m-auto max-md:flex-col">
       <video
         ref="localVideoElement"
         autoplay
         muted
         playsinline
-        class="w-1/2"
+        class="w-1/2 max-md:w-full"
       ></video>
-      <video
-        v-if="isRemoteVideoAvailable"
-        ref="remoteVideoElement"
-        autoplay
-        playsinline
-        class="w-1/2"
-      ></video>
-      <div
-        v-if="!isRemoteVideoAvailable"
-        class="bg-gray-400 w-1/2 flex items-center justify-center"
-      >
-        <div>
-          <h2 class="text-2xl text-white text-center">No video</h2>
+      <div class="relative w-1/2 max-md:w-full bg-black flex justify-center items-center">
+        <video
+          ref="remoteVideoElement"
+          autoplay
+          playsinline
+          class="w-1/2 max-md:w-full"
+        ></video>
+        <div
+          v-if="!isRemoteVideoAvailable"
+          class="bg-gray-400 w-full h-full absolute top-0 flex items-center justify-center max-md:w-full max-md:h-full"
+        >
+          <div>
+            <h2 class="text-2xl text-white text-center">No video</h2>
+          </div>
         </div>
       </div>
     </div>
-    <div class="mt-10 ml-5">
+    <div class="mt-10 ml-5 md:visible max-md:hidden">
       <Chat
         :is-open="isChatOpen"
         @sendMessage="(message: string) => sendChatMessage(message)"
         :messages="chatMessages"
         :is-load-more-available="isLoadMoreMessagesAvailable"
+        @loadMore="loadMoreChatMessages"
+      />
+    </div>
+    <div class="max-md:block hidden">
+      <MobileChat
+        :messages="chatMessages"
+        :is-load-more-available="isLoadMoreMessagesAvailable"
+        @send-message="(message: string) => sendChatMessage(message)"
         @loadMore="loadMoreChatMessages"
       />
     </div>
@@ -54,6 +63,7 @@ export interface NewProducerPayload {
 import { DateTime } from "luxon";
 import * as mediasoupClient from "mediasoup-client";
 import Chat from "~/components/sessions/Chat.vue";
+import MobileChat from "~/components/sessions/MobileChat.vue";
 import { useAppStore } from "~/store/app-store";
 import type { InitWebRTCSessionResponseInterface } from "~/store/sessions/interfaces/init-webRTC-session.response.interface";
 import { useSessionsStore } from "~/store/sessions/sessions.store";
@@ -75,7 +85,7 @@ const isRemoteVideoAvailable = ref<boolean>(false);
 const isLoadMoreMessagesAvailable = ref<boolean>(false);
 const chatMessagesSkip = ref(0);
 const chatMessagesLimit = ref(20);
-const isChatOpen = ref(true);
+const isChatOpen = ref(false);
 const chatMessages = ref<
   Array<{
     content: string;

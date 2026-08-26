@@ -10,10 +10,16 @@
       >
         <UIcon name="lucide:arrow-left" class="w-[20px] h-[20px]" />
       </button>
-      <button @click="toggleMenu" class="max-[1300px]:block hidden p-2">
+      <button
+        @click="toggleMenu"
+        class="max-[1300px]:block hidden p-2"
+        v-if="!appStore.isSideNavHidden"
+      >
         <UIcon name="lucide:menu" class="text-black" />
       </button>
-      <div class="max-[1300px]:ml-5">{{ isUserOnlineText }}</div>
+      <div :class="[appStore.isSideNavHidden ? '' : 'max-[1300px]:ml-5']">
+        {{ isUserOnlineText }}
+      </div>
       <div class="ml-3">
         <USwitch v-model="localIsOnlineState" color="success" />
       </div>

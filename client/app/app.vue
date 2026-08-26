@@ -48,6 +48,7 @@ onMounted(() => {
             isMenuOpen ? 'max-[1300px]:blur-sm' : 'max-[1300px]:blur-none',
           ]"
           style="transition: 0.3s all"
+          :inert="isMenuOpen"
         >
           <NuxtPage
             class="m-auto w-[85%]"

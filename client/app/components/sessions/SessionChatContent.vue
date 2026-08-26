@@ -1,15 +1,18 @@
 <template>
   <div class="flex min-h-0 flex-1 flex-col">
-    <div class="flex-1 space-y-5 overflow-y-auto bg-slate-50/60 px-4 py-5">
+    <div
+      class="flex-1 space-y-5 overflow-y-auto bg-slate-50/60 px-4 py-5"
+      ref="listOfMessages"
+    >
       <UButton
-        v-if="isLoadMoreAvailable"
+        v-if="props.isLoadMoreAvailable"
         type="button"
         label="Load more"
         icon="lucide:refresh-ccw"
         @click="emit('loadMore')"
       />
 
-      <div v-for="(chatMessage, index) in messages" :key="index">
+      <div v-for="(chatMessage, index) in props.messages" :key="index">
         <div v-if="chatMessage.isSender" class="flex justify-end">
           <div class="max-w-[78%]">
             <div
@@ -73,7 +76,9 @@ interface Props {
   isLoadMoreAvailable: boolean;
 }
 
-defineProps<Props>();
+const props = defineProps<Props>();
+
+const listOfMessages = useTemplateRef("listOfMessages");
 
 const emit = defineEmits<{
   sendMessage: [message: string];
@@ -86,4 +91,27 @@ function sendMessage() {
   emit("sendMessage", message.value);
   message.value = "";
 }
+
+async function scrollToMessagesBottom() {
+  await nextTick();
+  listOfMessages.value?.scrollTo({ top: listOfMessages.value?.scrollHeight });
+}
+
+watch(
+  () => props.messages,
+  (newValue, oldValue) => {
+    if (newValue.length > oldValue.length) {
+      scrollToMessagesBottom();
+    }
+  },
+);
+
+onMounted(() => {
+  // Wait 500 milliseconds before scroll ... Wait for render (idk -_-)
+  const timeout = window.setTimeout(() => {
+    scrollToMessagesBottom();
+
+    window.clearTimeout(timeout);
+  }, 500);
+});
 </script>

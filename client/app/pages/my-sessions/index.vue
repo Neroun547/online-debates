@@ -98,6 +98,28 @@
 
               <p class="mt-1 text-sm text-muted">
                 With {{ getCounterpartName(session) }}
+                <UBadge
+                  v-if="
+                    userStore.userId !== session.creatorId && session.creator
+                  "
+                  variant="soft"
+                  :color="
+                    session.creator.status === 'offline' ? 'neutral' : 'success'
+                  "
+                  >{{ session.creator.status }}</UBadge
+                >
+                <UBadge
+                  v-if="
+                    userStore.userId !== session.customerId && session.customer
+                  "
+                  variant="soft"
+                  :color="
+                    session.customer.status === 'offline'
+                      ? 'neutral'
+                      : 'success'
+                  "
+                  >{{ session.customer.status }}</UBadge
+                >
               </p>
             </div>
           </div>
@@ -128,15 +150,25 @@
           <div class="ml-auto">
             <UTooltip
               :text="'Start at ' + session.slot?.startTime"
-              v-if="!isSessionStarted(session.slot?.startTime ?? '') && session.status === 'booked'"
+              v-if="
+                !isSessionStarted(session.slot?.startTime ?? '') &&
+                session.status === 'booked'
+              "
             >
               <UButton label="Start" class="cursor-pointer" :disabled="true" />
             </UTooltip>
             <UTooltip
-              v-if="isSessionStarted(session.slot?.startTime ?? '') && session.status === 'booked'"
+              v-if="
+                isSessionStarted(session.slot?.startTime ?? '') &&
+                session.status === 'booked'
+              "
               :text="'Start now'"
             >
-              <UButton label="Start" class="cursor-pointer" @click="startSession(session.id)" />
+              <UButton
+                label="Start"
+                class="cursor-pointer"
+                @click="startSession(session.id)"
+              />
             </UTooltip>
           </div>
         </div>

@@ -117,11 +117,14 @@ function sendChatMessage(message: string) {
     date: DateTime.fromJSDate(now).toFormat("yyyy-MM-dd HH:mm"),
   });
 
-  chatMessages.value.push({
-    content: message.trim(),
-    createdAt: DateTime.fromJSDate(now).toFormat("yyyy-MM-dd HH:mm"),
-    isSender: true,
-  });
+  chatMessages.value = [
+    ...chatMessages.value,
+    {
+      content: message.trim(),
+      createdAt: DateTime.fromJSDate(now).toFormat("yyyy-MM-dd HH:mm"),
+      isSender: true,
+    },
+  ];
 }
 
 async function getDevice(
@@ -412,11 +415,14 @@ async function handleNewProducer(payload: NewProducerPayload) {
 }
 
 function handleNewChatMessage(payload: NewChatMessagePayload) {
-  chatMessages.value.push({
-    content: payload.message,
-    createdAt: payload.createdAt,
-    isSender: false,
-  });
+  chatMessages.value = [
+    ...chatMessages.value,
+    {
+      content: payload.message,
+      createdAt: payload.createdAt,
+      isSender: false,
+    },
+  ];
 
   chatMessagesSkip.value += 1;
 }

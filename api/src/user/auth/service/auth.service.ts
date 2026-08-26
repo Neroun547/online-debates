@@ -4,6 +4,7 @@ import { JwtService } from "@nestjs/jwt";
 import { UserServiceDb } from "src/db/user/user.service";
 import { ConfigService } from "@nestjs/config";
 import { createHmac } from "crypto";
+import { UserStatus } from "src/db/user/user.entity";
 
 @Injectable()
 export class AuthService {
@@ -37,7 +38,8 @@ export class AuthService {
                 expiresIn: this.configService.getOrThrow("USER_AUTH_JWT_EXPIRES_IN") 
             }
         );
-
+        await this.usersServiceDb.updateById(userInDb.id ?? 0, { status: UserStatus.ONLINE });
+        
         return {
             token: token,
             userId: userInDb.id ?? 0

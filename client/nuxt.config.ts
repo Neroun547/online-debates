@@ -14,6 +14,11 @@ export default defineNuxtConfig({
             url: process.env.NUXT_PUBLIC_WS_HOST ?? "http://192.168.1.103:8082",
             default: true,
           },
+          {
+            name: "user",
+            url: process.env.NUXT_PUBLIC_WS_HOST ?? "http://192.168.1.103:8082",
+            default: true
+          }
         ],
         server: false,
       },

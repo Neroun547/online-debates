@@ -11,7 +11,9 @@
         playsinline
         class="w-1/2 max-md:w-full"
       ></video>
-      <div class="relative w-1/2 max-md:w-full bg-black flex justify-center items-center">
+      <div
+        class="relative w-1/2 max-md:w-full bg-black flex justify-center items-center"
+      >
         <video
           ref="remoteVideoElement"
           autoplay
@@ -67,10 +69,10 @@ import MobileChat from "~/components/sessions/MobileChat.vue";
 import { useAppStore } from "~/store/app-store";
 import type { InitWebRTCSessionResponseInterface } from "~/store/sessions/interfaces/init-webRTC-session.response.interface";
 import { useSessionsStore } from "~/store/sessions/sessions.store";
-import type { SessionsSocket } from "~/types/sessions-socket.interface";
+import type { BaseSocket } from "~/types/base-socket.interface";
 
 const { $sessionsSocket: injectedSessionsSocket } = useNuxtApp();
-const $sessionsSocket = injectedSessionsSocket as SessionsSocket;
+const $sessionsSocket = injectedSessionsSocket as BaseSocket;
 
 const sessionsStore = useSessionsStore();
 const appStore = useAppStore();

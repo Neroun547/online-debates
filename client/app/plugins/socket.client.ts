@@ -1,9 +1,10 @@
 import { useUserStore } from "~/store/user/user.store";
-import type { SessionsSocket } from "~/types/sessions-socket.interface";
+import type { BaseSocket } from "~/types/base-socket.interface";
 
 interface SocketPluginResult {
   provide: {
-    sessionsSocket: SessionsSocket;
+    sessionsSocket: BaseSocket;
+    userStateSocket: BaseSocket;
   };
 }
 
@@ -13,7 +14,7 @@ export default defineNuxtPlugin((nuxtApp): SocketPluginResult => {
     const createSocket = nuxtApp.$nuxtSocket as unknown as (
       this: typeof nuxtApp,
       options: Record<string, unknown>,
-    ) => SessionsSocket;
+    ) => BaseSocket;
     const sessionSocket = createSocket.call(nuxtApp, {
         name: "sessions",
         channel: "/sessions",
@@ -25,6 +26,17 @@ export default defineNuxtPlugin((nuxtApp): SocketPluginResult => {
         },
     });
 
+    const userStateSocket = createSocket.call(nuxtApp, {
+      name: "user",
+      channel: "/user",
+      autoConnect: false,
+      auth: (callback: Function) => {
+        callback({
+          token: userStore.getToken
+        })
+      }
+    });
+
     watch(
         () => userStore.getIsAuth,
         (isAuth) => {
@@ -33,6 +45,13 @@ export default defineNuxtPlugin((nuxtApp): SocketPluginResult => {
             } else if (!isAuth && sessionSocket.connected) {
                 sessionSocket.disconnect();
             }
+
+            if(isAuth && userStore.getToken && !userStateSocket.connected) {
+              console.log("User state socket connect");
+              userStateSocket.connect();
+            } else if(!isAuth && userStateSocket.connected) {
+              userStateSocket.disconnect();
+            }
         },
         { immediate: true }
     );
@@ -40,6 +59,7 @@ export default defineNuxtPlugin((nuxtApp): SocketPluginResult => {
   return {
     provide: {
       sessionsSocket: sessionSocket,
+      userStateSocket: userStateSocket
     },
   };
 });

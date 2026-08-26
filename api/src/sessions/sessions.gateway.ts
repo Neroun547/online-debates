@@ -200,8 +200,6 @@ export class SessionsGateway implements OnGatewayConnection, OnGatewayDisconnect
 
     return { sessionId };
   }
- 
-
 
   emitNewProducer(payload: NewProducerPayload): void {
     this.server
@@ -211,18 +209,10 @@ export class SessionsGateway implements OnGatewayConnection, OnGatewayDisconnect
   }
 
   private extractToken(client: SessionSocket): string | null {
-    const handshakeAuth = client.handshake.auth as Record<string, unknown>;
-    const handshakeToken = handshakeAuth.token;
-
-    if (typeof handshakeToken === 'string' && handshakeToken) {
-      return handshakeToken.replace(/^Bearer\s+/i, '');
-    }
-    const authorization = client.handshake.headers.authorization;
-
-    if (typeof authorization !== 'string') {
+    if(!client.handshake || !client.handshake.auth || !client.handshake.auth.token || typeof client.handshake.auth.token !== "string") {
       return null;
     }
-    return authorization.replace(/^Bearer\s+/i, '');
+    return client.handshake.auth.token;
   }
 
   private getAuthenticatedUser(client: SessionSocket): UserJwtPayload {

@@ -1,6 +1,7 @@
-import { Body, Controller, Post } from "@nestjs/common";
+import { Body, Controller, Get, Post, UseGuards } from "@nestjs/common";
 import { AdminAuthService } from "./service/admin-auth.service";
 import { AuthDto } from "./dto/auth.dto";
+import { AdminAuthGuard } from "./admin-auth.guard";
 
 @Controller("/admin/auth")
 export class AdminAuthController {
@@ -13,6 +14,12 @@ export class AdminAuthController {
         const token = await this.adminAuthService.auth(body);
 
         return { token: token };
+    }
+
+    @UseGuards(AdminAuthGuard)
+    @Get()
+    async isAuth() {
+        return;
     }
 }
 

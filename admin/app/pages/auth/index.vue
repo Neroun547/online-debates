@@ -19,7 +19,9 @@
 import BaseUserCredentialsForm, {
   type FormFieldItem,
 } from "~/components/BaseUserCredentialsForm.vue";
-import { useAuthStore } from "../../../store/auth/auth.store";
+import { useAuthStore } from "../../store/auth/auth.store";
+
+const router = useRouter();
 
 const authStore = useAuthStore();
 
@@ -78,8 +80,8 @@ async function auth() {
   } else {
     isSuccess.value = true;
     successMessage.value = "Auth success";
-  }
 
-  window.location.href = "/";
+    router.push("/");
+  }
 }
 </script>

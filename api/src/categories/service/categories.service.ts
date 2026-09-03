@@ -21,6 +21,15 @@ export class CategoriesService {
             isLoadMoreAvailable: count > currentSkipElements
         }
     }
+    async getWithPaginationForAdmin(page: number, limit: number) {
+        const data = await this.categoriesServiceDb.findWithPagination(page, limit);
+        const count = await this.categoriesServiceDb.countAll();
+
+        return {
+            data: data,
+            count: count
+        }
+    }
     async saveCategory(body: CategoryInterface) {
         await this.categoriesServiceDb.save(body);
     }

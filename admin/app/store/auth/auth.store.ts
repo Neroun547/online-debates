@@ -8,7 +8,7 @@ import { getErrorMessage } from "~/utils/get-error-message";
 export const useAuthStore = defineStore("auth", {
     state: (): AuthStoreInterface => ({
         token: "",
-        username: "",
+        email: "",
         userId: 0,
         isError: false,
         errorMessage: "",
@@ -25,7 +25,7 @@ export const useAuthStore = defineStore("auth", {
                     this.setIsAuth(true);
                     this.setToken(response.token);
                 
-                    this.username = response.username;
+                    this.email = response.email;
                     this.userId = response.id;
                 }
             } catch(error: any) {
@@ -38,8 +38,15 @@ export const useAuthStore = defineStore("auth", {
 
                 await useApiFetch("/admin/auth", { method: "GET" });
             } catch(error: any) {
+                console.log(error);
                 this.setError(error.response._data.message);
             }
+        },
+        exit() {
+            this.token = "";
+            this.isAuth = false;
+            this.userId = 0;
+            this.email = "";
         },
         setIsAuth(value: boolean) {
             this.isAuth = value;

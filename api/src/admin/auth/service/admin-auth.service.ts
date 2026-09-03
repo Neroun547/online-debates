@@ -13,7 +13,7 @@ export class AdminAuthService {
         private configService: ConfigService
     ) {}
 
-    async auth(data: AuthDto): Promise<string> {
+    async auth(data: AuthDto): Promise<{ token: string; id: number; email: string; }> {
         const adminInDb = await this.adminServiceDb.findByEmailWithSecureParams(data.email);
 
         if(!adminInDb) {
@@ -25,7 +25,11 @@ export class AdminAuthService {
         const jwtSecret = this.configService.getOrThrow("ADMIN_AUTH_JWT_SECRET");
         const token = await this.jwtService.signAsync({ id: adminInDb.id }, { secret: jwtSecret, expiresIn: "7d" });
 
-        return token;
+        return {
+            token: token,
+            id: adminInDb.id,
+            email: adminInDb.email
+        };
     }
 
     private validatePassword(password: string, hash: string): boolean {

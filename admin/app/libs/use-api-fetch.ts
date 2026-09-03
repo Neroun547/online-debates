@@ -9,7 +9,7 @@ export async function useApiFetch<T>(
   const config = useRuntimeConfig()
   const authStore = useAuthStore();
   const token = authStore.getToken;
-
+  console.log(token)
   const headers = new Headers(options?.headers)
 
   if (token) {

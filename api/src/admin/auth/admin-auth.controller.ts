@@ -11,9 +11,7 @@ export class AdminAuthController {
 
     @Post()
     async auth(@Body() body: AuthDto) {
-        const token = await this.adminAuthService.auth(body);
-
-        return { token: token };
+        return await this.adminAuthService.auth(body);
     }
 
     @UseGuards(AdminAuthGuard)

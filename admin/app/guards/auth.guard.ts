@@ -1,4 +1,4 @@
-import { useAuthStore } from "~~/store/auth/auth.store";
+import { useAuthStore } from "~/store/auth/auth.store";
 
 export async function authGuard() {
     const authStore = useAuthStore();

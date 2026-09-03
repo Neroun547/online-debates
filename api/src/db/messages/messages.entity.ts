@@ -22,11 +22,11 @@ export class Messages {
     createdAt!: Date | string;
 
     @JoinColumn({ name: "sessionId" })
-    @ManyToOne(() => Sessions)
+    @ManyToOne(() => Sessions, { onDelete: "CASCADE", onUpdate: "CASCADE" })
     session!: Sessions;
 
     @JoinColumn({ name: "senderId" })
-    @ManyToOne(() => User)
+    @ManyToOne(() => User, { onDelete: "CASCADE", onUpdate: "CASCADE" })
     user!: User;
 }
 

@@ -28,11 +28,11 @@ export class Slots {
     @JoinColumn({ name: "userId" })
     user!: User;
 
-    @ManyToOne(() => Subject)
+    @ManyToOne(() => Subject, { onDelete: "CASCADE", onUpdate: "CASCADE" })
     @JoinColumn({ name: "subjectId" })
     subject!: Subject;
 
-    @ManyToOne(() => SlotsTemplates, { nullable: true, onDelete: "SET NULL" })
+    @ManyToOne(() => SlotsTemplates, { nullable: true, onDelete: "CASCADE", onUpdate: "CASCADE" })
     @JoinColumn({ name: "slotsTemplateId" })
     slotsTemplate!: SlotsTemplates;
 

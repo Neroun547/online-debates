@@ -29,15 +29,15 @@ export class Sessions {
     @Column()
     customerId!: number;
 
-    @ManyToOne(() => User, (user) => user.id)
+    @ManyToOne(() => User, (user) => user.id, { onDelete: "CASCADE", onUpdate: "CASCADE" })
     @JoinColumn({ name: "creatorId" })
     creator!: User;
 
-    @ManyToOne(() => User, (user) => user.id)
+    @ManyToOne(() => User, (user) => user.id, { onDelete: "CASCADE", onUpdate: "CASCADE" })
     @JoinColumn({ name: "customerId" })
     customer!: User; 
     
-    @OneToOne(() => Slots, (slot) => slot.id, { onDelete: "CASCADE" })
+    @OneToOne(() => Slots, (slot) => slot.id, { onDelete: "CASCADE", onUpdate: "CASCADE" })
     @JoinColumn({ name: "slotId" })
     slot!: Slots;
 

@@ -16,10 +16,10 @@ export class SlotsLock {
     @Column()
     subjectId!: number;
 
-    @ManyToOne(() => User, (user: User) => user.slotsLock, { onDelete: "CASCADE" })
+    @ManyToOne(() => User, (user: User) => user.slotsLock, { onDelete: "CASCADE", onUpdate: "CASCADE" })
     user!: User;
 
-    @ManyToOne(() => Subject, (subject: Subject) => subject.slotsLock, { onDelete: "CASCADE" })
+    @ManyToOne(() => Subject, (subject: Subject) => subject.slotsLock, { onDelete: "CASCADE", onUpdate: "CASCADE" })
     subject!: Subject; 
 }
 

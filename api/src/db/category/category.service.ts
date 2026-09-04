@@ -28,8 +28,13 @@ export class CategoryServiceDb {
 
         await this.repository.save(model);
     }
-    async findWithPagination(page: number, limit: number): Promise<CategoryDomainInterface[]> {
+    async find(page: number, limit: number) {
         const data = await this.repository.find({ where: {}, order: { priority: "ASC" }, take: limit, skip: (page - 1) * limit });
+
+        return data.map(item => CategoryMapper.toDomain(item));
+    }
+    async findWithSubjects(page: number, limit: number): Promise<CategoryDomainInterface[]> {
+        const data = await this.repository.find({ where: {}, order: { priority: "ASC" }, take: limit, skip: (page - 1) * limit, relations: { subjects: true } });
 
         return data.map(item => CategoryMapper.toDomain(item));
     }

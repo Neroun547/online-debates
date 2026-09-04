@@ -14,7 +14,7 @@ export class CategoriesService {
     async getWithPagination(page: number, limit: number): Promise<GetCategoriesResponseDto> {
         const currentSkipElements = page * limit;
         const count = await this.categoriesServiceDb.countAll();
-        const data = await this.categoriesServiceDb.findWithPagination(page, limit);
+        const data = await this.categoriesServiceDb.find(page, limit);
 
         return {
             data: data,
@@ -22,7 +22,7 @@ export class CategoriesService {
         }
     }
     async getWithPaginationForAdmin(page: number, limit: number) {
-        const data = await this.categoriesServiceDb.findWithPagination(page, limit);
+        const data = await this.categoriesServiceDb.findWithSubjects(page, limit);
         const count = await this.categoriesServiceDb.countAll();
 
         return {

@@ -6,13 +6,15 @@ import { GetByCategoryIdWithCategoryAndUserResponseDto } from "../dto/get-by-cat
 import { GetSubjectByIdWithCategoryAndUserResponseDto } from "../dto/get-subject-by-id-with-category-and-user-response.interface";
 import { UserServiceDb } from "src/db/user/user.service";
 import { UserDomainInterface } from "src/db/user/interfaces/user.interfaces";
+import { AdminServiceDb } from "src/db/admin/admin.service";
 
 @Injectable()
 export class SubjectsService {
     constructor(
         private subjectsServiceDb: SubjectServiceDb,
         private categoryServiceDb: CategoryServiceDb,
-        private usersServiceDb: UserServiceDb
+        private usersServiceDb: UserServiceDb,
+        private adminServiceDb: AdminServiceDb
     ) {}
 
     async getUsersBySubjectId(subjectId: number, page: number, limit: number, userId: number) {
@@ -96,6 +98,19 @@ export class SubjectsService {
             throw new NotFoundException({ message: "Subject not found" });
         }
         await this.subjectsServiceDb.deleteByIdAndUserId(id, userId);
+    }
+
+    async deleteSubjectFromAdmin(params: {
+        subjectId: number;
+        categoryId: number;
+        adminId: number;
+    }) {
+        const adminInDb = await this.adminServiceDb.findById(params.adminId);
+
+        if(!adminInDb) {
+            throw new NotFoundException({ message: "Admin not found" });
+        }
+        await this.subjectsServiceDb.deleteByCategoryIdAndId(params.subjectId, params.categoryId);
     }
 
     private async getCountByCategoryIdAndUserId(categoryId: number | undefined, userId: number | undefined): Promise<number> {

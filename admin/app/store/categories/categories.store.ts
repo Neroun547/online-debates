@@ -2,6 +2,7 @@ import { defineStore } from "pinia";
 import type { BaseStoreInterface } from "../interfaces/base-store.interface";
 import { useApiFetch } from "~/libs/use-api-fetch";
 import type { GetCategoriesResponseInterface } from "./interfaces/get-categories-response.interface";
+import type { UpdateCategoryRequestDto } from "./interfaces/update-category-request.interface";
 
 export const useCategoriesStore = defineStore("categories", {
     state: (): BaseStoreInterface => ({
@@ -27,6 +28,15 @@ export const useCategoriesStore = defineStore("categories", {
                 await useApiFetch(`/admin/categories/` + id, { method: "DELETE" });
             } catch(error: any) {
                 this.setError(error.response._data.message);
+            }
+        },
+        async updateCategoryById(id: number, data: UpdateCategoryRequestDto) {
+            try {
+                this.clearError();
+
+                await useApiFetch(`/admin/categories/` + id, { method: "PUT", body: data });
+            } catch(error: any) {
+                this.setError(error);
             }
         },
         clearError() {

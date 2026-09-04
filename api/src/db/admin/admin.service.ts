@@ -9,6 +9,14 @@ import { AdminMapper } from "./admin.mapper";
 export class AdminServiceDb {
     constructor(@InjectRepository(Admin) private repository: Repository<Admin>) {}
     
+    async findById(id: number): Promise<AdminDomainInterface | null> {
+        const data = await this.repository.findOne({ where: { id: id } });
+
+        if(!data) {
+            return null;
+        }
+        return AdminMapper.toDomain(data);
+    }
     async save(data: AdminInterface) {
         const model = AdminMapper.toSave(data);
 

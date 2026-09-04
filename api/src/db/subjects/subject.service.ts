@@ -13,6 +13,9 @@ export class SubjectServiceDb {
         private em: EntityManager
     ) {}
 
+    async deleteByCategoryIdAndId(id: number, categoryId: number): Promise<void> {
+        await this.repository.delete({ id: id, categoryId: categoryId });
+    }
     async findByIdWithCategoryAndUser(id: number): Promise<SubjectDomainInterface | null> {
         const data = await this.repository.findOne({ where: { id: id }, relations: { user: true, category: true } });
 

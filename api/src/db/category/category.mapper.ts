@@ -1,3 +1,4 @@
+import { SubjectMapper } from "../subjects/subject.mapper";
 import { Category } from "./category.entity";
 import { CategoryDomainInterface, CategoryInterface } from "./interfaces/category.interfaces";
 
@@ -6,7 +7,8 @@ export class CategoryMapper {
         return {
             id: model.id,
             name: model.name,
-            priority: model.priority
+            priority: model.priority,
+            subjects: model.subjects ? model.subjects.map(item => SubjectMapper.toDomain(item)) : undefined
         }
     }
 

@@ -14,7 +14,12 @@
       <template #action-cell="{ row }">
         <div class="flex justify-end gap-5">
           <UTooltip text="Edit">
-            <UButton icon="lucide:pencil" size="xs" class="cursor-pointer" />
+            <UButton
+              icon="lucide:pencil"
+              size="xs"
+              class="cursor-pointer"
+              @click="openUpdateCategoryModal(row.original)"
+            />
           </UTooltip>
 
           <UTooltip text="Delete">
@@ -45,11 +50,18 @@ import { authGuard } from "../guards/auth.guard";
 import { useCategoriesStore } from "~/store/categories/categories.store";
 import type { TableColumn } from "@nuxt/ui";
 import BaseDeleteModal from "~/components/BaseDeleteModal.vue";
+import UpdateCategoryModal from "~/components/categories/UpdateCategoryModal.vue";
+import { useSubjectStore } from "~/store/subjects/subjects.store";
+import { ActionType } from "~/components/categories/enums/action-type.enum";
+
+const toast = useToast();
 
 const overlay = useOverlay();
 const deleteCategoryModal = overlay.create(BaseDeleteModal);
+const updateCategoryModal = overlay.create(UpdateCategoryModal);
 
 const categoriesStore = useCategoriesStore();
+const subjectsStore = useSubjectStore();
 
 const isTableLoading = ref(false);
 const categories = ref<CategoryItem[]>([]);
@@ -86,6 +98,60 @@ async function openDeleteCategoryModal(category: CategoryItem) {
     await categoriesStore.deleteCategoryById(category.id);
 
     getCategories();
+  }
+}
+
+async function openUpdateCategoryModal(category: CategoryItem) {
+  const result = await updateCategoryModal.open({
+    name: category.name,
+    priority: category.priority,
+    subjects: category.subjects,
+  });
+  if (
+    result &&
+    typeof result === "object" &&
+    result.type === ActionType.update
+  ) {
+    await categoriesStore.updateCategoryById(category.id, result);
+
+    if (!categoriesStore.isError) {
+      getCategories();
+
+      toast.add({
+        title: "Category updated successfully",
+        color: "success",
+      });
+    } else {
+      toast.add({
+        title: "Error",
+        description: categoriesStore.errorMessage,
+        color: "error",
+      });
+    }
+  }
+  if (
+    result &&
+    typeof result === "object" &&
+    result.type === ActionType.delete
+  ) {
+    await subjectsStore.deleteSubjectByCategoryIdAndSubjectId(
+      result.id,
+      result.categoryId,
+    );
+
+    if (!subjectsStore.isError) {
+      getCategories();
+
+      toast.add({
+        title: "Subject delete successfully",
+        color: "success",
+      });
+    } else {
+      toast.add({
+        title: "Error",
+        description: subjectsStore.errorMessage,
+      });
+    }
   }
 }
 

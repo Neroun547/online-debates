@@ -84,7 +84,12 @@ export class UserServiceDb {
     async deleteById(userId: number) {
         await this.repository.delete({ id: userId });
     }
-    async saveAndReturn(data: User): Promise<UserDomainInterface> {
+    async save(data: UserInterface): Promise<void> {
+        const model = UserMapper.toSave(data);
+
+        await this.repository.save(model);
+    }
+    async saveAndReturn(data: UserInterface): Promise<UserDomainInterface> {
         const savedUser = await this.repository.save(UserMapper.toSave(data));
 
         return UserMapper.toDomain(savedUser);

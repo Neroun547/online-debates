@@ -11,5 +11,6 @@ export interface UserItemInterface {
 export interface GetUsersResponseInterface {
     data: UserItemInterface[];
     isLoadMorePossible: boolean;
+    count: number;
 }
 

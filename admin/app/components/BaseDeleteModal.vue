@@ -9,8 +9,8 @@
     <template #footer>
       <div class="flex justify-end w-full">
         <div>
-          <UButton label="Cancel" @click="emit('close', false)" class="mr-5" />
-          <UButton label="Delete" @click="emit('close', true)" color="error" />
+          <UButton label="Cancel" @click="emit('close', false)" class="mr-5 cursor-pointer" />
+          <UButton label="Delete" @click="emit('close', true)" color="error" class="cursor-pointer" />
         </div>
       </div>
     </template>

@@ -13,6 +13,11 @@ const items: NavigationMenuItem[] = [
     icon: "lucide:notebook",
     to: "/subjects",
   },
+  {
+    label: "Users",
+    icon: "lucide:user",
+    to: "/users"
+  }
 ];
 </script>
 

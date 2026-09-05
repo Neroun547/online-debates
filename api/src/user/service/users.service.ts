@@ -9,6 +9,7 @@ import { CACHE_MANAGER } from "@nestjs/cache-manager";
 import { UserStatus } from "src/db/user/user.entity";
 import { JwtService } from "@nestjs/jwt";
 import { GetUsersResponseDto } from "../dto/get-users-response.dto";
+import { CreateUserRequestDto } from "../dto/create-user-request.dto";
 
 @Injectable()
 export class UserService {
@@ -182,8 +183,55 @@ export class UserService {
 
         return {
             data: result,
-            isLoadMorePossible: count > params.page * params.limit
+            isLoadMorePossible: count > params.page * params.limit,
+            count: count
         }
+    }
+
+    async createUser(params: CreateUserRequestDto) {
+        const userInDb = await this.usersServiceDb.findByEmailOrUsernameTwoSeparateParams(params.email, params.username);
+
+        if(userInDb) {
+            throw new BadRequestException({ message: "User with the same username or email already exists" });
+        }
+        const passwordHash = createHmac(this.configService.getOrThrow("PASSWORD_HASH_ALGORITHM"), this.configService.getOrThrow("PASSWORD_HASH_KEY")).update(params.password).digest("hex");
+        
+        await this.usersServiceDb.save({
+            username: params.username,
+            email: params.email,
+            password: passwordHash,
+            isConfirmed: true,
+            status: UserStatus.OFFLINE,
+            timezone: params.timezone
+        });
+    }
+
+    async adminUpdateUser(params: {
+        userId: number;
+        email: string;
+        username: string;
+        timezone: string;
+        password?: string;
+    }) {
+        const userWithTheSameEmailInDb = await this.usersServiceDb.findByEmailAndNotId(params.email, params.userId);
+        const userWithTheSameUsernameInDb = await this.usersServiceDb.findByUsernameAndNotId(params.username, params.userId);
+
+        if(userWithTheSameEmailInDb) {
+            throw new BadRequestException({ message: "User with the same email already exists in db" });
+        }
+        if(userWithTheSameUsernameInDb) {
+            throw new BadRequestException({ message: "User with the same username already exists in db" });
+        } 
+
+        await this.usersServiceDb.updateById(
+            params.userId, 
+            {
+                password: (typeof params.password === "string" && params.password.length >= 8) ? createHmac(this.configService.getOrThrow("PASSWORD_HASH_ALGORITHM"), this.configService.getOrThrow("PASSWORD_HASH_KEY")).update(params.password).digest("hex") : undefined,
+                email: params.email,
+                timezone: params.timezone,
+                username: params.username,
+            }
+        )
     }
 }
 

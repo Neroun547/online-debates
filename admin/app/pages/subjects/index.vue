@@ -157,6 +157,7 @@ async function openDeleteSubjectModal(subject: SubjectItem) {
       toast.add({
         title: "Success",
         description: "Subject deleted successfully",
+        color: "success"
       });
 
       isSubjectsLoading.value = true;
@@ -186,6 +187,7 @@ async function openCreateSubjectModal() {
     } else {
       toast.add({
         title: "Subject saved successfully",
+        color: "success"
       });
 
       isSubjectsLoading.value = true;

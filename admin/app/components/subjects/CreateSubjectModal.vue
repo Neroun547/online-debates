@@ -102,15 +102,30 @@ async function getCategories(isSearch?: boolean) {
 
   if (response && response.data) {
     if (isSearch) {
-      categories.value = response.data;
+      const parsedResponse = parseResponse(response.data);
+      const currentCategory = categories.value.find(
+        (category) => formState.category === category.id,
+      );
+
+      categories.value = currentCategory
+        ? [currentCategory, ...parsedResponse]
+        : parsedResponse;
     } else {
-      categories.value.push(...response.data);
+      const parsedResponse = parseResponse(response.data);
+      categories.value.push(...parsedResponse);
     }
     isLoadMorePossible.value = response.count > categories.value.length;
   } else {
     isLoadMorePossible.value = false;
   }
   isCategoriesLoading.value = false;
+}
+
+function parseResponse(data: CategoryItem[]) {
+  return data.filter(
+    (item) =>
+      categories.value.findIndex((category) => category.id === item.id) === -1,
+  );
 }
 
 watch(page, () => {

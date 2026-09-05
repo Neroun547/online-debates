@@ -1,23 +1,42 @@
 <template>
   <UModal title="Update category">
     <template #body>
-      <UForm @submit="saveChanges">
-        <UFormField class="w-full" label="Name">
-          <UInput v-model="nameState" placeholder="Name:" class="w-full" />
+      <UForm @submit="saveChanges" :schema="formSchema" :state="formState">
+        <UFormField class="w-full" label="Name" name="name">
+          <UInput
+            v-model="formState.name"
+            placeholder="Name:"
+            class="w-full"
+            name="name"
+          />
         </UFormField>
-        <UFormField class="w-full mt-5" label="Priority">
-          <UInputNumber v-model="priorityState" class="w-full" :min="1" />
+        <UFormField class="w-full mt-5" label="Priority" name="priority">
+          <UInputNumber
+            v-model="formState.priority"
+            class="w-full"
+            :min="1"
+            name="priority"
+          />
         </UFormField>
 
         <div class="mt-5">
           <h2>Subjects:</h2>
           <div>
-            <div v-for="subject in props.subjects" class="mt-3 flex w-full justify-between">
+            <div
+              v-for="subject in props.subjects"
+              class="mt-3 flex w-full justify-between"
+            >
               <div>
                 {{ subject.name }}
               </div>
               <div>
-                <UButton icon="lucide:trash-2" size="xs" color="error" class="cursor-pointer" @click="openConfirmDeleteModal(subject)" />
+                <UButton
+                  icon="lucide:trash-2"
+                  size="xs"
+                  color="error"
+                  class="cursor-pointer"
+                  @click="openConfirmDeleteModal(subject)"
+                />
               </div>
             </div>
           </div>
@@ -46,19 +65,28 @@
 import type { SubjectItem } from "~/store/categories/interfaces/get-categories-response.interface";
 import BaseDeleteModal from "../BaseDeleteModal.vue";
 import { ActionType } from "./enums/action-type.enum.ts";
+import * as zod from "zod";
 
 interface Props {
   name: string;
   priority: number;
-  subjects: SubjectItem[];
+  subjects?: SubjectItem[];
 }
 
 const overlay = useOverlay();
 const confirmDeleteModal = overlay.create(BaseDeleteModal);
 
 const props = defineProps<Props>();
-const nameState = ref("");
-const priorityState = ref<number>();
+
+const formState = reactive({
+  name: "",
+  priority: 1,
+});
+
+const formSchema = zod.object({
+  name: zod.string().min(1).max(500),
+  priority: zod.number().min(1),
+});
 
 const emit = defineEmits(["close"]);
 
@@ -67,31 +95,31 @@ function saveChanges(event: Event) {
 
   emit("close", {
     type: ActionType.update,
-    name: nameState.value,
-    priority: priorityState.value,
+    name: formState.name,
+    priority: formState.priority,
   });
 }
 
 async function openConfirmDeleteModal(subject: SubjectItem) {
-    const result = await confirmDeleteModal.open({
-        title: "Delete subject",
-        description: "Do you want delete " + subject.name + " subject ?"
-    });
+  const result = await confirmDeleteModal.open({
+    title: "Delete subject",
+    description: "Do you want delete " + subject.name + " subject ?",
+  });
 
-    if(result) {
-        emit("close", {
-            type: ActionType.delete,
-            id: subject.id,
-            categoryId: subject.categoryId
-        });
-    }
+  if (result) {
+    emit("close", {
+      type: ActionType.delete,
+      id: subject.id,
+      categoryId: subject.categoryId,
+    });
+  }
 }
 
 watch(
   props,
   () => {
-    nameState.value = props.name;
-    priorityState.value = props.priority;
+    formState.name = props.name;
+    formState.priority = props.priority;
   },
   { immediate: true },
 );

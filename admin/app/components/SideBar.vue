@@ -5,13 +5,13 @@ const items: NavigationMenuItem[] = [
   {
     label: "Categories",
     icon: "lucide:list",
-    active: true,
-    to: "/"
+    to: "/",
+    exact: true
   },
   {
     label: "Subjects",
     icon: "lucide:notebook",
-    to: "/subjects"
+    to: "/subjects",
   },
 ];
 </script>
@@ -22,15 +22,15 @@ const items: NavigationMenuItem[] = [
     resizable
     :ui="{ footer: 'border-t border-default' }"
   >
-  <template #header>
-    <h2 class="text-center w-full">Online debates admin</h2>
-  </template>
+    <template #header="{ collapsed }">
+      <h2 class="text-center w-full" v-if="!collapsed">Online debates admin</h2>
+    </template>
     <template #default="{ collapsed }">
       <UNavigationMenu
         :collapsed="collapsed"
         :items="items"
         orientation="vertical"
-      />
+      ></UNavigationMenu>
     </template>
   </UDashboardSidebar>
 </template>

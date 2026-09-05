@@ -3,7 +3,11 @@
     <div class="flex justify-between">
       <div class="text-2xl">Categories</div>
       <div>
-        <UButton label="Create category" icon="lucide:plus" />
+        <UButton
+          label="Create category"
+          icon="lucide:plus"
+          @click="openCreateCategoryModal"
+        />
       </div>
     </div>
     <UTable
@@ -53,10 +57,12 @@ import BaseDeleteModal from "~/components/BaseDeleteModal.vue";
 import UpdateCategoryModal from "~/components/categories/UpdateCategoryModal.vue";
 import { useSubjectStore } from "~/store/subjects/subjects.store";
 import { ActionType } from "~/components/categories/enums/action-type.enum";
+import CreateCategoryModal from "~/components/categories/CreateCategoryModal.vue";
 
 const toast = useToast();
 
 const overlay = useOverlay();
+const createCategoryModal = overlay.create(CreateCategoryModal);
 const deleteCategoryModal = overlay.create(BaseDeleteModal);
 const updateCategoryModal = overlay.create(UpdateCategoryModal);
 
@@ -66,6 +72,8 @@ const subjectsStore = useSubjectStore();
 const isTableLoading = ref(false);
 const categories = ref<CategoryItem[]>([]);
 const totalCategoriesCount = ref(0);
+
+const isCategoriesLoading = ref(false);
 
 const tableColumns: TableColumn<CategoryItem>[] = [
   {
@@ -85,6 +93,38 @@ const tableColumns: TableColumn<CategoryItem>[] = [
 const page = ref(1);
 const limit = 20;
 
+async function openCreateCategoryModal() {
+  const result = await createCategoryModal.open();
+
+  if (result && typeof result === "object") {
+    await categoriesStore.createCategory({
+      name: result.name,
+      priority: result.priority,
+    });
+
+    if (categoriesStore.isError) {
+      toast.add({
+        title: "Error",
+        description: categoriesStore.errorMessage,
+        color: "error",
+      });
+    } else {
+      toast.add({
+        title: "Success",
+        description: "Category created successfully",
+        color: "success",
+      });
+
+      isCategoriesLoading.value = true;
+      page.value = 1;
+
+      await getCategories();
+
+      isCategoriesLoading.value = false;
+    }
+  }
+}
+
 async function openDeleteCategoryModal(category: CategoryItem) {
   const result = await deleteCategoryModal.open({
     title: "Delete " + category.name,
@@ -97,7 +137,11 @@ async function openDeleteCategoryModal(category: CategoryItem) {
   if (result) {
     await categoriesStore.deleteCategoryById(category.id);
 
-    getCategories();
+    isCategoriesLoading.value = true;
+    page.value = 1;
+    await getCategories();
+
+    isCategoriesLoading.value = false;
   }
 }
 
@@ -112,7 +156,10 @@ async function openUpdateCategoryModal(category: CategoryItem) {
     typeof result === "object" &&
     result.type === ActionType.update
   ) {
-    await categoriesStore.updateCategoryById(category.id, result);
+    await categoriesStore.updateCategoryById(category.id, {
+      name: result.name,
+      priority: result.priority,
+    });
 
     if (!categoriesStore.isError) {
       getCategories();
@@ -171,7 +218,9 @@ async function getCategories() {
 }
 
 watch(page, () => {
-  getCategories();
+  if (!isCategoriesLoading.value) {
+    getCategories();
+  }
 });
 
 onMounted(() => {

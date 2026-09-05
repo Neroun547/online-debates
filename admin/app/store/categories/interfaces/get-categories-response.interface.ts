@@ -9,7 +9,7 @@ export interface CategoryItem {
     id: number;
     name: string;
     priority: number;
-    subjects: SubjectItem[];
+    subjects?: SubjectItem[];
 }
 
 export interface GetCategoriesResponseInterface {

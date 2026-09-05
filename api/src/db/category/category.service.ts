@@ -33,10 +33,22 @@ export class CategoryServiceDb {
 
         return data.map(item => CategoryMapper.toDomain(item));
     }
-    async findWithSubjects(page: number, limit: number): Promise<CategoryDomainInterface[]> {
-        const data = await this.repository.find({ where: {}, order: { priority: "ASC" }, take: limit, skip: (page - 1) * limit, relations: { subjects: true } });
+    async findWithSubjectsAndSearchByName(page: number, limit: number, searchName?: string): Promise<CategoryDomainInterface[]> {
+        if(!searchName) {
+            const data = await this.repository.find({ where: {}, order: { priority: "ASC" }, take: limit, skip: (page - 1) * limit, relations: { subjects: true } });
 
-        return data.map(item => CategoryMapper.toDomain(item));
+            return data.map(item => CategoryMapper.toDomain(item));
+        } else {
+            const data = await this.repository
+                .createQueryBuilder("category")
+                .leftJoinAndSelect("category.subjects", "subjects")
+                .offset((page - 1) * limit)
+                .limit(limit)
+                .where("category.name LIKE :searchName", { searchName: "%" + searchName + "%" })
+                .getMany();
+
+            return data.map(item => CategoryMapper.toDomain(item));
+        }
     }
     async updateById(id: number, data: CategoryInterface): Promise<void> {
         await this.repository.update({ id: id }, data);

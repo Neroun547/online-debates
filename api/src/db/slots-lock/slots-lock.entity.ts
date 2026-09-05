@@ -10,8 +10,8 @@ export class SlotsLock {
     @PrimaryGeneratedColumn()
     id!: number;
 
-    @Column()
-    userId!: number;
+    @Column({ nullable: true})
+    userId!: number | null;
     
     @Column()
     subjectId!: number;

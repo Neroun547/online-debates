@@ -3,6 +3,7 @@ import type { BaseStoreInterface } from "../interfaces/base-store.interface";
 import { useApiFetch } from "~/libs/use-api-fetch";
 import type { GetCategoriesResponseInterface } from "./interfaces/get-categories-response.interface";
 import type { UpdateCategoryRequestDto } from "./interfaces/update-category-request.interface";
+import type { CreateCategoryRequestInterface } from "./interfaces/create-category-request.interface";
 
 export const useCategoriesStore = defineStore("categories", {
     state: (): BaseStoreInterface => ({
@@ -10,13 +11,28 @@ export const useCategoriesStore = defineStore("categories", {
         errorMessage: undefined
     }),
     actions: {
-        async getCategories(page: number, limit: number) {
+        async createCategory(data: CreateCategoryRequestInterface) {
             try {
                 this.clearError();
 
-                const response = await useApiFetch<GetCategoriesResponseInterface>(`/admin/categories?page=${page}&limit=${limit}`, { method: "GET" });
+                await useApiFetch("/admin/categories", { method: "POST", body: data });
+            } catch(error: any) {
+                this.setError(error.response._data.message);
+            }
+        },
+        async getCategories(page: number, limit: number, searchName?: string) {
+            try {
+                this.clearError();
 
-                return response;
+                if(!searchName) {
+                    const response = await useApiFetch<GetCategoriesResponseInterface>(`/admin/categories?page=${page}&limit=${limit}`, { method: "GET" });
+
+                    return response;
+                } else {
+                    const response = await useApiFetch<GetCategoriesResponseInterface>(`/admin/categories?page=${page}&limit=${limit}&searchName=${searchName}`, { method: "GET" });
+
+                    return response;
+                }
             } catch(error: any) {
                 this.setError(error.response._data.message);
             }

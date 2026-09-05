@@ -21,8 +21,8 @@ export class CategoriesService {
             isLoadMoreAvailable: count > currentSkipElements
         }
     }
-    async getWithPaginationForAdmin(page: number, limit: number) {
-        const data = await this.categoriesServiceDb.findWithSubjects(page, limit);
+    async getWithPaginationForAdmin(page: number, limit: number, searchName?: string) {
+        const data = await this.categoriesServiceDb.findWithSubjectsAndSearchByName(page, limit, searchName);
         const count = await this.categoriesServiceDb.countAll();
 
         return {

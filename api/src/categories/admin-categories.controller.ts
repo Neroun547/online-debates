@@ -34,7 +34,7 @@ export class AdminCategoriesController {
 
     @Get()
     async getCategories(@Query() query: GetCategoriesDto): Promise<GetCategoriesForAdminResponseDto> {
-        return await this.categoriesService.getWithPaginationForAdmin(query.page, query.limit);
+        return await this.categoriesService.getWithPaginationForAdmin(query.page, query.limit, query.searchName);
     }
 }
 

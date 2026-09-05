@@ -15,7 +15,7 @@ export class Subject {
     categoryId!: number;
     
     @Column({ nullable: true })
-    userId!: number;
+    userId!: number | null;
 
     @ManyToOne(() => User, { nullable: true, onDelete: "SET NULL", onUpdate: "CASCADE" })
     @JoinColumn({ name: "userId" })

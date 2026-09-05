@@ -8,6 +8,7 @@ import type { Cache } from "cache-manager";
 import { CACHE_MANAGER } from "@nestjs/cache-manager";
 import { UserStatus } from "src/db/user/user.entity";
 import { JwtService } from "@nestjs/jwt";
+import { GetUsersResponseDto } from "../dto/get-users-response.dto";
 
 @Injectable()
 export class UserService {
@@ -166,6 +167,23 @@ export class UserService {
         });
 
         return newToken;
+    }
+    async getUsers(params: {
+        page: number;
+        limit: number;
+        searchUsername?: string; 
+    }): Promise<GetUsersResponseDto> {
+        const result = await this.usersServiceDb.findWithSearchByUsername({
+            limit: params.limit,
+            page: params.page,
+            searchUsername: params.searchUsername
+        });
+        const count = await this.usersServiceDb.countAll();
+
+        return {
+            data: result,
+            isLoadMorePossible: count > params.page * params.limit
+        }
     }
 }
 

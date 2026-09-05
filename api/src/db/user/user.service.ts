@@ -16,6 +16,29 @@ export class UserServiceDb {
         private em: EntityManager
     ) {}
 
+    async countAll() {
+        return await this.repository.count();
+    }
+    async findWithSearchByUsername(params: {
+        page: number;
+        limit: number;
+        searchUsername?: string;
+    }) {
+        if(params.searchUsername) {
+            const data = await this.repository
+                .createQueryBuilder("user")
+                .limit(params.limit)
+                .offset((params.page - 1) * params.limit)
+                .where("user.username LIKE :searchUsername", { searchUsername: "%" + params.searchUsername + "%" })
+                .getMany();
+
+            return data.map(item => UserMapper.toDomain(item));
+        } else {
+            const data = await this.repository.find({ take: params.limit, skip: (params.page - 1) * params.limit });
+
+            return data.map(item => UserMapper.toDomain(item));
+        }
+    }
     async existsById(id: number): Promise<boolean> {
         return await this.repository.exists({ where: { id: id } });
     }

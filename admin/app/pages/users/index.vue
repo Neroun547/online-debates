@@ -128,7 +128,6 @@ async function openUpdateUserModal(user: UserItemInterface) {
       });
 
       isUsersLoading.value = true;
-      page.value = 1;
 
       await getUsers();
 

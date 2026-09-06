@@ -4,6 +4,7 @@ import type { AuthRequestInterface } from "./interfaces/auth-request.interface";
 import { useApiFetch } from "../../libs/use-api-fetch";
 import type { AuthResponseInterface } from "./interfaces/auth-response.interface";
 import { getErrorMessage } from "~/utils/get-error-message";
+import type { AdminUpdatePasswordRequestInterface } from "./interfaces/admin-update-password-request.interface";
 
 export const useAuthStore = defineStore("auth", {
     state: (): AuthStoreInterface => ({
@@ -38,7 +39,26 @@ export const useAuthStore = defineStore("auth", {
 
                 await useApiFetch("/admin/auth", { method: "GET" });
             } catch(error: any) {
-                console.log(error);
+                this.setError(error.response._data.message);
+            }
+        },
+        async changeEmail(newEmail: string) {
+            try {
+                this.clearErrorState(),
+
+                await useApiFetch("/admin/email", { method: "PATCH", body: { email: newEmail } });
+
+                this.email = newEmail;
+            } catch(error: any) {
+                this.setError(error.response._data.message);
+            }
+        },
+        async changePassword(params: AdminUpdatePasswordRequestInterface) {
+            try {
+                this.clearErrorState();
+
+                await useApiFetch("/admin/password", { method: "PATCH", body: params });
+            } catch(error: any) {
                 this.setError(error.response._data.message);
             }
         },
@@ -68,7 +88,7 @@ export const useAuthStore = defineStore("auth", {
     },
     persist: {
         storage: piniaPluginPersistedstate.localStorage(),
-        pick: ["token", "username", "userId", "isAuth"],
+        pick: ["token", "email", "userId", "isAuth"],
     },
 });
 

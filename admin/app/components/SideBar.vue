@@ -17,6 +17,11 @@ const items: NavigationMenuItem[] = [
     label: "Users",
     icon: "lucide:user",
     to: "/users"
+  },
+  {
+    label: "Settings",
+    icon: "lucide:settings",
+    to: "/settings"
   }
 ];
 </script>

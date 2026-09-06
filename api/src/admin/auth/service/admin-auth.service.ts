@@ -32,7 +32,7 @@ export class AdminAuthService {
         };
     }
 
-    private validatePassword(password: string, hash: string): boolean {
+    validatePassword(password: string, hash: string): boolean {
         const hashAlg = this.configService.getOrThrow("ADMIN_AUTH_HASH_ALGORITHM");
         const hashKey = this.configService.getOrThrow("ADMIN_AUTH_PASSWORD_SECRET");
 

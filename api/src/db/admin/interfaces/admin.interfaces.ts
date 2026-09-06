@@ -15,3 +15,9 @@ export interface AdminDomainInterfaceWithSecureParams {
     password: string;
 }
 
+export interface UpdateAdminInterface {
+    id?: number;
+    email?: string;
+    password?: string;
+}
+

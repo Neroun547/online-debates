@@ -21,6 +21,8 @@ import { ScheduleModule } from '@nestjs/schedule';
 import { SlotsLock } from './db/slots-lock/slots-lock.entity';
 import { SessionsModule } from './sessions/sessions.module';
 import { Messages } from './db/messages/messages.entity';
+import { SupportModule } from './support/support.module';
+import { Support } from './db/support/support.entity';
 
 @Module({
   imports: [
@@ -46,7 +48,8 @@ import { Messages } from './db/messages/messages.entity';
         SlotsTemplates, 
         Sessions, 
         SlotsLock,
-        Messages
+        Messages,
+        Support
       ],
       type: "mariadb"  
     }),
@@ -56,7 +59,8 @@ import { Messages } from './db/messages/messages.entity';
     AdminModule,
     SubjectsModule,
     SlotsModule,
-    SessionsModule
+    SessionsModule,
+    SupportModule
   ],
   controllers: [AppController],
   providers: [AppService],

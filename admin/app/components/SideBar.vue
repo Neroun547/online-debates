@@ -22,6 +22,11 @@ const items: NavigationMenuItem[] = [
     label: "Settings",
     icon: "lucide:settings",
     to: "/settings"
+  },
+  {
+    label: "Support",
+    icon: "lucide:circle-question-mark",
+    to: "/support"
   }
 ];
 </script>

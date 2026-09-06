@@ -37,11 +37,11 @@
         </ULink>
       </div>
       <div class="block m-auto mt-5">
-        <ULink 
+        <ULink
           to="/my-sessions"
           active-class="text-primary"
           inactive-class="text-black"
-          class="flex items-center"  
+          class="flex items-center"
         >
           <UIcon name="lucide:clipboard-clock" class="block mr-2" />
           <div>My sessions</div>
@@ -56,6 +56,17 @@
         >
           <UIcon name="lucide:settings" class="block mr-2" />
           <div class="text-left w-full">Settings</div>
+        </ULink>
+      </div>
+      <div class="block m-auto mt-5">
+        <ULink
+          to="/support"
+          active-class="text-primary"
+          inactive-class="text-black"
+          class="flex items-center"
+        >
+          <UIcon name="lucide:circle-question-mark" class="block mr-2" />
+          <div>Support</div>
         </ULink>
       </div>
       <div class="border-gray-200 border-t mt-5"></div>

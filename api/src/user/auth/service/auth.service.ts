@@ -5,6 +5,7 @@ import { UserServiceDb } from "src/db/user/user.service";
 import { ConfigService } from "@nestjs/config";
 import { createHmac } from "crypto";
 import { UserStatus } from "src/db/user/user.entity";
+import { UserDomainInterface } from "src/db/user/interfaces/user.interfaces";
 
 @Injectable()
 export class AuthService {
@@ -14,13 +15,7 @@ export class AuthService {
         private configService: ConfigService
     ) {}
 
-    async generateJwtToken(params: {
-        id: number;
-        email: string;
-        username: string;
-        timezone: string;
-        isAvailableForInstantMeeting: boolean;
-    }) {
+    async generateJwtToken(params: UserDomainInterface) {
         return await this.jwtService.signAsync({
             id: params.id,
             email: params.email,
@@ -42,12 +37,13 @@ export class AuthService {
             throw new ForbiddenException({ message: "Invalid password" });
         }
         const token = await this.generateJwtToken(
-            { 
-                id: userInDb.id ?? 0, 
-                email: userInDb.email, 
+            {
+                id: userInDb.id ?? 0,
+                email: userInDb.email,
                 username: userInDb.username,
                 timezone: userInDb.timezone,
-                isAvailableForInstantMeeting: userInDb.isAvailableForInstantMeeting
+                isAvailableForInstantMeeting: userInDb.isAvailableForInstantMeeting,
+                status: UserStatus.ONLINE
             }
         );
         await this.usersServiceDb.updateById(userInDb.id ?? 0, { status: UserStatus.ONLINE });

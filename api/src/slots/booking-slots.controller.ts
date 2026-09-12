@@ -1,9 +1,11 @@
-import { Body, Controller, Get, Post, Query, Req, UseGuards } from "@nestjs/common";
+import { Body, Controller, Get, Post, Query, UseGuards } from "@nestjs/common";
 import { AuthGuard } from "src/user/auth/auth.guard";
 import { GetSlotsForBookingRequestDto } from "./dto/get-slots-for-booking-request.dto";
 import { BookSessionDto } from "./dto/book-session.dto";
 import { SessionsService } from "../sessions/service/sessions.service";
 import { SlotsService } from "./service/slots.service";
+import { User } from "src/user/auth/decorators/user.decorator";
+import type { UserDomainInterface } from "src/db/user/interfaces/user.interfaces";
 
 @UseGuards(AuthGuard)
 @Controller("booking/slots")
@@ -16,21 +18,20 @@ export class BookingSlotsController {
     }
     
     @Get()
-    async getSlotsForBooking(@Query() query: GetSlotsForBookingRequestDto, @Req() req: Request) {
+    async getSlotsForBooking(@Query() query: GetSlotsForBookingRequestDto, @User() user: UserDomainInterface) {
         return await this.slotsService.getSlotsForBooking({
             subjectId: query.subjectId,
             authorId: query.userId,
             dateFrom: query.dateFrom,
             dateTo: query.dateTo,
-            customerId: req["user"].id
+            customerId: user.id
         });
     }
 
     @Post("session")
-    async bookSession(@Body() body: BookSessionDto, @Req() req: Request) {
-        await this.sessionsService.bookSession(body.slotId, req["user"].id, body.currentUserDateTime);
+    async bookSession(@Body() body: BookSessionDto, @User() user: UserDomainInterface) {
+        await this.sessionsService.bookSession(body.slotId, user.id, body.currentUserDateTime);
 
         return;
     }
 }
-

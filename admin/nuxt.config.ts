@@ -22,6 +22,10 @@ export default defineNuxtConfig({
       }
     }
   },
+  devServer: {
+    port: Number(process.env.DEV_PORT),
+    host: process.env.APP_HOST_NAME ?? '0.0.0.0',
+  },
   colorMode: {
     preference: "dark"
   },

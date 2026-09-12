@@ -1,5 +1,7 @@
-import { Body, Controller, Delete, Get, Param, ParseIntPipe, Post, Put, Query, Req, UseGuards } from "@nestjs/common";
+import { Body, Controller, Delete, Get, Param, ParseIntPipe, Post, Put, Query, UseGuards } from "@nestjs/common";
 import { AdminAuthGuard } from "src/admin/auth/admin-auth.guard";
+import { Admin } from "src/admin/auth/decorators/admin.decorator";
+import type { AdminDomainInterface } from "src/db/admin/interfaces/admin.interfaces";
 import { SubjectsService } from "./service/subjects.service";
 import { DeleteSubjectDto } from "./dto/delete-subject.dto";
 import { CreateSubjectDto } from "./dto/create-subject.dto";
@@ -15,11 +17,11 @@ export class AdminSubjectsController {
     }
     
     @Delete()
-    async deleteSubject(@Query() query: DeleteSubjectDto, @Req() req: Request) {
+    async deleteSubject(@Query() query: DeleteSubjectDto, @Admin() admin: AdminDomainInterface) {
         await this.subjectsService.deleteSubjectFromAdmin({
             subjectId: query.subjectId,
             categoryId: query.categoryId,
-            adminId: req["user"].id
+            adminId: admin.id
         });
 
         return;
@@ -49,4 +51,3 @@ export class AdminSubjectsController {
         return;
     }
 }
-

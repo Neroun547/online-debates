@@ -1,13 +1,14 @@
-import { Body, Controller, Delete, Get, Param, ParseIntPipe, Post, Put, Query, Req, UseGuards } from "@nestjs/common";
+import { Body, Controller, Delete, Get, Param, ParseIntPipe, Post, Put, Query, UseGuards } from "@nestjs/common";
 import { AuthGuard } from "src/user/auth/auth.guard";
 import { GetSubjectsDto } from "./dto/get-subjects.dto";
 import { CreateSubjectDto } from "./dto/create-subject.dto";
-import type { Request } from "express";
 import { SubjectsService } from "./service/subjects.service";
 import { UpdateSubjectDto } from "./dto/update-subject.dto";
 import { GetByCategoryIdWithCategoryAndUserResponseDto } from "./dto/get-by-category-id-with-category-and-user-response.dto";
 import { GetSubjectByIdWithCategoryAndUserResponseDto } from "./dto/get-subject-by-id-with-category-and-user-response.interface";
 import { GetSubjectUsersRequestDto } from "./dto/get-subject-users-request.dto";
+import { User } from "src/user/auth/decorators/user.decorator";
+import type { UserDomainInterface } from "src/db/user/interfaces/user.interfaces";
 
 @Controller("subjects")
 export class SubjectsController {
@@ -28,16 +29,16 @@ export class SubjectsController {
     
     @UseGuards(AuthGuard)
     @Post()
-    async createSubject(@Body() body: CreateSubjectDto, @Req() req: Request) {
-        await this.subjectsService.createSubject(body.name, body.categoryId, req["user"].id);
+    async createSubject(@Body() body: CreateSubjectDto, @User() user: UserDomainInterface) {
+        await this.subjectsService.createSubject(body.name, body.categoryId, user.id);
 
         return;
     }
 
     @UseGuards(AuthGuard)
     @Get(":subjectId/users")
-    async getSubjectUsers(@Req() req: Request, @Query() query: GetSubjectUsersRequestDto) {
-        return this.subjectsService.getUsersBySubjectId(query.subjectId, query.page, query.limit, req["user"].id);   
+    async getSubjectUsers(@User() user: UserDomainInterface, @Query() query: GetSubjectUsersRequestDto) {
+        return this.subjectsService.getUsersBySubjectId(query.subjectId, query.page, query.limit, user.id);
     }
 
 
@@ -49,18 +50,17 @@ export class SubjectsController {
 
     @UseGuards(AuthGuard)
     @Put(":id")
-    async updateSubject(@Body() body: UpdateSubjectDto, @Req() req: Request, @Param("id", new ParseIntPipe()) id: number) {
-        await this.subjectsService.updateSubjectByCategoryIdAndUserId(req["user"].id, body.categoryId, id, body);
+    async updateSubject(@Body() body: UpdateSubjectDto, @User() user: UserDomainInterface, @Param("id", new ParseIntPipe()) id: number) {
+        await this.subjectsService.updateSubjectByCategoryIdAndUserId(user.id, body.categoryId, id, body);
 
         return;
     }
 
     @UseGuards(AuthGuard)
     @Delete(":id")
-    async deleteSubjectById(@Param("id", new ParseIntPipe()) id: number, @Req() req: Request) {
-        await this.subjectsService.deleteSubjectById(id, req["user"].id);
+    async deleteSubjectById(@Param("id", new ParseIntPipe()) id: number, @User() user: UserDomainInterface) {
+        await this.subjectsService.deleteSubjectById(id, user.id);
 
         return;
     } 
 }
-

@@ -7,7 +7,6 @@ import { MailerService } from "src/integrations/mailer/mailer.service";
 import type { Cache } from "cache-manager";
 import { CACHE_MANAGER } from "@nestjs/cache-manager";
 import { UserStatus } from "src/db/user/user.entity";
-import { JwtService } from "@nestjs/jwt";
 import { GetUsersResponseDto } from "../dto/get-users-response.dto";
 import { CreateUserRequestDto } from "../dto/create-user-request.dto";
 import { AuthService } from "../auth/service/auth.service";
@@ -19,7 +18,6 @@ export class UserService {
         private configService: ConfigService,
         private mailerService: MailerService,
         @Inject(CACHE_MANAGER) private cacheManager: Cache,
-        private jwtService: JwtService,
         private authService: AuthService
     ) {}
 
@@ -134,7 +132,8 @@ export class UserService {
             username: (params.username && params.username !== params.oldUsername) ? params.username : params.oldUsername,
             email: params.oldEmail,
             timezone: (params.timezone && params.timezone !== params.oldTimeZone) ? params.timezone : params.oldTimeZone,
-            isAvailableForInstantMeeting: typeof params.isAvailableForInstantMeeting === "boolean" ? params.isAvailableForInstantMeeting : userInDb.isAvailableForInstantMeeting
+            isAvailableForInstantMeeting: typeof params.isAvailableForInstantMeeting === "boolean" ? params.isAvailableForInstantMeeting : userInDb.isAvailableForInstantMeeting,
+            status: userInDb.status
         });
 
         return { token: newToken, isMailSent: isMailSent };
@@ -162,11 +161,12 @@ export class UserService {
         await this.usersServiceDb.updateById(Number(parsedDataFromCache.userId), { email: parsedDataFromCache.email });
 
         const newToken = await this.authService.generateJwtToken({
-            id: userInDb.id, 
-            email: parsedDataFromCache.email, 
+            id: userInDb.id,
+            email: parsedDataFromCache.email,
             username: userInDb.username,
             timezone: userInDb.timezone,
-            isAvailableForInstantMeeting: userInDb.isAvailableForInstantMeeting
+            isAvailableForInstantMeeting: userInDb.isAvailableForInstantMeeting,
+            status: userInDb.status
         });
 
         return newToken;

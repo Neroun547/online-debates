@@ -10,6 +10,7 @@ import { UserStatus } from "src/db/user/user.entity";
 import { JwtService } from "@nestjs/jwt";
 import { GetUsersResponseDto } from "../dto/get-users-response.dto";
 import { CreateUserRequestDto } from "../dto/create-user-request.dto";
+import { AuthService } from "../auth/service/auth.service";
 
 @Injectable()
 export class UserService {
@@ -18,7 +19,8 @@ export class UserService {
         private configService: ConfigService,
         private mailerService: MailerService,
         @Inject(CACHE_MANAGER) private cacheManager: Cache,
-        private jwtService: JwtService
+        private jwtService: JwtService,
+        private authService: AuthService
     ) {}
 
     async deleteUserById(userId: number) {
@@ -127,15 +129,12 @@ export class UserService {
             }
             await this.usersServiceDb.updateById(params.userId, updateData);
         }
-        const newToken = await this.jwtService.signAsync({
+        const newToken = await this.authService.generateJwtToken({
             id: params.userId,
             username: (params.username && params.username !== params.oldUsername) ? params.username : params.oldUsername,
             email: params.oldEmail,
             timezone: (params.timezone && params.timezone !== params.oldTimeZone) ? params.timezone : params.oldTimeZone,
-            isAvailableForInstantMeeting: params.isAvailableForInstantMeeting
-        }, {
-            secret: this.configService.getOrThrow("USER_AUTH_JWT_SECRET"),
-            expiresIn: this.configService.getOrThrow("USER_AUTH_JWT_EXPIRES_IN") 
+            isAvailableForInstantMeeting: typeof params.isAvailableForInstantMeeting === "boolean" ? params.isAvailableForInstantMeeting : userInDb.isAvailableForInstantMeeting
         });
 
         return { token: newToken, isMailSent: isMailSent };
@@ -162,15 +161,12 @@ export class UserService {
         }
         await this.usersServiceDb.updateById(Number(parsedDataFromCache.userId), { email: parsedDataFromCache.email });
 
-        const newToken = await this.jwtService.signAsync({
+        const newToken = await this.authService.generateJwtToken({
             id: userInDb.id, 
             email: parsedDataFromCache.email, 
             username: userInDb.username,
             timezone: userInDb.timezone,
             isAvailableForInstantMeeting: userInDb.isAvailableForInstantMeeting
-        }, {
-            secret: this.configService.getOrThrow("USER_AUTH_JWT_SECRET"),
-            expiresIn: this.configService.getOrThrow("USER_AUTH_JWT_EXPIRES_IN") 
         });
 
         return newToken;

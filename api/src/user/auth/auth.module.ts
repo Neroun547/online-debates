@@ -14,6 +14,7 @@ import { UserModuleDb } from "src/db/user/user.module";
         UserModuleDb
     ],
     controllers: [AuthController],
-    providers: [AuthService]
+    providers: [AuthService],
+    exports: [AuthService]
 })
 export class AuthModule {}

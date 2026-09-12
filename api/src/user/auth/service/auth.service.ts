@@ -14,6 +14,21 @@ export class AuthService {
         private configService: ConfigService
     ) {}
 
+    async generateJwtToken(params: {
+        id: number;
+        email: string;
+        username: string;
+        timezone: string;
+        isAvailableForInstantMeeting: boolean;
+    }) {
+        return await this.jwtService.signAsync({
+            id: params.id,
+            email: params.email,
+            username: params.username,
+            timezone: params.timezone,
+            isAvailableForInstantMeeting: params.isAvailableForInstantMeeting
+        }, { secret: this.configService.getOrThrow("USER_AUTH_JWT_SECRET"), expiresIn: this.configService.getOrThrow("USER_AUTH_JWT_EXPIRES_IN") });
+    }
     async auth(body: AuthDto): Promise<{ token: string; userId: number; isOnline: boolean; }> {
         const userInDb = await this.usersServiceDb.findByEmailOrUsernameWithSecureParams(body.usernameOrEmail);
 
@@ -26,17 +41,13 @@ export class AuthService {
         if(!this.checkPassword(userInDb.password, body.password)) {
             throw new ForbiddenException({ message: "Invalid password" });
         }
-        const token = await this.jwtService.signAsync(
+        const token = await this.generateJwtToken(
             { 
-                id: userInDb.id, 
+                id: userInDb.id ?? 0, 
                 email: userInDb.email, 
                 username: userInDb.username,
                 timezone: userInDb.timezone,
                 isAvailableForInstantMeeting: userInDb.isAvailableForInstantMeeting
-            }, 
-            { 
-                secret: this.configService.getOrThrow("USER_AUTH_JWT_SECRET"),
-                expiresIn: this.configService.getOrThrow("USER_AUTH_JWT_EXPIRES_IN") 
             }
         );
         await this.usersServiceDb.updateById(userInDb.id ?? 0, { status: UserStatus.ONLINE });

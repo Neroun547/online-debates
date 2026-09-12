@@ -4,18 +4,20 @@ import { SlotDomainInterface } from "src/db/slots/interfaces/slots.interfaces";
 
 export interface SessionsInterface {
     id?: number;
-    slotId: number;
+    slotId: number | null;
     status: SessionsStatus;
     creatorId: number;
     customerId: number; 
+    createdAt: Date | string;
 }
 
 export interface SessionsDomainInterface {
     id: number;
-    slotId: number;
+    slotId: number | null;
     status: SessionsStatus;
     creatorId: number;
     customerId: number;
+    createdAt: Date | string;
     creator?: UserDomainInterface;
     customer?: UserDomainInterface; 
     slot?: SlotDomainInterface;

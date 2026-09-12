@@ -67,6 +67,7 @@ export class UserService {
         email?: string; 
         username?: string;
         timezone?: string;
+        isAvailableForInstantMeeting?: boolean;
         oldUsername: string;
         oldEmail: string;
         oldTimeZone: string;
@@ -113,6 +114,9 @@ export class UserService {
         if(params.timezone && params.timezone !== params.oldTimeZone) {
             updateData.timezone = params.timezone;
         }
+        if(typeof params.isAvailableForInstantMeeting === "boolean") {
+            updateData.isAvailableForInstantMeeting = params.isAvailableForInstantMeeting;
+        }
         if(Object.keys(updateData).length) {
             if(updateData.username) {
                 const userWithTheSameUsernameInDb = await this.usersServiceDb.findByUsernameAndNotId(updateData.username, params.userId);
@@ -127,7 +131,8 @@ export class UserService {
             id: params.userId,
             username: (params.username && params.username !== params.oldUsername) ? params.username : params.oldUsername,
             email: params.oldEmail,
-            timezone: (params.timezone && params.timezone !== params.oldTimeZone) ? params.timezone : params.oldTimeZone
+            timezone: (params.timezone && params.timezone !== params.oldTimeZone) ? params.timezone : params.oldTimeZone,
+            isAvailableForInstantMeeting: params.isAvailableForInstantMeeting
         }, {
             secret: this.configService.getOrThrow("USER_AUTH_JWT_SECRET"),
             expiresIn: this.configService.getOrThrow("USER_AUTH_JWT_EXPIRES_IN") 
@@ -161,7 +166,8 @@ export class UserService {
             id: userInDb.id, 
             email: parsedDataFromCache.email, 
             username: userInDb.username,
-            timezone: userInDb.timezone
+            timezone: userInDb.timezone,
+            isAvailableForInstantMeeting: userInDb.isAvailableForInstantMeeting
         }, {
             secret: this.configService.getOrThrow("USER_AUTH_JWT_SECRET"),
             expiresIn: this.configService.getOrThrow("USER_AUTH_JWT_EXPIRES_IN") 
@@ -202,7 +208,8 @@ export class UserService {
             password: passwordHash,
             isConfirmed: true,
             status: UserStatus.OFFLINE,
-            timezone: params.timezone
+            timezone: params.timezone,
+            isAvailableForInstantMeeting: true
         });
     }
 

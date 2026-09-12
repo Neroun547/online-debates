@@ -37,6 +37,9 @@ export class User {
     @Column({ type: "varchar", length: 50, nullable: true })
     timezone!: string;
 
+    @Column({ type: "bool", default: true })
+    isAvailableForInstantMeeting!: boolean;
+
     @OneToMany(() => Subject, (subject: Subject) => subject.user)
     subjects?: Subject[];
 

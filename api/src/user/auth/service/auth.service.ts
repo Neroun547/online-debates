@@ -14,7 +14,7 @@ export class AuthService {
         private configService: ConfigService
     ) {}
 
-    async auth(body: AuthDto): Promise<{ token: string; userId: number; }> {
+    async auth(body: AuthDto): Promise<{ token: string; userId: number; isOnline: boolean; }> {
         const userInDb = await this.usersServiceDb.findByEmailOrUsernameWithSecureParams(body.usernameOrEmail);
 
         if(!userInDb) {
@@ -31,7 +31,8 @@ export class AuthService {
                 id: userInDb.id, 
                 email: userInDb.email, 
                 username: userInDb.username,
-                timezone: userInDb.timezone
+                timezone: userInDb.timezone,
+                isAvailableForInstantMeeting: userInDb.isAvailableForInstantMeeting
             }, 
             { 
                 secret: this.configService.getOrThrow("USER_AUTH_JWT_SECRET"),
@@ -42,7 +43,8 @@ export class AuthService {
         
         return {
             token: token,
-            userId: userInDb.id ?? 0
+            userId: userInDb.id ?? 0,
+            isOnline: true
         };
     }
     private checkPassword(hash: string, password: string): boolean {

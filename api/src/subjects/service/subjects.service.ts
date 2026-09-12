@@ -9,6 +9,7 @@ import { UserDomainInterface } from "src/db/user/interfaces/user.interfaces";
 import { AdminServiceDb } from "src/db/admin/admin.service";
 import { GetSubjectsResponseDto } from "../dto/get-subjects-response.dto";
 import { AdminUpdateSubjectDto } from "../dto/admin-update-subject.dto";
+import { UserStatus } from "src/db/user/user.entity";
 
 @Injectable()
 export class SubjectsService {
@@ -34,7 +35,10 @@ export class SubjectsService {
                     isTheSameUser: true
                 }
             }
-            return user;
+            return {
+                ...user,
+                isAvailableForInstantMeeting: user.status === UserStatus.ONLINE && user.isAvailableForInstantMeeting
+            };
         });
     }
     async getSubjectWithUserAndCategoryById(id: number): Promise<GetSubjectByIdWithCategoryAndUserResponseDto> {

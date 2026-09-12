@@ -36,7 +36,8 @@ export class SignupService {
                 password: passwordHash,
                 isConfirmed: false,
                 status: UserStatus.OFFLINE,
-                timezone: body.timezone
+                timezone: body.timezone,
+                isAvailableForInstantMeeting: true
             });
 
             await this.cacheManager.set(randomHash, createdUser.id, Number(this.configService.getOrThrow("SIGNUP_CONFIRM_ACCOUNT_LETTER_TTL")));

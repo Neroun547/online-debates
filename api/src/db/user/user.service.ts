@@ -54,7 +54,8 @@ export class UserServiceDb {
                     username: user.username,
                     email: user.email,
                     status: user.status,
-                    timezone: user.timezone
+                    timezone: user.timezone,
+                    isAvailableForInstantMeeting: user.isAvailableForInstantMeeting
                 });
             }
         }

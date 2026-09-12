@@ -8,7 +8,8 @@ export class UserMapper {
             email: user.email,
             username: user.username,
             status: user.status,
-            timezone: user.timezone
+            timezone: user.timezone,
+            isAvailableForInstantMeeting: user.isAvailableForInstantMeeting
         }
     }
     static toDomainWithSecureParams(user: User): UserInterface {
@@ -19,7 +20,8 @@ export class UserMapper {
             isConfirmed: user.isConfirmed,
             password: user.password,
             status: user.status,
-            timezone: user.timezone
+            timezone: user.timezone,
+            isAvailableForInstantMeeting: user.isAvailableForInstantMeeting
         }
     }
     static toSave(user: UserInterface): User {

@@ -17,6 +17,8 @@ import type { TransportProduceDataRequestInterface } from './interfaces/transpor
 import type { TransportProduceRequestInterface } from './interfaces/transport-produce-request.interface'
 import type { TransportConnectRequestInterface } from './interfaces/transport-connect-request.interface'
 import type { GetChatMessagesResponseInterface } from './interfaces/get-chat-messages-response.interface'
+import type { StartSessionNowRequestInterface } from './interfaces/start-session-now-request.interface'
+import type { StartSessionNowResponseInterface } from './interfaces/start-session-now-response.interface'
 
 interface ConsumeResponseInterface {
   id: string
@@ -31,6 +33,15 @@ export const useSessionsStore = defineStore('sessions', {
     isError: false
   }),
   actions: {
+    async startSessionNow(params: StartSessionNowRequestInterface): Promise<StartSessionNowResponseInterface | undefined> {
+      try {
+        this.clearErrorState();
+
+        return await useApiFetch<StartSessionNowResponseInterface>("/sessions/book-now", { method: "POST", body: params });
+      } catch(error: any) {
+        this.setError(error.response._data.message);
+      }
+    },
     async consume(params: ConsumeRequestInterface): Promise<ConsumeResponseInterface | undefined> {
       try {
         this.clearErrorState()
@@ -46,7 +57,7 @@ export const useSessionsStore = defineStore('sessions', {
           }
         )
       } catch (error: any) {
-        this.setError(getErrorMessage(error))
+        this.setError(error.response._data.message);
       }
     },
     async resumeConsumer(params: ResumeConsumeRequestInterface): Promise<void> {
@@ -63,7 +74,7 @@ export const useSessionsStore = defineStore('sessions', {
           }
         )
       } catch (error: any) {
-        this.setError(getErrorMessage(error))
+        this.setError(error.response._data.message);
       }
     },
     async getUserSessions(
@@ -77,7 +88,7 @@ export const useSessionsStore = defineStore('sessions', {
           query: params
         })
       } catch (error: any) {
-        this.setError(getErrorMessage(error))
+        this.setError(error.response._data.message);
       }
     },
     async transportProduceData(params: TransportProduceDataRequestInterface): Promise<TransportProduceDataResponseInterface | undefined> {
@@ -95,7 +106,7 @@ export const useSessionsStore = defineStore('sessions', {
                 }
             });
         } catch(error: any) {
-            this.setError(error);
+            this.setError(error.response._data.message);
         }
     },
     async transportProduce(params: TransportProduceRequestInterface): Promise<{ id: string } | undefined> {
@@ -111,7 +122,7 @@ export const useSessionsStore = defineStore('sessions', {
                 }
             });
         } catch(error: any) {
-            this.setError(error);
+            this.setError(error.response._data.message);
         }
     },  
     async transportConnect(params: TransportConnectRequestInterface): Promise<void> {
@@ -127,7 +138,7 @@ export const useSessionsStore = defineStore('sessions', {
                 } 
             });
         } catch(error: any) {
-            this.setError(error);
+            this.setError(error.response._data.message);
         }
     },
     async initSession(sessionId: number, direction: "send" | "recv"): Promise<InitWebRTCSessionResponseInterface | undefined> {
@@ -143,7 +154,7 @@ export const useSessionsStore = defineStore('sessions', {
                 }
             );
         } catch(error: any) {
-            this.setError(error);
+            this.setError(error.response._data.message);
         }
     },
     async getProducerData(sessionId: number): Promise<GetProducerDataResponseInterface | undefined> {
@@ -154,7 +165,7 @@ export const useSessionsStore = defineStore('sessions', {
                 method: "GET"
             });
         } catch(error: any) {
-            this.setError(error);
+            this.setError(error.response._data.message);
         }
     },
     async getChatMessages(params: {
@@ -169,7 +180,7 @@ export const useSessionsStore = defineStore('sessions', {
           method: "GET"
         });
       } catch(error: any) {
-        this.setError(error);
+        this.setError(error.response._data.message);
       }
     },
     setError(value: any) {

@@ -134,6 +134,28 @@
               }}
             </p>
           </div>
+          <div
+            v-if="
+              !session.slot &&
+              session.createdAt &&
+              session.creatorId === userStore.userId
+            "
+          >
+            <p class="font-medium text-highlighted">
+              Session booked with you immediate at {{ session.createdAt }}
+            </p>
+          </div>
+          <div
+            v-if="
+              !session.slot &&
+              session.createdAt &&
+              session.creatorId !== userStore.userId
+            "
+          >
+            <p class="font-medium text-highlighted">
+              You booked session immediate at {{ session.createdAt }}
+            </p>
+          </div>
         </div>
 
         <div
@@ -152,7 +174,8 @@
               :text="'Start at ' + session.slot?.startTime"
               v-if="
                 !isSessionStarted(session.slot?.startTime ?? '') &&
-                session.status === 'booked'
+                session.status === 'booked' &&
+                session.slot
               "
             >
               <UButton label="Start" class="cursor-pointer" :disabled="true" />
@@ -160,8 +183,19 @@
             <UTooltip
               v-if="
                 isSessionStarted(session.slot?.startTime ?? '') &&
-                session.status === 'booked'
+                session.status === 'booked' &&
+                session.slot
               "
+              :text="'Start now'"
+            >
+              <UButton
+                label="Start"
+                class="cursor-pointer"
+                @click="startSession(session.id)"
+              />
+            </UTooltip>
+            <UTooltip
+              v-if="session.status === 'booked' && !session.slot"
               :text="'Start now'"
             >
               <UButton

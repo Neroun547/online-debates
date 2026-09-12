@@ -28,6 +28,7 @@ export interface UserSessionInterface {
   status: SessionStatus
   creatorId: number
   customerId: number
+  createdAt: string;
   creator?: SessionUserInterface
   customer?: SessionUserInterface
   slot?: SessionSlotInterface

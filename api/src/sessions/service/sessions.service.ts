@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable, NotFoundException } from "@nestjs/common";
+import { BadRequestException, Injectable, InternalServerErrorException, NotFoundException } from "@nestjs/common";
 import { GetAllUserSessionsStatus } from "../dto/get-all-user-sessions-request.dto";
 import { DateTime } from "luxon";
 import { SessionsServiceDb } from "src/db/sessions/sessions.service";
@@ -57,7 +57,11 @@ export class SessionsService {
                     }
                 }
             }   
-            return item;
+            return { 
+                ...item, 
+                isBookedNow: true, 
+                createdAt: parseMessageDateForRecipient(item.createdAt, userInDb.timezone)
+            }
         });
     }
 
@@ -87,6 +91,25 @@ export class SessionsService {
             userId: userId,
             slotAuthorId: slotInDb.userId
         });    
+    }
+
+    async bookSessionNow(params: {
+        creatorId: number;
+        customerId: number;
+        categoryId: number;
+        subjectId: number;
+    }): Promise<number> {
+        const savedSessionId = await this.sessionsServiceDb.saveSessionWithoutSlot({
+            customerId: params.customerId,
+            creatorId: params.creatorId,
+            categoryId: params.categoryId,
+            subjectId: params.subjectId
+        });
+
+        if(!savedSessionId) {
+            throw new InternalServerErrorException({ message: "Save session failed" });
+        }
+        return savedSessionId;
     }
 
     async saveMessageAndReturn(params: {

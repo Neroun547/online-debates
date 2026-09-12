@@ -46,7 +46,8 @@ export class UsersController {
             timezone: body.timezone?.trim(),
             oldEmail: req["user"].email,
             oldUsername: req["user"].username,
-            oldTimeZone: req["user"].timezone
+            oldTimeZone: req["user"].timezone,
+            isAvailableForInstantMeeting: body.isAvailableForInstantMeeting
         });
 
         return { token: result.token, isMailSent: result.isMailSent };
@@ -66,7 +67,8 @@ export class UsersController {
             id: req["user"].id,
             username: req["user"].username,
             email: req["user"].email,
-            timezone: req["user"].timezone
+            timezone: req["user"].timezone,
+            isAvailableForInstantMeeting: req["user"].isAvailableForInstantMeeting
         }
     } 
 

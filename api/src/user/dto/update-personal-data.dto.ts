@@ -1,4 +1,4 @@
-import { IsEmail, IsOptional, IsString, Length } from "class-validator";
+import { IsBoolean, IsEmail, IsOptional, IsString, Length } from "class-validator";
 
 export class UpdateUserPersonalDataDto {
     @IsOptional()
@@ -14,5 +14,9 @@ export class UpdateUserPersonalDataDto {
     @IsString()
     @Length(1, 50)
     timezone?: string;
+
+    @IsOptional()
+    @IsBoolean()
+    isAvailableForInstantMeeting?: boolean;
 }
 

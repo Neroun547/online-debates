@@ -14,8 +14,8 @@ export class Sessions {
     @PrimaryGeneratedColumn()
     id!: number;
 
-    @Column()
-    slotId!: number;
+    @Column({ nullable: true })
+    slotId!: number | null;
 
     @Column({ 
         type: "enum",
@@ -29,6 +29,9 @@ export class Sessions {
     @Column()
     customerId!: number;
 
+    @Column({ type: "datetime" })
+    createdAt!: Date | string;
+
     @ManyToOne(() => User, (user) => user.id, { onDelete: "CASCADE", onUpdate: "CASCADE" })
     @JoinColumn({ name: "creatorId" })
     creator!: User;
@@ -37,7 +40,7 @@ export class Sessions {
     @JoinColumn({ name: "customerId" })
     customer!: User; 
     
-    @OneToOne(() => Slots, (slot) => slot.id, { onDelete: "CASCADE", onUpdate: "CASCADE" })
+    @OneToOne(() => Slots, (slot) => slot.id, { onDelete: "CASCADE", onUpdate: "CASCADE", nullable: true })
     @JoinColumn({ name: "slotId" })
     slot!: Slots;
 

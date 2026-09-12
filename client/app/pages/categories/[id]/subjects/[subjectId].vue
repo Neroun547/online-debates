@@ -31,6 +31,9 @@ import { useSlotsStore } from "~/store/slots/slots.store";
 import type { UserInterface } from "~/store/user/interfaces/user-response.interface";
 import type { GetSlotsForBookingResponseInterface } from "~/store/slots/interfaces/get-slots-for-booking-response.interface";
 import { DateTime } from "luxon";
+import { useSessionsStore } from "~/store/sessions/sessions.store";
+
+const sessionStore = useSessionsStore();
 
 const toast = useToast();
 
@@ -82,6 +85,25 @@ const usersTableColumns = [
       if (row.original.id === usersStore.userId) {
         return "It's you";
       }
+      if (row.original.isAvailableForInstantMeeting) {
+        return [
+          h(UButton, {
+            label: "Book session",
+            class: "cursor-pointer",
+            onClick: function () {
+              activeBookingUser.value = row.original;
+              openBookSessionModal();
+            },
+          }),
+          h(UButton, {
+            label: "Start session now",
+            class: "cursor-pointer ml-5",
+            onClick: function () {
+              startSessionNow(row.original.id);
+            },
+          }),
+        ];
+      }
       return h(UButton, {
         label: "Book session",
         class: "cursor-pointer",
@@ -128,14 +150,44 @@ async function bookSession(params: {
   isBookingButtonLoading.value = false;
 }
 
+async function startSessionNow(userId: number) {
+  const response = await sessionStore.startSessionNow({
+    userId: userId,
+    subjectId: Number(route.params.subjectId),
+    categoryId: Number(route.params.id),
+  });
+
+  if (sessionStore.isError) {
+    toast.add({
+      title: "Error",
+      description: sessionStore.errorMessage,
+      color: "error",
+    });
+  } else {
+    if (response && typeof response.sessionId === "number") {
+      toast.add({
+        title: "Success",
+        description: "Session booked successfully",
+      });
+
+      window.location.href = "/my-sessions/" + response.sessionId;
+    }
+  }
+}
+
 async function loadSlots(date: string) {
   if (activeBookingUser.value) {
     isSlotsLoading.value = true;
-    
+
     const currentDate = DateTime.fromJSDate(new Date()).toFormat("yyyy-MM-dd");
 
     const response = await slotsStore.getSlotsForBooking({
-      dateFrom: date + " " + (currentDate === date ? DateTime.now().toFormat("HH:mm:ss") : "00:00:00"),
+      dateFrom:
+        date +
+        " " +
+        (currentDate === date
+          ? DateTime.now().toFormat("HH:mm:ss")
+          : "00:00:00"),
       dateTo: date + " 23:59:59",
       subjectId: Number(route.params.subjectId),
       userId: activeBookingUser.value.id,

@@ -1,4 +1,4 @@
-import { ConflictException, Injectable, NotFoundException } from "@nestjs/common";
+import { BadRequestException, ConflictException, Injectable, NotFoundException } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Sessions, SessionsStatus } from "./sessions.entity";
 import { EntityManager, Repository } from "typeorm";
@@ -6,6 +6,10 @@ import { SessionsMapper } from "./sessions.mapper";
 import { Slots } from "../slots/slots.entity";
 import { GetAllUserSessionsStatus } from "src/sessions/dto/get-all-user-sessions-request.dto";
 import { SessionsDomainInterface } from "./interfaces/sessions.interfaces";
+import { User, UserStatus } from "../user/user.entity";
+import { Category } from "../category/category.entity";
+import { Subject } from "../subjects/subject.entity";
+import { DateTime } from "luxon";
 
 @Injectable()
 export class SessionsServiceDb {
@@ -14,6 +18,55 @@ export class SessionsServiceDb {
         private em: EntityManager
     ) {}
 
+    async getBookedNowSessions(userId: number): Promise<SessionsDomainInterface[]> {
+        const data = await this.sessionsRepository.find({ where: [ { creatorId: userId }, { customerId: userId } ], relations: { customer: true, creator: true } });
+
+        return data.map(item => SessionsMapper.toDomain(item));
+    }
+    async saveSessionWithoutSlot(
+        params: {
+            customerId: number;
+            creatorId: number; 
+            categoryId: number;
+            subjectId: number;
+        }
+    ): Promise<number | undefined> {
+        let savedId: number | undefined;
+
+        await this.em.transaction("READ COMMITTED", async (tx) => {
+            const creatorInDb = await tx.findOne(User, { where: { id: params.creatorId } });
+
+            if(!creatorInDb) {
+                throw new NotFoundException({ message: "User not found" });
+            }
+            const customerInDb = await tx.findOne(User, { where: { id: params.customerId } });
+
+            if(!customerInDb) {
+                throw new NotFoundException({ message: "User not found" });
+            }
+            const categoryInDb = await tx.findOne(Category, { where: { id: params.categoryId } });
+
+            if(!categoryInDb) {
+                throw new NotFoundException({ message: "Category not found" });
+            }
+            const subjectInDb = await tx.findOne(Subject, { where: { id: params.subjectId } });
+
+            if(!subjectInDb) {
+                throw new NotFoundException({ message: "Subject not found" });
+            }
+            const sessionModel = SessionsMapper.toSave({
+                slotId: null,
+                status: SessionsStatus.BOOKED,
+                creatorId: params.creatorId,
+                customerId: params.customerId,
+                createdAt: DateTime.fromJSDate(new Date()).toUTC().toFormat("yyyy-MM-dd HH:mm:ss")
+            });
+            const saved = await tx.save(sessionModel);
+
+            savedId = saved.id;
+        });
+        return savedId;
+    }
     async existsById(id: number): Promise<boolean> {
         return await this.sessionsRepository.exists({ where: { id: id } });
     }
@@ -53,7 +106,7 @@ export class SessionsServiceDb {
                 .leftJoinAndSelect("session.creator", "creator")
                 .leftJoinAndSelect("slot.subject", "subject")
                 .leftJoinAndSelect("subject.category", "category")
-                .where("(session.creatorId = :creatorId OR session.customerId = :customerId) AND (slot.startTime >= :startTime AND slot.endTime <= :endTime)", 
+                .where("(session.creatorId = :creatorId OR session.customerId = :customerId) AND (slot.startTime >= :startTime AND slot.endTime <= :endTime) OR (session.slotId IS NULL AND session.creatorId = :creatorId OR session.customerId = :customerId)", 
                 { 
                     creatorId: params.userId, 
                     customerId: params.userId, 
@@ -72,7 +125,7 @@ export class SessionsServiceDb {
                 .leftJoinAndSelect("session.creator", "creator")
                 .leftJoinAndSelect("slot.subject", "subject")
                 .leftJoinAndSelect("subject.category", "category")
-                .where("(session.creatorId = :creatorId) AND (slot.startTime >= :startTime AND slot.endTime <= :endTime)", 
+                .where("(session.creatorId = :creatorId) AND (slot.startTime >= :startTime AND slot.endTime <= :endTime) OR (session.slotId IS NULL AND session.creatorId = :creatorId OR session.customerId = :customerId)", 
                 { 
                     creatorId: params.userId, 
                     startTime: params.dateFrom,
@@ -90,7 +143,7 @@ export class SessionsServiceDb {
                 .leftJoinAndSelect("session.creator", "creator")
                 .leftJoinAndSelect("slot.subject", "subject")
                 .leftJoinAndSelect("subject.category", "category")
-                .where("(session.customerId = :customerId) AND (slot.startTime >= :startTime AND slot.endTime <= :endTime)", 
+                .where("(session.customerId = :customerId) AND (slot.startTime >= :startTime AND slot.endTime <= :endTime) OR (session.slotId IS NULL AND session.creatorId = :creatorId OR session.customerId = :customerId)", 
                 { 
                     customerId: params.userId, 
                     startTime: params.dateFrom,
@@ -145,7 +198,8 @@ export class SessionsServiceDb {
                 slotId: params.slotId,
                 status: SessionsStatus.BOOKED,
                 creatorId: params.slotAuthorId,
-                customerId: params.userId
+                customerId: params.userId,
+                createdAt: DateTime.fromJSDate(new Date()).toUTC().toFormat("yyyy-MM-dd HH:mm:ss")
             });
             await tx.save(sessionModel);
         });

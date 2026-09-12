@@ -82,7 +82,7 @@ type SessionServer = Server<
 @WebSocketGateway({
   namespace: '/sessions',
   cors: {
-    origin: process.env.CLIENT_CORS_ORIGIN ?? 'http://localhost:3103',
+    origin: process.env.CLIENT_CORS_ORIGIN ?? 'http://192.168.1.100:3103',
   },
 })
 export class SessionsGateway implements OnGatewayConnection, OnGatewayDisconnect {

@@ -43,6 +43,13 @@
               <UFormField label="Timezone" name="timezone" class="mt-5 w-full">
                 <TimezoneSelect v-model="user.timezone" />
               </UFormField>
+              <UFormField
+                label="Is available for instant meeting"
+                name="isAvailableForInstantMeeting"
+                class="mt-5 w-full"
+              >
+                <USwitch v-model="user.isAvailableForInstantMeeting" color="success" />
+              </UFormField>
 
               <UButton
                 class="w-min mt-5 block cursor-pointer"
@@ -128,6 +135,8 @@ import ConfirmYourNewEmailModal from "~/components/settings/ConfirmYourNewEmailM
 const updateEmailUserSchema = z.object({
   email: z.email(),
   username: z.string().trim().min(6).max(50),
+  timezone: z.string(),
+  isAvailableForInstantMeeting: z.boolean(),
 });
 
 const updatePasswordSchema = z
@@ -157,12 +166,14 @@ const oldUserData = ref<GetUserInfoResponseInterface>({
   username: "",
   email: "",
   timezone: "",
+  isAvailableForInstantMeeting: true,
 });
 
 const user = ref<GetUserInfoResponseInterface>({
   username: "",
   email: "",
   timezone: "",
+  isAvailableForInstantMeeting: true,
 });
 
 const isDeleteAccountModalShow = ref(false);
@@ -207,6 +218,7 @@ async function getUser() {
     user.value.username = data.username;
     user.value.email = data.email;
     user.value.timezone = data.timezone;
+    user.value.isAvailableForInstantMeeting = data.isAvailableForInstantMeeting;
 
     oldUserData.value.username = data.username;
     oldUserData.value.email = data.email;
@@ -218,6 +230,7 @@ async function updateUserPersonalInfo() {
     username: user.value.username,
     email: user.value.email,
     timezone: user.value.timezone,
+    isAvailableForInstantMeeting: user.value.isAvailableForInstantMeeting
   });
 
   isConfirmNewEmailModalShow.value = result.isMailSent;

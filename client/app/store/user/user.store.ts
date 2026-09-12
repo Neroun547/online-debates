@@ -132,6 +132,9 @@ export const useUserStore = defineStore("user", {
         setUserId(value: number) {
             this.userId = value;
         },
+        setIsOnline(value: boolean) {
+            this.isOnline = value;
+        },
         async getUserInfo(): Promise<GetUserInfoResponseInterface | undefined> {
             try {
                 this.clearErrorState();
@@ -160,6 +163,7 @@ export const useUserStore = defineStore("user", {
                     this.setUserId(response.userId);
                     this.setToken(response.token);
                     this.setIsAuth(true);
+                    this.setIsOnline(response.isOnline);
                 }
             } catch(error: any) {
                 this.setError(error.response._data.message);

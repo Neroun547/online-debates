@@ -105,7 +105,6 @@ export class SessionsService {
             categoryId: params.categoryId,
             subjectId: params.subjectId
         });
-
         if(!savedSessionId) {
             throw new InternalServerErrorException({ message: "Save session failed" });
         }

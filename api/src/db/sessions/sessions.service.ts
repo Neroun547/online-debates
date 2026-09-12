@@ -39,6 +39,9 @@ export class SessionsServiceDb {
             if(!creatorInDb) {
                 throw new NotFoundException({ message: "User not found" });
             }
+            if(!creatorInDb.isAvailableForInstantMeeting) {
+                throw new BadRequestException({ message: "User not available" });
+            }
             const customerInDb = await tx.findOne(User, { where: { id: params.customerId } });
 
             if(!customerInDb) {

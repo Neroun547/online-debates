@@ -133,6 +133,9 @@ export class SessionsGateway implements OnGatewayConnection, OnGatewayDisconnect
     @ConnectedSocket() client: SessionSocket,
     @MessageBody() payload: SessionChatMessagePayload
   ) {
+    if(!payload || !payload.message) {
+      return;
+    }
     const sessionId = this.validateSessionId(payload.sessionId);
     const user = this.getAuthenticatedUser(client);
     const sessionInDb = await this.sessionsServiceDb.findByIdAndUserIdWithSenderAndRecipient(sessionId, user.id);

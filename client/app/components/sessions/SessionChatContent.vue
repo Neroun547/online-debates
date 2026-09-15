@@ -50,6 +50,7 @@
       >
         <textarea
           v-model="message"
+          @keydown.enter.exact.prevent="sendMessage"
           rows="1"
           aria-label="Message"
           placeholder="Write a message..."
@@ -88,7 +89,11 @@ const emit = defineEmits<{
 const message = ref("");
 
 function sendMessage() {
-  emit("sendMessage", message.value);
+  const trimmedMessage = message.value.trim();
+
+  if (!trimmedMessage) return;
+
+  emit("sendMessage", trimmedMessage);
   message.value = "";
 }
 

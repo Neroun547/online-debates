@@ -28,7 +28,7 @@ export class SubjectsService {
         }
         const data = await this.usersServiceDb.findInSubject(subjectId, page, limit);
 
-        return data.map((user: UserDomainInterface) => {
+        return Promise.all(data.map(async (user: UserDomainInterface) => {
             if(user.id === userId) {
                 return {
                     ...user,
@@ -37,9 +37,9 @@ export class SubjectsService {
             }
             return {
                 ...user,
-                isAvailableForInstantMeeting: user.status === UserStatus.ONLINE && user.isAvailableForInstantMeeting
+                isAvailableForPermanentSessions: user.isAvailableForPermanentSessions
             };
-        });
+        }));
     }
     async getSubjectWithUserAndCategoryById(id: number): Promise<GetSubjectByIdWithCategoryAndUserResponseDto> {
         const subjectInDb = await this.subjectsServiceDb.findByIdWithCategoryAndUser(id);

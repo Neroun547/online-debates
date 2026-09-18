@@ -44,11 +44,18 @@
                 <TimezoneSelect v-model="user.timezone" />
               </UFormField>
               <UFormField
-                label="Is available for instant meeting"
-                name="isAvailableForInstantMeeting"
+                label="Is available for permanent sessions"
+                name="isAvailableForPermanentSessions"
                 class="mt-5 w-full"
               >
-                <USwitch v-model="user.isAvailableForInstantMeeting" color="success" />
+                <USwitch
+                  v-model="user.isAvailableForPermanentSessions"
+                  color="success"
+                />
+                <p class="italic mt-5 text-xs">
+                  By enabling this option, users can establish a persistent
+                  session with you to communicate with you at any time.
+                </p>
               </UFormField>
 
               <UButton
@@ -136,7 +143,7 @@ const updateEmailUserSchema = z.object({
   email: z.email(),
   username: z.string().trim().min(6).max(50),
   timezone: z.string(),
-  isAvailableForInstantMeeting: z.boolean(),
+  isAvailableForPermanentSessions: z.boolean(),
 });
 
 const updatePasswordSchema = z
@@ -166,14 +173,14 @@ const oldUserData = ref<GetUserInfoResponseInterface>({
   username: "",
   email: "",
   timezone: "",
-  isAvailableForInstantMeeting: true,
+  isAvailableForPermanentSessions: true,
 });
 
 const user = ref<GetUserInfoResponseInterface>({
   username: "",
   email: "",
   timezone: "",
-  isAvailableForInstantMeeting: true,
+  isAvailableForPermanentSessions: true,
 });
 
 const isDeleteAccountModalShow = ref(false);
@@ -218,7 +225,7 @@ async function getUser() {
     user.value.username = data.username;
     user.value.email = data.email;
     user.value.timezone = data.timezone;
-    user.value.isAvailableForInstantMeeting = data.isAvailableForInstantMeeting;
+    user.value.isAvailableForPermanentSessions = data.isAvailableForPermanentSessions;
 
     oldUserData.value.username = data.username;
     oldUserData.value.email = data.email;
@@ -230,7 +237,7 @@ async function updateUserPersonalInfo() {
     username: user.value.username,
     email: user.value.email,
     timezone: user.value.timezone,
-    isAvailableForInstantMeeting: user.value.isAvailableForInstantMeeting
+    isAvailableForPermanentSessions: user.value.isAvailableForPermanentSessions,
   });
 
   isConfirmNewEmailModalShow.value = result.isMailSent;

@@ -2,6 +2,7 @@ import { Column, Entity, JoinColumn, ManyToMany, ManyToOne, OneToMany, OneToOne,
 import { User } from "../user/user.entity";
 import { Slots } from "../slots/slots.entity";
 import { Messages } from "../messages/messages.entity";
+import { Subject } from "../subjects/subject.entity";
 
 export enum SessionsStatus {
     BOOKED = "booked",
@@ -31,6 +32,13 @@ export class Sessions {
 
     @Column({ type: "datetime" })
     createdAt!: Date | string;
+
+    @Column({ nullable: true })
+    subjectId!: number;
+
+    @ManyToOne(() => Subject, { nullable: true })
+    @JoinColumn({ name: "subjectId" })
+    subject!: Subject;
 
     @ManyToOne(() => User, (user) => user.id, { onDelete: "CASCADE", onUpdate: "CASCADE" })
     @JoinColumn({ name: "creatorId" })

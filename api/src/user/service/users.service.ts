@@ -67,7 +67,7 @@ export class UserService {
         email?: string; 
         username?: string;
         timezone?: string;
-        isAvailableForInstantMeeting?: boolean;
+        isAvailableForPermanentSessions?: boolean;
         oldUsername: string;
         oldEmail: string;
         oldTimeZone: string;
@@ -114,8 +114,8 @@ export class UserService {
         if(params.timezone && params.timezone !== params.oldTimeZone) {
             updateData.timezone = params.timezone;
         }
-        if(typeof params.isAvailableForInstantMeeting === "boolean") {
-            updateData.isAvailableForInstantMeeting = params.isAvailableForInstantMeeting;
+        if(typeof params.isAvailableForPermanentSessions === "boolean") {
+            updateData.isAvailableForPermanentSessions = params.isAvailableForPermanentSessions;
         }
         if(Object.keys(updateData).length) {
             if(updateData.username) {
@@ -132,7 +132,7 @@ export class UserService {
             username: (params.username && params.username !== params.oldUsername) ? params.username : params.oldUsername,
             email: params.oldEmail,
             timezone: (params.timezone && params.timezone !== params.oldTimeZone) ? params.timezone : params.oldTimeZone,
-            isAvailableForInstantMeeting: typeof params.isAvailableForInstantMeeting === "boolean" ? params.isAvailableForInstantMeeting : userInDb.isAvailableForInstantMeeting,
+            isAvailableForPermanentSessions: typeof params.isAvailableForPermanentSessions === "boolean" ? params.isAvailableForPermanentSessions : userInDb.isAvailableForPermanentSessions,
             status: userInDb.status
         });
 
@@ -165,7 +165,7 @@ export class UserService {
             email: parsedDataFromCache.email,
             username: userInDb.username,
             timezone: userInDb.timezone,
-            isAvailableForInstantMeeting: userInDb.isAvailableForInstantMeeting,
+            isAvailableForPermanentSessions: userInDb.isAvailableForPermanentSessions,
             status: userInDb.status
         });
 
@@ -205,7 +205,7 @@ export class UserService {
             isConfirmed: true,
             status: UserStatus.OFFLINE,
             timezone: params.timezone,
-            isAvailableForInstantMeeting: true
+            isAvailableForPermanentSessions: true
         });
     }
 

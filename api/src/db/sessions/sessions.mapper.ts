@@ -14,7 +14,8 @@ export class SessionsMapper {
             createdAt: model.createdAt,
             slot: model.slot ? SlotsMapper.toDomain(model.slot) : undefined,
             creator: model.creator ? UserMapper.toDomain(model.creator) : undefined,
-            customer: model.customer ? UserMapper.toDomain(model.customer) : undefined
+            customer: model.customer ? UserMapper.toDomain(model.customer) : undefined,
+            subjectId: model.subjectId
         }
     }
 

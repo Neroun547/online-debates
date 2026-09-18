@@ -2,6 +2,7 @@ import { Column, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColum
 import { User } from "../user/user.entity";
 import { Category } from "../category/category.entity";
 import { SlotsLock } from "../slots-lock/slots-lock.entity";
+import { Sessions } from "../sessions/sessions.entity";
 
 @Entity({ name: "subjects" })
 export class Subject {
@@ -27,5 +28,8 @@ export class Subject {
 
     @OneToMany(() => SlotsLock, (slotsLock) => slotsLock.subject)
     slotsLock!: SlotsLock[];
+
+    @OneToMany(() => Sessions, (sessions) => sessions.subject)
+    sessions!: Sessions[];
 }
 

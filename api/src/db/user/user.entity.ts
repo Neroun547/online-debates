@@ -38,7 +38,7 @@ export class User {
     timezone!: string;
 
     @Column({ type: "bool", default: true })
-    isAvailableForInstantMeeting!: boolean;
+    isAvailableForPermanentSessions!: boolean;
 
     @OneToMany(() => Subject, (subject: Subject) => subject.user)
     subjects?: Subject[];

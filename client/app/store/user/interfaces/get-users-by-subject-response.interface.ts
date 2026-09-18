@@ -4,7 +4,7 @@ export interface GetUsersBySubjectResponseInterface {
     username: string;
     status: string;
     timezone: string;
-    isAvailableForInstantMeeting: boolean;
+    isAvailableForPermanentSessions: boolean;
 }
 
 

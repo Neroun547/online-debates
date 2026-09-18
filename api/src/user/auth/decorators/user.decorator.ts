@@ -11,7 +11,7 @@ export const User = createParamDecorator<UserDomainInterface>(
         email: request.user.email,
         status: request.user.status,
         timezone: request.user.timezone,
-        isAvailableForInstantMeeting: request.user.isAvailableForInstantMeeting
+        isAvailableForPermanentSessions: request.user.isAvailableForPermanentSessions
     };
   },
 );

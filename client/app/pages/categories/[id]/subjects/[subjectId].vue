@@ -85,7 +85,7 @@ const usersTableColumns = [
       if (row.original.id === usersStore.userId) {
         return "It's you";
       }
-      if (row.original.isAvailableForInstantMeeting) {
+      if (row.original.isAvailableForPermanentSessions) {
         return [
           h(UButton, {
             label: "Book session",

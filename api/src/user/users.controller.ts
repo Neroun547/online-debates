@@ -46,7 +46,7 @@ export class UsersController {
             oldEmail: user.email,
             oldUsername: user.username,
             oldTimeZone: user.timezone,
-            isAvailableForInstantMeeting: body.isAvailableForInstantMeeting
+            isAvailableForPermanentSessions: body.isAvailableForPermanentSessions
         });
 
         return { token: result.token, isMailSent: result.isMailSent };
@@ -67,7 +67,7 @@ export class UsersController {
             username: user.username,
             email: user.email,
             timezone: user.timezone,
-            isAvailableForInstantMeeting: user.isAvailableForInstantMeeting
+            isAvailableForPermanentSessions: user.isAvailableForPermanentSessions
         }
     } 
 

@@ -9,7 +9,7 @@ export class UserMapper {
             username: user.username,
             status: user.status,
             timezone: user.timezone,
-            isAvailableForInstantMeeting: user.isAvailableForInstantMeeting
+            isAvailableForPermanentSessions: user.isAvailableForPermanentSessions
         }
     }
     static toDomainWithSecureParams(user: User): UserInterface {
@@ -21,7 +21,7 @@ export class UserMapper {
             password: user.password,
             status: user.status,
             timezone: user.timezone,
-            isAvailableForInstantMeeting: user.isAvailableForInstantMeeting
+            isAvailableForPermanentSessions: user.isAvailableForPermanentSessions
         }
     }
     static toSave(user: UserInterface): User {

@@ -9,7 +9,7 @@ export interface UserInterface {
     isConfirmed: boolean;
     status: UserStatus;
     timezone: string;
-    isAvailableForInstantMeeting: boolean;
+    isAvailableForPermanentSessions: boolean;
 }
 
 // Interface for update 
@@ -21,7 +21,7 @@ export interface UpdateUserInterface {
     isConfirmed?: boolean;
     status?: UserStatus;
     timezone?: string;
-    isAvailableForInstantMeeting?: boolean;
+    isAvailableForPermanentSessions?: boolean;
 }
 
 // Domain user interface. Without password or other secure data
@@ -31,6 +31,6 @@ export interface UserDomainInterface {
     email: string;
     status: UserStatus;
     timezone: string;
-    isAvailableForInstantMeeting: boolean;
+    isAvailableForPermanentSessions: boolean;
 }
 

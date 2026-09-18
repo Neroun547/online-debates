@@ -9,6 +9,7 @@ export interface SessionsInterface {
     creatorId: number;
     customerId: number; 
     createdAt: Date | string;
+    subjectId: number | null;
 }
 
 export interface SessionsDomainInterface {
@@ -18,6 +19,7 @@ export interface SessionsDomainInterface {
     creatorId: number;
     customerId: number;
     createdAt: Date | string;
+    subjectId: number | null;
     creator?: UserDomainInterface;
     customer?: UserDomainInterface; 
     slot?: SlotDomainInterface;

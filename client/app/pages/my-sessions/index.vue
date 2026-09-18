@@ -142,7 +142,8 @@
             "
           >
             <p class="font-medium text-highlighted">
-              Session booked with you immediate at {{ session.createdAt }}
+              This is a permanent session. Booked with you at
+              {{ session.createdAt }}
             </p>
           </div>
           <div
@@ -153,7 +154,8 @@
             "
           >
             <p class="font-medium text-highlighted">
-              You booked session immediate at {{ session.createdAt }}
+              This is a permanent session. You created it at
+              {{ session.createdAt }}
             </p>
           </div>
         </div>
@@ -304,24 +306,6 @@ function isSessionStarted(date: string): boolean {
   return DateTime.fromFormat(date, "yyyy-MM-dd HH:mm").toMillis() <= Date.now();
 }
 
-function toApiDate(value: string, endOfDay = false): string {
-  const date = DateTime.fromISO(value);
-  const boundary = endOfDay ? date.endOf("day") : date.startOf("day");
-
-  return boundary.toUTC().toISO() ?? value;
-}
-
-function sortSessions(
-  sessions: UserSessionInterface[],
-): UserSessionInterface[] {
-  return sessions.sort((firstSession, secondSession) => {
-    const firstStartTime = firstSession.slot?.startTime ?? "";
-    const secondStartTime = secondSession.slot?.startTime ?? "";
-
-    return firstStartTime.localeCompare(secondStartTime);
-  });
-}
-
 async function loadSessions(reset = false) {
   if (!isDateRangeValid.value) {
     if (reset) {
@@ -351,8 +335,8 @@ async function loadSessions(reset = false) {
     const response = await sessionsStore.getUserSessions({
       page: requestedPage,
       limit,
-      dateFrom: toApiDate(dateFrom.value),
-      dateTo: toApiDate(dateTo.value, true),
+      dateFrom: dateFrom.value,
+      dateTo: dateTo.value,
       status: selectedSessionFilterOption.value,
     });
 
@@ -371,7 +355,7 @@ async function loadSessions(reset = false) {
       (session) => !existingSessionIds.has(session.id),
     );
 
-    allSessions.value = sortSessions([...allSessions.value, ...newSessions]);
+    allSessions.value = [...allSessions.value, ...newSessions];
     page.value = requestedPage;
     hasMore.value = response.length === limit;
   } finally {

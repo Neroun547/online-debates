@@ -17,6 +17,7 @@ export class UpdateUserPersonalDataDto {
 
     @IsOptional()
     @IsBoolean()
-    isAvailableForInstantMeeting?: boolean;
+    isAvailableForPermanentSessions?: boolean;
 }
+
 

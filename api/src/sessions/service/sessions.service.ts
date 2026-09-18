@@ -59,7 +59,7 @@ export class SessionsService {
             }   
             return { 
                 ...item, 
-                isBookedNow: true, 
+                isPermanent: true, 
                 createdAt: parseMessageDateForRecipient(item.createdAt, userInDb.timezone)
             }
         });
@@ -89,7 +89,8 @@ export class SessionsService {
         await this.sessionsServiceDb.saveSession({
             slotId: slotId,
             userId: userId,
-            slotAuthorId: slotInDb.userId
+            slotAuthorId: slotInDb.userId,
+            subjectId: null
         });    
     }
 
@@ -99,7 +100,16 @@ export class SessionsService {
         categoryId: number;
         subjectId: number;
     }): Promise<number> {
-        const savedSessionId = await this.sessionsServiceDb.saveSessionWithoutSlot({
+        const permanentSessionInDb = await this.sessionsServiceDb.findPermanentSession({
+            customerId: params.customerId,
+            creatorId: params.creatorId,
+            subjectId: params.subjectId 
+        });
+
+        if(permanentSessionInDb) {
+            return permanentSessionInDb.id;
+        }
+        const savedSessionId = await this.sessionsServiceDb.savePermanentSession({
             customerId: params.customerId,
             creatorId: params.creatorId,
             categoryId: params.categoryId,

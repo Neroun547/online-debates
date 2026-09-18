@@ -31,9 +31,11 @@ import type { PropsFieldItemInterface } from "~/components/BaseUserCredentialsFo
 import { z } from "zod";
 import { useUserStore } from "~/store/user/user.store";
 import type { SignupRequestInterface } from "~/store/user/interfaces/signup-request.interface";
+import { useAppStore } from "~/store/app-store";
 
 const isFormLoading = ref(false);
 
+const appStore = useAppStore();
 const userStore = useUserStore();
 
 const isFormSubmittedSuccess = ref(false);
@@ -94,4 +96,8 @@ async function signup(data: SignupRequestInterface) {
   }
   isFormLoading.value = false;
 }
+
+onMounted(() => {
+  appStore.setIsLoading(false);
+});
 </script>

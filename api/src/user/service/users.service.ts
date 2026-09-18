@@ -209,6 +209,44 @@ export class UserService {
         });
     }
 
+    async sendPasswordRecoveryLink(email: string) {
+        const userInDb = await this.usersServiceDb.findByEmail(email);
+
+        if(!userInDb) {
+            throw new NotFoundException({ message: "User not found" });
+        }
+        const randomHash = createHmac("sha256", String(Date.now() + Math.floor(Math.random() * 1000))).digest("hex");
+        const passwordRecoveryLetterTTL = this.configService.getOrThrow("PASSWORD_RECOVERY_LETTER_TTL");
+
+        await this.cacheManager.set(randomHash, userInDb.id, Number(passwordRecoveryLetterTTL));
+  
+        const passwordRecoveryMailFrom = this.configService.getOrThrow("PASSWORD_RECOVERY_MAIL_FROM");
+        const passwordRecoveryMailSubject = this.configService.getOrThrow("PASSWORD_RECOVERY_MAIL_SUBJECT");
+        const passwordRecoveryMailLink = this.configService.getOrThrow("PASSWORD_RECOVERY_MAIL_LINK");
+
+        await this.mailerService.sendMailWithHtml({
+            from: passwordRecoveryMailFrom,
+            to: email,
+            subject: passwordRecoveryMailSubject,
+            html: `<a href="${passwordRecoveryMailLink + randomHash}">Click to recover password</a>`
+        });
+    }
+
+    async passwordRecovery(newPassword: string, hash: string) {
+        const dataInCache = await this.cacheManager.get(hash);
+
+        if(!dataInCache) {
+            throw new NotFoundException();
+        }
+        const newPasswordHash = createHmac(this.configService.getOrThrow("PASSWORD_HASH_ALGORITHM"), this.configService.getOrThrow("PASSWORD_HASH_KEY")).update(newPassword).digest("hex");
+        
+        await this.usersServiceDb.updateById(Number(dataInCache), { password: newPasswordHash });
+        this.cacheManager.del(hash)
+        .catch((error) => {
+            console.log("passwordRecovery: delete data from Redis error", error);
+        });
+    }
+
     async adminUpdateUser(params: {
         userId: number;
         email: string;

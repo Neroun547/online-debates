@@ -72,8 +72,10 @@
 </template>
 <script setup lang="ts">
 import { z } from "zod";
+import { useAppStore } from "~/store/app-store";
 import { useSupportStore } from "~/store/support/support.store";
 
+const appStore = useAppStore();
 const supportStore = useSupportStore();
 
 const toast = useToast();
@@ -114,4 +116,8 @@ async function saveMessage(e: Event) {
     });
   }
 }
+
+onMounted(() => {
+  appStore.setIsLoading(false);
+});
 </script>

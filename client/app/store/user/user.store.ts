@@ -115,6 +115,21 @@ export const useUserStore = defineStore("user", {
                 this.setError(error.response._data.message);
             }
         },
+        async sendPasswordRecoveryLink(email: string) {
+            try {
+                await useApiFetch("/users/send-password-recovery-link", { method: "POST", body: { email: email } });
+            } catch(error: any) {
+                console.log(error)
+                this.setError(error.response._data.message);
+            }
+        },
+        async passwordRecovery(newPassword: string, hash: string) {
+            try {
+                await useApiFetch("/users/password-recovery/" + hash, { method: "PATCH", body: { password: newPassword } });
+            } catch(error: any) {
+                this.setError(error.response._data.message);
+            }
+        },
         setError(value: any) {
             this.isError = true;
             this.errorMessage = getErrorMessage(value);

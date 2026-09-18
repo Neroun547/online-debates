@@ -42,7 +42,7 @@ onMounted(() => {
         <div
           :class="[
             'min-h-[100vh]',
-            !isCurrentSessionPage
+            !isCurrentSessionPage && !userStore.isAuth
               ? 'flex-10 w-[85%] ml-auto max-[1300px]:w-full mt-5'
               : 'w-full',
             isMenuOpen ? 'max-[1300px]:blur-sm' : 'max-[1300px]:blur-none',

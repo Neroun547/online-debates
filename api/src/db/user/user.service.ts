@@ -16,6 +16,14 @@ export class UserServiceDb {
         private em: EntityManager
     ) {}
 
+    async findByEmail(email: string): Promise<UserDomainInterface | null> {
+        const data = await this.repository.findOne({ where: { email: email } });
+
+        if(!data) {
+            return null;
+        }
+        return UserMapper.toDomain(data);
+    }
     async countAll() {
         return await this.repository.count();
     }

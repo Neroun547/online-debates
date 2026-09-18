@@ -1,4 +1,4 @@
-import { BadRequestException, Body, Controller, Delete, Get, Param, Patch, UseGuards } from "@nestjs/common";
+import { BadRequestException, Body, Controller, Delete, Get, Param, Patch, Post, UseGuards } from "@nestjs/common";
 import { UpdateUserOnlineStatusDto } from "./dto/update-user-online-status.dto";
 import { AuthGuard } from "./auth/auth.guard";
 import { UserService } from "./service/users.service";
@@ -7,6 +7,8 @@ import { UpdateUserPersonalDataDto } from "./dto/update-personal-data.dto";
 import { UpdateUserDataResponseDto } from "./dto/update-user-data-response.dto";
 import { User } from "./auth/decorators/user.decorator";
 import type { UserDomainInterface } from "src/db/user/interfaces/user.interfaces";
+import { SendPasswordRecoveryLink } from "./dto/send-password-recovery-link.dto";
+import { PasswordRecoveryDto } from "./dto/password-recovery.dto";
 
 @Controller("users")
 export class UsersController {
@@ -16,6 +18,20 @@ export class UsersController {
     @Patch("status")
     async updateUserOnlineStatus(@Body() body: UpdateUserOnlineStatusDto, @User() user: UserDomainInterface) {
         await this.usersService.updateIsOnlineStatusByUserId(user.id, body.status);
+
+        return;
+    }
+
+    @Post("send-password-recovery-link")
+    async sendPasswordRecoveryLink(@Body() body: SendPasswordRecoveryLink) {
+        await this.usersService.sendPasswordRecoveryLink(body.email);
+
+        return;
+    }
+
+    @Patch("password-recovery/:hash")
+    async passwordRecovery(@Body() body: PasswordRecoveryDto, @Param("hash") hash: string) {
+        await this.usersService.passwordRecovery(body.password, hash);
 
         return;
     }

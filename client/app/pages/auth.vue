@@ -20,6 +20,15 @@
               >Sign up</ULink
             >
           </p>
+          <p class="mt-3">
+            Forget password ?
+            <ULink
+              to="/forget-password"
+              class="text-primary hover:text-primary"
+            >
+              Password Recovery
+            </ULink>
+          </p>
         </template>
       </BaseUserCredentialsForm>
     </div>
@@ -29,9 +38,11 @@
 import { z } from "zod";
 import type { PropsFieldItemInterface } from "~/components/BaseUserCredentialsForm.vue";
 import BaseUserCredentialsForm from "~/components/BaseUserCredentialsForm.vue";
+import { useAppStore } from "~/store/app-store";
 import type { AuthRequestInterface } from "~/store/user/interfaces/auth-request.interface";
 import { useUserStore } from "~/store/user/user.store";
 
+const appStore = useAppStore();
 const userStore = useUserStore();
 
 const isFormLoading = ref(false);
@@ -83,4 +94,8 @@ async function auth(state: AuthRequestInterface) {
   }
   isFormLoading.value = false;
 }
+
+onMounted(() => {
+  appStore.setIsLoading(false);
+});
 </script>

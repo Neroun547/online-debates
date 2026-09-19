@@ -6,7 +6,9 @@
           More people better conversation
         </h4>
         <h2 class="text-4xl max-md:text-2xl font-bold mt-5">Talk about what</h2>
-        <h2 class="text-4xl max-md:text-2xl font-bold text-primary">interests you</h2>
+        <h2 class="text-4xl max-md:text-2xl font-bold text-primary">
+          interests you
+        </h2>
         <p class="font-bold text-xl mt-5 max-md:text-base">
           Find like-minded people, meet someone new, or join engaging
           discussions
@@ -18,12 +20,14 @@
             you.
           </p>
         </div>
-        <button
-          class="bg-blue-500 cursor-pointer pl-10 pr-10 pt-2 pb-2 text-white rounded-xl mt-5 flex items-center max-md:text-sm"
-        >
-          <div>Try now</div>
-          <UIcon name="lucide:arrow-right" class="block ml-2" />
-        </button>
+        <ULink to="/signup">
+          <button
+            class="bg-blue-500 cursor-pointer pl-10 pr-10 pt-2 pb-2 text-white rounded-xl mt-5 flex items-center max-md:text-sm"
+          >
+            <div>Try now</div>
+            <UIcon name="lucide:arrow-right" class="block ml-2" />
+          </button>
+        </ULink>
       </div>
       <div class="w-full">
         <div class="left-side-top-section w-full relative">
@@ -159,7 +163,9 @@
           <div
             class="flex justify-between items-center mt-10 max-[890px]:flex-col max-[890px]:items-start"
           >
-            <h2 class="font-bold text-4xl max-md:text-2xl">Today's most popular categories</h2>
+            <h2 class="font-bold text-4xl max-md:text-2xl">
+              Today's most popular categories
+            </h2>
             <ULink
               to="/home"
               class="text-primary flex items-center max-[890px]:mt-5"

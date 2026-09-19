@@ -1,7 +1,7 @@
 <template>
   <div class="w-full">
     <h2 class="text-center mt-25 font-bold text-2xl">
-      Password recovery password
+      Password recovery
     </h2>
     <div class="flex justify-center max-sm:p-5">
       <BaseUserCredentialsForm

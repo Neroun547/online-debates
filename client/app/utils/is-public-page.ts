@@ -1,7 +1,7 @@
 const publicPages = [
     "/auth",
     "/signup",
-    "/forgot-password",
+    "/forget-password",
     "/password-recovery",
     "/support"
 ]

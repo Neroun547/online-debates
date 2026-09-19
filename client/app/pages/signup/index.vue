@@ -32,6 +32,7 @@ import { z } from "zod";
 import { useUserStore } from "~/store/user/user.store";
 import type { SignupRequestInterface } from "~/store/user/interfaces/signup-request.interface";
 import { useAppStore } from "~/store/app-store";
+import { redirectAuthUser } from "~/utils/redirect-auth-user";
 
 const isFormLoading = ref(false);
 

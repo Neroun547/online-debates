@@ -41,6 +41,7 @@ import BaseUserCredentialsForm from "~/components/BaseUserCredentialsForm.vue";
 import { useAppStore } from "~/store/app-store";
 import type { AuthRequestInterface } from "~/store/user/interfaces/auth-request.interface";
 import { useUserStore } from "~/store/user/user.store";
+import { redirectAuthUser } from "~/utils/redirect-auth-user";
 
 const appStore = useAppStore();
 const userStore = useUserStore();

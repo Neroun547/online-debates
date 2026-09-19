@@ -1,14 +1,14 @@
 import { SlotsMapper } from "../slots/slots.mapper";
 import { UserMapper } from "../user/user.mapper";
 import { SessionsDomainInterface, SessionsInterface } from "./interfaces/sessions.interfaces";
-import { Sessions, SessionsStatus } from "./sessions.entity";
+import { Sessions } from "./sessions.entity";
 
 export class SessionsMapper {
     static toDomain(model: Sessions): SessionsDomainInterface {
         return {
             id: model.id,
             slotId: model.slotId,
-            status: SessionsStatus.BOOKED,
+            status: model.status,
             creatorId: model.creatorId,
             customerId: model.customerId,
             createdAt: model.createdAt,

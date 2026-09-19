@@ -1,6 +1,6 @@
 <template>
   <div
-    class="border-primary border-r-[1.5px] fixed top-[50px] h-full bg-white z-10 shadow-lg"
+    class="border-gray-200 border-r-[1.5px] fixed top-[50px] h-full bg-white z-10 shadow-lg"
   >
     <div class="w-[120px] m-auto">
       <div class="block m-auto mt-5">

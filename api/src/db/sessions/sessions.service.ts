@@ -6,7 +6,7 @@ import { SessionsMapper } from "./sessions.mapper";
 import { Slots } from "../slots/slots.entity";
 import { GetAllUserSessionsStatus } from "src/sessions/dto/get-all-user-sessions-request.dto";
 import { SessionsDomainInterface } from "./interfaces/sessions.interfaces";
-import { User, UserStatus } from "../user/user.entity";
+import { User } from "../user/user.entity";
 import { Category } from "../category/category.entity";
 import { Subject } from "../subjects/subject.entity";
 import { DateTime } from "luxon";
@@ -18,6 +18,12 @@ export class SessionsServiceDb {
         private em: EntityManager
     ) {}
 
+    async updateSessionsExpiredStatus() {
+        const now = new Date();
+        const date10MinPrev = DateTime.fromJSDate(now).minus({ minutes: 10 }).toFormat("yyyy-MM-dd HH:mm:ss");
+
+        await this.sessionsRepository.query(`UPDATE sessions AS session INNER JOIN slots AS slot ON slot.id = session.slotId SET session.status = '${SessionsStatus.COMPLETED}' WHERE slot.endTime < '${date10MinPrev}' AND session.status = '${SessionsStatus.BOOKED}'`);
+    }
     async findPermanentSession(params: { customerId: number; creatorId: number; subjectId: number; }): Promise<SessionsDomainInterface | null> {
         const data = await this.sessionsRepository.findOne({ where: { creatorId: params.creatorId,  customerId: params.customerId, subjectId: params.subjectId, slotId: IsNull() } });
 

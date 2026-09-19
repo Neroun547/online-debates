@@ -99,5 +99,7 @@ async function signup(data: SignupRequestInterface) {
 
 onMounted(() => {
   appStore.setIsLoading(false);
+
+  redirectAuthUser();
 });
 </script>

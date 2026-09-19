@@ -97,5 +97,7 @@ async function auth(state: AuthRequestInterface) {
 
 onMounted(() => {
   appStore.setIsLoading(false);
+
+  redirectAuthUser();
 });
 </script>

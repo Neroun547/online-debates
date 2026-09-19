@@ -10,10 +10,11 @@ import { SessionsGateway } from "./sessions.gateway";
 import { MessagesModuleDb } from "src/db/messages/messages.module";
 import { UserSessionsChatController } from "./user-sessions-chat.controller";
 import { SessionsController } from "./sessions.controller";
+import { SessionsSchedule } from "./sessions.schedule";
 
 @Module({
     imports: [SlotsModuleDb, UserModuleDb, SessionsModuleDb, WebRTCModule, MessagesModuleDb],
-    providers: [SessionsService, SessionsGateway],
+    providers: [SessionsService, SessionsGateway, SessionsSchedule],
     controllers: [UserSessionsController, WebRTCController, UserSessionsChatController, SessionsController],
     exports: [SessionsService]
 })

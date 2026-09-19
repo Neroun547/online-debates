@@ -51,28 +51,16 @@ export class UserServiceDb {
         return await this.repository.exists({ where: { id: id } });
     }
     async findInSubject(subjectId: number, page: number, limit: number): Promise<UserDomainInterface[]> {
-        const data = await this.repository.query(`SELECT * FROM users LEFT JOIN slots ON users.id = slots.userId WHERE slots.id IS NOT NULL AND slots.subjectId=${subjectId} LIMIT ${limit} OFFSET ${(page - 1) * limit};`);
-        
-        const map = new Map<number, UserDomainInterface>();
+        const resultArr = await this.repository
+            .createQueryBuilder("user")
+            .leftJoin("user.slots", "slot")
+            .leftJoin("slot.subject", "subject")
+            .where("subject.id = :subjectId", { subjectId: subjectId })
+            .limit(limit)
+            .offset((page - 1) * limit)
+            .getMany();
 
-        for(const user of data) {
-            if(!map.get(user.userId)) {
-                map.set(user.userId, {
-                    id: user.userId,
-                    username: user.username,
-                    email: user.email,
-                    status: user.status,
-                    timezone: user.timezone,
-                    isAvailableForPermanentSessions: user.isAvailableForPermanentSessions
-                });
-            }
-        }
-        const resultArr: Array<UserDomainInterface> = [];
-        
-        for(const [key, value] of map.entries()) {
-            resultArr.push(value);
-        }
-        return resultArr;
+        return resultArr.map(user => UserMapper.toDomain(user));
     }
     async findByUsernameAndNotId(username: string, userId: number): Promise<UserDomainInterface | null> {
         const data = await this.repository.findOne({ where: { username: username, id: Not(userId) } });

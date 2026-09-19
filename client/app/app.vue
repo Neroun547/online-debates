@@ -75,8 +75,7 @@ watch(
             !isCurrentSessionPage || !userStore.isAuth
               ? 'flex-10 w-[85%] ml-auto max-[1300px]:w-full mt-5'
               : 'w-full',
-            isCurrentSessionPage ? 'w-full' : '',
-            isMenuOpen ? 'max-[1300px]:blur-sm' : 'max-[1300px]:blur-none',
+            isCurrentSessionPage ? 'w-full' : ''
           ]"
           style="transition: 0.3s all"
         >

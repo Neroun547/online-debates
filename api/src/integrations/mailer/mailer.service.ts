@@ -1,20 +1,14 @@
 import { Injectable } from "@nestjs/common";
-import { ConfigService } from "@nestjs/config";
-import * as nodemailer from "nodemailer";
-import SMTPTransport from "nodemailer/lib/smtp-transport";
+import { Resend } from 'resend';
+import * as dotenv from "dotenv";
+
+dotenv.config();
+
+const resend = new Resend(process.env.MAILER_TOKEN);
 
 @Injectable()
 export class MailerService {
-    constructor(private configService: ConfigService) {}
-
-    private getTransport(): nodemailer.Transporter<SMTPTransport.SentMessageInfo, SMTPTransport.Options> {
-        const transporter = nodemailer.createTransport({
-            host: this.configService.getOrThrow("MAILER_HOST"),
-            port: Number(this.configService.getOrThrow("MAILER_PORT"))
-        }); 
-
-        return transporter;
-    }
+    constructor() {}
 
     async sendMailWithHtml(params: {
         from: string,
@@ -22,9 +16,8 @@ export class MailerService {
         subject: string,
         html: string
     }): Promise<void> {
-        const transporter = this.getTransport();
         
-        await transporter.sendMail({
+        await resend.emails.send({
             from: params.from,
             to: params.to,
             subject: params.subject,

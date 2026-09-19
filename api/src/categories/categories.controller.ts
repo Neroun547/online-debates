@@ -3,6 +3,7 @@ import { AuthGuard } from "src/user/auth/auth.guard";
 import { CategoriesService } from "./service/categories.service";
 import { GetCategoriesDto } from "./dto/get-categories.dto";
 import { GetCategoriesResponseDto } from "./dto/get-categories-response.dto";
+import { CategoryDomainInterface } from "src/db/category/interfaces/category.interfaces";
 
 @Controller("categories")
 export class CategoriesController {
@@ -14,6 +15,11 @@ export class CategoriesController {
     @Get()
     async getCategories(@Query() query: GetCategoriesDto): Promise<GetCategoriesResponseDto> {
         return await this.categoriesService.getWithPagination(query.page, query.limit);
+    }
+
+    @Get("popular")
+    async getTheMostPopularCategories(): Promise<CategoryDomainInterface[]> {
+        return await this.categoriesService.getTheMostPopularCategories(5);
     }
 
     @UseGuards(AuthGuard)

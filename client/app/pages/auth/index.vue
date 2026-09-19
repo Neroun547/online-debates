@@ -86,7 +86,7 @@ async function auth(state: AuthRequestInterface) {
     isFormSubmittedSuccess.value = true;
     isAuthError.value = false;
 
-    window.location.href = "/";
+    window.location.href = "/home";
   } else {
     authErrorMessage.value = userStore.errorMessage;
     isFormSubmittedSuccess.value = false;

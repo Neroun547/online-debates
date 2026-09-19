@@ -119,6 +119,15 @@ export const useCategoriesStore = defineStore("categories", {
                 this.setError(error.response._data.message);
             }
         },
+        async getTheMostPopularCategories(): Promise<CategoryItem[] | undefined> {
+            try {
+                this.clearError();
+
+                return await useApiFetch<CategoryItem[]>("/categories/popular", { method: "GET" });
+            } catch(error: any) {
+                this.setError(error.response._data.message);
+            }
+        },
         clearError() {
             this.isError = false;
             this.errorMessage = undefined;

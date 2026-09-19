@@ -5,17 +5,16 @@
     aria-live="polite"
     :aria-label="label"
   >
-    <div
-      class="size-12 animate-spin rounded-full border-4 border-primary/20 border-t-primary motion-reduce:animate-none"
-      aria-hidden="true"
-    />
+    <Loader />
   </div>
 </template>
 
 <script setup>
+import Loader from "./Loader.vue";
+
 defineProps({
   label: {
-    type: String
-  }
-})
+    type: String,
+  },
+});
 </script>

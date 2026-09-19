@@ -18,7 +18,7 @@
           ref="remoteVideoElement"
           autoplay
           playsinline
-          class="w-1/2 max-md:w-full"
+          class="w-full"
         ></video>
         <div
           v-if="!isRemoteVideoAvailable"

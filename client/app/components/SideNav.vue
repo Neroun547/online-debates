@@ -27,7 +27,7 @@
       </div>
       <div class="block m-auto mt-5">
         <ULink
-          to="/"
+          to="/home"
           active-class="text-primary"
           inactive-class="text-black"
           class="flex items-center"

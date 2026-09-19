@@ -49,5 +49,8 @@ export class CategoriesService {
         }
         await this.categoriesServiceDb.updateById(id, body);
     }
+    async getTheMostPopularCategories(count: number): Promise<CategoryDomainInterface[]> {
+        return await this.categoriesServiceDb.getCategoriesWithTheLargestNumberOfUsers(count);
+    }
 }
 

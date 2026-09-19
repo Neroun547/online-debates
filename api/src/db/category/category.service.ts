@@ -4,11 +4,25 @@ import { Category } from "./category.entity";
 import { CategoryDomainInterface, CategoryInterface } from "./interfaces/category.interfaces";
 import { CategoryMapper } from "./category.mapper";
 import { InjectRepository } from "@nestjs/typeorm";
+import { Slots } from "../slots/slots.entity";
 
 @Injectable()
 export class CategoryServiceDb {
     constructor(@InjectRepository(Category) private repository: Repository<Category>) {}
 
+    async getCategoriesWithTheLargestNumberOfUsers(limit: number): Promise<CategoryDomainInterface[]> {
+        const data = await this.repository
+            .createQueryBuilder("category")
+            .leftJoin("category.subjects", "subject")
+            .leftJoin(Slots, "slot", "slot.subjectId = subject.id")
+            .groupBy("category.id")
+            .orderBy("COUNT(slot.id)", "DESC")
+            .addOrderBy("category.id", "ASC")
+            .limit(limit)
+            .getMany();
+
+        return data.map(item => CategoryMapper.toDomain(item));
+    }
     async countAll(): Promise<number> {
         return await this.repository.count();
     }
@@ -57,4 +71,3 @@ export class CategoryServiceDb {
         await this.repository.delete({ id: id });
     }
 }
-

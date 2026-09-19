@@ -7,24 +7,54 @@ import { useAppStore } from "./store/app-store.ts";
 
 const route = useRoute();
 
-const isCurrentPublicPage = ref<boolean>(false);
+const showPublicLayout = ref<boolean>(false);
 const isCurrentSessionPage = ref<boolean>(false);
+
+const showLandingNavState = ref<boolean>(false);
 
 const userStore = useUserStore();
 const appStore = useAppStore();
 
-const isMenuOpen = ref(false);
+const isMenuOpen = ref(true);
 
 onMounted(() => {
-  isCurrentPublicPage.value = isPublicPage(route.path);
+  const pageData = isPublicPage(route.path);
+
+  if (pageData.page === "/support" && userStore.isAuth) {
+    showPublicLayout.value = false;
+  } else if (pageData.page === "/support" && !userStore.isAuth) {
+    showPublicLayout.value = true;
+  } else {
+    showPublicLayout.value = isPublicPage(route.path).value;
+  }
   isCurrentSessionPage.value = route.path.includes("/my-sessions/");
 });
+
+function showLandingNav() {
+  return route.path === "/";
+}
+
+watch(
+  () => route.path,
+  () => {
+    const pageData = isPublicPage(route.path);
+
+    if (pageData.page === "/support" && userStore.isAuth) {
+      showPublicLayout.value = false;
+    } else if (pageData.page === "/support" && !userStore.isAuth) {
+      showPublicLayout.value = true;
+    } else {
+      showPublicLayout.value = isPublicPage(route.path).value;
+    }
+    isCurrentSessionPage.value = route.path.includes("/my-sessions/");
+  },
+);
 </script>
 
 <template>
   <UApp>
     <UMain>
-      <div class="min-h-screen flex flex-col" v-if="!isCurrentPublicPage">
+      <div class="min-h-screen flex flex-col" v-if="!showPublicLayout">
         <Nav
           v-if="userStore.getIsAuth"
           @toggle-menu="(value) => (isMenuOpen = value)"
@@ -42,13 +72,13 @@ onMounted(() => {
         <div
           :class="[
             'min-h-[100vh]',
-            !isCurrentSessionPage && !userStore.isAuth
+            !isCurrentSessionPage || !userStore.isAuth
               ? 'flex-10 w-[85%] ml-auto max-[1300px]:w-full mt-5'
               : 'w-full',
+            isCurrentSessionPage ? 'w-full' : '',
             isMenuOpen ? 'max-[1300px]:blur-sm' : 'max-[1300px]:blur-none',
           ]"
           style="transition: 0.3s all"
-          :inert="isMenuOpen"
         >
           <NuxtPage
             class="m-auto w-[85%]"
@@ -57,16 +87,23 @@ onMounted(() => {
           <PageLoader :class="appStore.isPageLoading ? '' : 'hidden'" />
         </div>
         <Footer
-          v-if="userStore.getIsAuth"
           :class="[
             !isCurrentSessionPage
               ? 'w-[85%] ml-auto max-[1300px]:w-full mt-10'
-              : '',
+              : 'w-full',
           ]"
         />
       </div>
-      <div v-if="isCurrentPublicPage">
-        <NuxtPage class="m-auto w-[85%]" />
+      <div v-if="showPublicLayout" class="min-h-screen h-full">
+        <LandingNav />
+        <NuxtPage class="m-auto w-[85%] min-h-screen" />
+        <Footer
+          :class="[
+            !isCurrentSessionPage && !showPublicLayout
+              ? 'w-[85%] ml-auto max-[1300px]:w-full mt-10'
+              : 'w-full',
+          ]"
+        />
       </div>
     </UMain>
   </UApp>

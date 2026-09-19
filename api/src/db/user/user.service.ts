@@ -53,11 +53,21 @@ export class UserServiceDb {
     async findInSubject(subjectId: number, page: number, limit: number): Promise<UserDomainInterface[]> {
         const resultArr = await this.repository
             .createQueryBuilder("user")
-            .leftJoin("user.slots", "slot")
-            .leftJoin("slot.subject", "subject")
-            .where("subject.id = :subjectId", { subjectId: subjectId })
-            .limit(limit)
-            .offset((page - 1) * limit)
+            .where(queryBuilder => {
+                const slotsInSubject = queryBuilder
+                    .subQuery()
+                    .select("1")
+                    .from(Slots, "slot")
+                    .where("slot.userId = user.id")
+                    .andWhere("slot.subjectId = :subjectId")
+                    .getQuery();
+
+                return `EXISTS ${slotsInSubject}`;
+            })
+            .setParameter("subjectId", subjectId)
+            .orderBy("user.id", "ASC")
+            .take(limit)
+            .skip((page - 1) * limit)
             .getMany();
 
         return resultArr.map(user => UserMapper.toDomain(user));
@@ -168,5 +178,4 @@ export class UserServiceDb {
         }
     }
 }
-
 

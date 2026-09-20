@@ -1,18 +1,18 @@
 <template>
   <div class="w-full">
     <h2 class="text-center mt-25 font-bold text-2xl">
-      Password recovery
+      {{ $t("forget-password.title") }}
     </h2>
     <div class="flex justify-center max-sm:p-5">
       <BaseUserCredentialsForm
         class="max-w-[400px] w-full mt-10"
         :fields="formFields"
         :form-schema="formSchema"
-        submitButtonText="Send recovery link"
+        :submit-button-text="$t('forget-password.submit')"
         :isError="isError"
         :errorMessage="errorMessage"
         :isSuccess="isSuccess"
-        successMessage="Recovery link was sent to your email"
+        :success-message="$t('forget-password.successMessage')"
         :isFormLoading="isFormLoading"
         @submit-form="(data) => sendRecoveryLink(data)"
       />
@@ -29,6 +29,7 @@ import { useAppStore } from "~/store/app-store";
 
 const userStore = useUserStore();
 const appStore = useAppStore();
+const { t } = useI18n();
 
 const isError = ref<boolean>(false);
 const errorMessage = ref<string>("");
@@ -36,15 +37,15 @@ const errorMessage = ref<string>("");
 const isSuccess = ref<boolean>(false);
 const isFormLoading = ref<boolean>(false);
 
-const formFields: Array<PropsFieldItemInterface> = [
+const formFields = computed<Array<PropsFieldItemInterface>>(() => [
   {
     name: "email",
-    placeholder: "Enter account email",
+    placeholder: t("forget-password.emailPlaceholder"),
     type: "email",
     htmlTag: "input",
-    label: "Email",
+    label: t("forget-password.email"),
   },
-];
+]);
 
 const formSchema = z.object({
   email: z.string().email(),
@@ -58,7 +59,7 @@ async function sendRecoveryLink(data: { email: string }) {
 
   if (userStore.isError) {
     isError.value = true;
-    errorMessage.value = userStore.errorMessage ?? "Error";
+    errorMessage.value = userStore.errorMessage ?? t("forget-password.error");
   } else {
     isSuccess.value = true;
   }

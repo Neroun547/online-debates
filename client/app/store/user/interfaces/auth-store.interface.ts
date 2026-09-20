@@ -5,5 +5,6 @@ export interface UserStore extends BaseStoreInterface {
     token: string;
     isOnline: boolean;
     userId: number | undefined;
+    language: null | string;
 }
 

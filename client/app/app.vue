@@ -10,8 +10,6 @@ const route = useRoute();
 const showPublicLayout = ref<boolean>(false);
 const isCurrentSessionPage = ref<boolean>(false);
 
-const showLandingNavState = ref<boolean>(false);
-
 const userStore = useUserStore();
 const appStore = useAppStore();
 

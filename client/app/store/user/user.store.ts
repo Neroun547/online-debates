@@ -24,7 +24,8 @@ export const useUserStore = defineStore("user", {
         isAuth: false,
         token: "",
         isOnline: false,
-        userId: undefined
+        userId: undefined,
+        language: null
     }),
     getters: {
         getToken: (state: UserStore): string | null => {
@@ -150,6 +151,9 @@ export const useUserStore = defineStore("user", {
         setIsOnline(value: boolean) {
             this.isOnline = value;
         },
+        setLanguage(value: string | null) {
+            this.language = value;
+        },
         async getUserInfo(): Promise<GetUserInfoResponseInterface | undefined> {
             try {
                 this.clearErrorState();
@@ -179,6 +183,7 @@ export const useUserStore = defineStore("user", {
                     this.setToken(response.token);
                     this.setIsAuth(true);
                     this.setIsOnline(response.isOnline);
+                    this.setLanguage(response.language);
                 }
             } catch(error: any) {
                 this.setError(error.response._data.message);
@@ -218,6 +223,15 @@ export const useUserStore = defineStore("user", {
                 this.setError(error);
             }
         },
+        async updateUserLanguage(language: string) {
+            try {
+                this.setLanguage(language);
+
+                await useApiFetch("/users/language", { method: "PATCH", body: { language: language } });
+            } catch(error: any) {
+                this.setError(error);
+            }
+        }
     },
     persist: {
         storage: piniaPluginPersistedstate.localStorage(),
@@ -225,7 +239,8 @@ export const useUserStore = defineStore("user", {
             "userId",
             "token",
             "isAuth",
-            "isOnline"
+            "isOnline",
+            "language"
         ]
     },
 });

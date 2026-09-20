@@ -40,6 +40,9 @@ export class User {
     @Column({ type: "bool", default: true })
     isAvailableForPermanentSessions!: boolean;
 
+    @Column({ nullable: true, type: "varchar" })
+    language!: string | null;
+
     @OneToMany(() => Subject, (subject: Subject) => subject.user)
     subjects?: Subject[];
 

@@ -24,7 +24,7 @@ export class AuthService {
             isAvailableForPermanentSessions: params.isAvailableForPermanentSessions
         }, { secret: this.configService.getOrThrow("USER_AUTH_JWT_SECRET"), expiresIn: this.configService.getOrThrow("USER_AUTH_JWT_EXPIRES_IN") });
     }
-    async auth(body: AuthDto): Promise<{ token: string; userId: number; isOnline: boolean; }> {
+    async auth(body: AuthDto): Promise<{ token: string; userId: number; isOnline: boolean; language: string | null }> {
         const userInDb = await this.usersServiceDb.findByEmailOrUsernameWithSecureParams(body.usernameOrEmail);
 
         if(!userInDb) {
@@ -43,7 +43,8 @@ export class AuthService {
                 username: userInDb.username,
                 timezone: userInDb.timezone,
                 isAvailableForPermanentSessions: userInDb.isAvailableForPermanentSessions,
-                status: UserStatus.ONLINE
+                status: UserStatus.ONLINE,
+                language: userInDb.language
             }
         );
         await this.usersServiceDb.updateById(userInDb.id ?? 0, { status: UserStatus.ONLINE });
@@ -51,7 +52,8 @@ export class AuthService {
         return {
             token: token,
             userId: userInDb.id ?? 0,
-            isOnline: true
+            isOnline: true,
+            language: userInDb.language
         };
     }
     private checkPassword(hash: string, password: string): boolean {

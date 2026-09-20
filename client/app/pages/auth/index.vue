@@ -1,32 +1,34 @@
 <template>
   <div class="w-full">
-    <h2 class="text-center mt-25 font-bold text-2xl">Log in</h2>
+    <h2 class="text-center mt-25 font-bold text-2xl">
+      {{ $t("auth.title") }}
+    </h2>
     <div class="flex justify-center max-sm:p-5">
       <BaseUserCredentialsForm
         class="max-w-[400px] w-full mt-10"
         :form-schema="formSchema"
         :fields="fields"
-        submit-button-text="Log in"
+        :submit-button-text="$t('auth.submit')"
         @submit-form="(state: AuthRequestInterface) => auth(state)"
         :is-error="isAuthError"
         :error-message="authErrorMessage"
         :is-success="isFormSubmittedSuccess"
-        success-message="Log in successful"
+        :success-message="$t('auth.successMessage')"
       >
         <template v-slot:footerLinks>
           <p>
-            Don't have an account ?
-            <ULink to="/signup" class="text-primary hover:text-primary"
-              >Sign up</ULink
-            >
+            {{ $t("auth.noAccount") }}
+            <ULink to="/signup" class="text-primary hover:text-primary">
+              {{ $t("auth.signUp") }}
+            </ULink>
           </p>
           <p class="mt-3">
-            Forget password ?
+            {{ $t("auth.forgotPassword") }}
             <ULink
               to="/forget-password"
               class="text-primary hover:text-primary"
             >
-              Password Recovery
+              {{ $t("auth.passwordRecovery") }}
             </ULink>
           </p>
         </template>
@@ -45,6 +47,7 @@ import { redirectAuthUser } from "~/utils/redirect-auth-user";
 
 const appStore = useAppStore();
 const userStore = useUserStore();
+const { t } = useI18n();
 
 const isFormLoading = ref(false);
 
@@ -57,22 +60,22 @@ const isFormSubmittedSuccess = ref(false);
 const isAuthError = ref(false);
 const authErrorMessage = ref<string | undefined>(undefined);
 
-const fields: Array<PropsFieldItemInterface> = [
+const fields = computed<Array<PropsFieldItemInterface>>(() => [
   {
     name: "usernameOrEmail",
-    placeholder: "Username or email address",
+    placeholder: t("auth.usernameOrEmailPlaceholder"),
     type: "text",
     htmlTag: "input",
-    label: "Your username or email address",
+    label: t("auth.usernameOrEmailLabel"),
   },
   {
     name: "password",
-    placeholder: "Password",
+    placeholder: t("auth.password"),
     type: "password",
     htmlTag: "input",
-    label: "Your password",
+    label: t("auth.passwordLabel"),
   },
-];
+]);
 
 async function auth(state: AuthRequestInterface) {
   isFormLoading.value = true;

@@ -9,6 +9,7 @@ export interface UserInterface {
     isConfirmed: boolean;
     status: UserStatus;
     timezone: string;
+    language: string | null;
     isAvailableForPermanentSessions: boolean;
 }
 
@@ -21,6 +22,7 @@ export interface UpdateUserInterface {
     isConfirmed?: boolean;
     status?: UserStatus;
     timezone?: string;
+    language?: string | null;
     isAvailableForPermanentSessions?: boolean;
 }
 
@@ -31,6 +33,7 @@ export interface UserDomainInterface {
     email: string;
     status: UserStatus;
     timezone: string;
+    language: string | null;
     isAvailableForPermanentSessions: boolean;
 }
 

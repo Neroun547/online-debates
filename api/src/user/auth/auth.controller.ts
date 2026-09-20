@@ -11,7 +11,7 @@ export class AuthController {
     async auth(@Body() body: AuthDto): Promise<AuthResponseDto> {
         const result = await this.authService.auth(body);
 
-        return { token: result.token, userId: result.userId, isOnline: result.isOnline };
+        return { token: result.token, userId: result.userId, isOnline: result.isOnline, language: result.language };
     }
 }
 

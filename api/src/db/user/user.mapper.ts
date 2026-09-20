@@ -9,6 +9,7 @@ export class UserMapper {
             username: user.username,
             status: user.status,
             timezone: user.timezone,
+            language: user.language,
             isAvailableForPermanentSessions: user.isAvailableForPermanentSessions
         }
     }
@@ -21,6 +22,7 @@ export class UserMapper {
             password: user.password,
             status: user.status,
             timezone: user.timezone,
+            language: user.language,
             isAvailableForPermanentSessions: user.isAvailableForPermanentSessions
         }
     }
@@ -36,6 +38,7 @@ export class UserMapper {
         model.isConfirmed = user.isConfirmed;
         model.status = user.status;
         model.timezone = user.timezone;
+        model.language = user.language;
 
         return model;
     }

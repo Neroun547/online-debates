@@ -21,6 +21,9 @@ export class UserService {
         private authService: AuthService
     ) {}
 
+    async updateUserLanguage(userId: number, language: string) {
+        await this.usersServiceDb.updateById(userId, { language: language });
+    }
     async deleteUserById(userId: number) {
         const userInDb = await this.usersServiceDb.findById(userId);
 
@@ -133,6 +136,7 @@ export class UserService {
             email: params.oldEmail,
             timezone: (params.timezone && params.timezone !== params.oldTimeZone) ? params.timezone : params.oldTimeZone,
             isAvailableForPermanentSessions: typeof params.isAvailableForPermanentSessions === "boolean" ? params.isAvailableForPermanentSessions : userInDb.isAvailableForPermanentSessions,
+            language: userInDb.language,
             status: userInDb.status
         });
 
@@ -166,6 +170,7 @@ export class UserService {
             username: userInDb.username,
             timezone: userInDb.timezone,
             isAvailableForPermanentSessions: userInDb.isAvailableForPermanentSessions,
+            language: userInDb.language,
             status: userInDb.status
         });
 
@@ -205,6 +210,7 @@ export class UserService {
             isConfirmed: true,
             status: UserStatus.OFFLINE,
             timezone: params.timezone,
+            language: null,
             isAvailableForPermanentSessions: true
         });
     }

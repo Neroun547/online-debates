@@ -243,6 +243,45 @@
         "messagePlaceholder": "Write a message...",
         "sendMessage": "Send message"
     },
+    "signup": {
+        "title": "Sign up",
+        "successMessage": "Confirm your email address. A message was sent to your email.",
+        "submit": "Sign up",
+        "alreadyHaveAccount": "Already have an account?",
+        "signIn": "Sign in",
+        "email": "Email",
+        "username": "Username",
+        "password": "Password",
+        "timezone": "Timezone"
+    },
+    "auth": {
+        "title": "Log in",
+        "submit": "Log in",
+        "successMessage": "Log in successful",
+        "noAccount": "Don't have an account?",
+        "signUp": "Sign up",
+        "forgotPassword": "Forgot your password?",
+        "passwordRecovery": "Password recovery",
+        "usernameOrEmailPlaceholder": "Username or email address",
+        "usernameOrEmailLabel": "Your username or email address",
+        "password": "Password",
+        "passwordLabel": "Your password"
+    },
+    "forget-password": {
+        "title": "Password recovery",
+        "submit": "Send recovery link",
+        "successMessage": "A recovery link was sent to your email",
+        "email": "Email",
+        "emailPlaceholder": "Enter account email",
+        "error": "Error"
+    },
+    "password-recovery": {
+        "title": "Enter a new password",
+        "submit": "Set new password",
+        "successMessage": "Password updated successfully",
+        "newPassword": "New password",
+        "error": "Error"
+    },
     "zodI18n": {
         "errors": {
             "custom": "Invalid value",

@@ -4,6 +4,9 @@
   </div>
 </template>
 <script setup lang="ts">
+import { useUserStore } from "~/store/user/user.store";
+
+const userStore = useUserStore();
 const { setLocale, locale } = useI18n();
 
 const selectedLanguage = ref<"en" | "uk" | "ru">("en");
@@ -25,6 +28,10 @@ const languageSelectItems = [
 
 watch(selectedLanguage, (newValue: "en" | "uk" | "ru") => {
   setLocale(newValue);
+
+  if (userStore.isAuth) {
+    userStore.updateUserLanguage(newValue);
+  }
 });
 
 onMounted(() => {

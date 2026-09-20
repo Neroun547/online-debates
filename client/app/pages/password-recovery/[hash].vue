@@ -1,6 +1,8 @@
 <template>
   <div class="w-full">
-    <h2 class="text-center mt-25 font-bold text-2xl">Write new password</h2>
+    <h2 class="text-center mt-25 font-bold text-2xl">
+      {{ $t("password-recovery.title") }}
+    </h2>
     <div class="flex justify-center max-sm:p-5">
       <BaseUserCredentialsForm
         class="max-w-[400px] w-full mt-10"
@@ -10,8 +12,8 @@
         :is-error="isError"
         :is-success="isSuccess"
         :is-form-loading="isFormLoading"
-        submitButtonText="Set new password"
-        success-message="Password updated successfully"
+        :submit-button-text="$t('password-recovery.submit')"
+        :success-message="$t('password-recovery.successMessage')"
         @submit-form="(data) => updatePassword(data)"
       />
     </div>
@@ -24,15 +26,17 @@ import { useUserStore } from "~/store/user/user.store";
 import z from "zod";
 import { useAppStore } from "~/store/app-store";
 
-const formFields: Array<PropsFieldItemInterface> = [
+const { t } = useI18n();
+
+const formFields = computed<Array<PropsFieldItemInterface>>(() => [
   {
     name: "password",
-    placeholder: "New password",
+    placeholder: t("password-recovery.newPassword"),
     type: "password",
     htmlTag: "input",
-    label: "New password",
+    label: t("password-recovery.newPassword"),
   },
-];
+]);
 const formSchema = z.object({
   password: z.string().min(8).max(50),
 });
@@ -57,7 +61,7 @@ async function updatePassword(data: { password: string }) {
 
   if (userStore.isError) {
     isError.value = true;
-    errorMessage.value = userStore.errorMessage ?? "Error";
+    errorMessage.value = userStore.errorMessage ?? t("password-recovery.error");
   } else {
     isSuccess.value = true;
 

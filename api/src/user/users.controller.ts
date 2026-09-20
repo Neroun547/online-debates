@@ -9,6 +9,7 @@ import { User } from "./auth/decorators/user.decorator";
 import type { UserDomainInterface } from "src/db/user/interfaces/user.interfaces";
 import { SendPasswordRecoveryLink } from "./dto/send-password-recovery-link.dto";
 import { PasswordRecoveryDto } from "./dto/password-recovery.dto";
+import { UpdateUserLanguageDto } from "./dto/update-user-language.dto";
 
 @Controller("users")
 export class UsersController {
@@ -25,6 +26,14 @@ export class UsersController {
     @Post("send-password-recovery-link")
     async sendPasswordRecoveryLink(@Body() body: SendPasswordRecoveryLink) {
         await this.usersService.sendPasswordRecoveryLink(body.email);
+
+        return;
+    }
+    
+    @UseGuards(AuthGuard)
+    @Patch("language")
+    async updateUserLanguage(@User() user: UserDomainInterface, @Body() body: UpdateUserLanguageDto) {
+        await this.usersService.updateUserLanguage(user.id, body.language);
 
         return;
     }

@@ -172,7 +172,7 @@ export const useUserStore = defineStore("user", {
                 this.setError(error.response._data.message);
             }
         },
-        async auth(data: AuthRequestInterface): Promise<void> {
+        async auth(data: AuthRequestInterface): Promise<{ language: string | null | undefined } | undefined> {
             try {
                 this.clearErrorState();
 
@@ -185,6 +185,7 @@ export const useUserStore = defineStore("user", {
                     this.setIsOnline(response.isOnline);
                     this.setLanguage(response.language);
                 }
+                return { language: response?.language }
             } catch(error: any) {
                 this.setError(error.response._data.message);
             }

@@ -45,6 +45,8 @@ import type { AuthRequestInterface } from "~/store/user/interfaces/auth-request.
 import { useUserStore } from "~/store/user/user.store";
 import { redirectAuthUser } from "~/utils/redirect-auth-user";
 
+const { setLocale } = useI18n();
+
 const appStore = useAppStore();
 const userStore = useUserStore();
 const { t } = useI18n();
@@ -80,12 +82,15 @@ const fields = computed<Array<PropsFieldItemInterface>>(() => [
 async function auth(state: AuthRequestInterface) {
   isFormLoading.value = true;
 
-  await userStore.auth({
+  const response = await userStore.auth({
     usernameOrEmail: state.usernameOrEmail,
     password: state.password,
   });
-
   if (!userStore.isError) {
+    if (response?.language) {
+      //@ts-ignore
+      setLocale(response.language);
+    }
     authErrorMessage.value = "";
     isFormSubmittedSuccess.value = true;
     isAuthError.value = false;

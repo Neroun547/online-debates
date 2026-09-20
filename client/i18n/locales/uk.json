@@ -1,0 +1,269 @@
+{
+    "noCategoriesFound": "Категорій не знайдено",
+    "noSubjectsFound": "Тем не знайдено",
+    "loading": "Завантаження",
+    "loadMore": "Завантажити більше",
+    "nav": {
+        "offlineStatusLabel": "Я офлайн",
+        "onlineStatusLabel": "Я онлайн"
+    },
+    "landingNav": {
+        "tryIt": "Спробувати",
+        "support": "Підтримка",
+        "chatRules": "Правила спілкування",
+        "login": "Увійти"
+    },
+    "landing": {
+        "morePeopleBetterConversation": "Більше людей — цікавіше спілкування",
+        "talkAboutWhat": "Обговорюйте те, що",
+        "interestsYou": "вас цікавить",
+        "findLikeMindedPeople": "Знаходьте однодумців, знайомтеся з новими людьми та долучайтеся до захопливих обговорень",
+        "sharedInterestsSpace": "Wanna Talk — це простір для спілкування на основі спільних інтересів.",
+        "chooseSubjectAndStart": "Оберіть тему, знайдіть співрозмовників і розпочніть обговорення у зручний для вас час.",
+        "tryNow": "Спробувати",
+        "findPeopleDescription": "Wanna Talk допомагає знаходити людей зі схожими інтересами. Просто оберіть тему, знайдіть вільний час або створіть власну тему.",
+        "worldIsCloser": "Світ ближчий, ніж здається",
+        "howItWorks": "Як це працює?",
+        "fewStepsToConversation": "Лише кілька кроків — і ви вже долучилися до розмови.",
+        "chooseSubject": "Оберіть тему",
+        "toTalkAbout": "для обговорення",
+        "selectDateAndTime": "Оберіть дату й час",
+        "toMakeBooking": "щоб забронювати зустріч",
+        "wait": "Зачекайте",
+        "forSessionStart": "на початок сесії",
+        "enjoyDiscussion": "Насолоджуйтеся спілкуванням",
+        "createOwnTopicDescription": "Ви також можете створити власну тему для обговорення в одній із наявних категорій або обрати готову тему й додати зручні часові слоти.",
+        "popularCategoriesToday": "Найпопулярніші категорії сьогодні",
+        "viewAllCategories": "Переглянути всі категорії"
+    },
+    "footer": {
+        "brand": "Wanna talk",
+        "support": "Підтримка",
+        "privacyPolicy": "Політика конфіденційності"
+    },
+    "baseDeleteModal": {
+        "cancel": "Скасувати"
+    },
+    "sideNav": {
+        "mySlots": "Мої слоти",
+        "mySubjects": "Мої теми",
+        "categories": "Категорії",
+        "mySessions": "Мої сесії",
+        "settings": "Налаштування",
+        "support": "Підтримка",
+        "exit": "Вийти"
+    },
+    "settings": {
+        "title": "Налаштування",
+        "personalInfo": "Особиста інформація",
+        "email": "Електронна пошта",
+        "username": "Ім’я користувача",
+        "timezone": "Часовий пояс",
+        "availableForPermanentSessions": "Доступний для постійних сесій",
+        "permanentSessionsDescription": "Увімкнувши цю опцію, ви дозволите користувачам створювати з вами постійну сесію та зв’язуватися з вами в будь-який час.",
+        "language": "Мова",
+        "savePersonalData": "Зберегти нові особисті дані",
+        "changePassword": "Змінити пароль",
+        "enterOldPassword": "Введіть поточний пароль",
+        "oldPassword": "Поточний пароль",
+        "enterNewPassword": "Введіть новий пароль",
+        "newPassword": "Новий пароль",
+        "confirmNewPassword": "Підтвердьте новий пароль",
+        "confirmNewPasswordPlaceholder": "Підтвердьте новий пароль",
+        "updatePassword": "Оновити пароль",
+        "dangerZone": "Небезпечна зона",
+        "deleteAccount": "Видалити обліковий запис",
+        "passwordsDoNotMatch": "Паролі не збігаються",
+        "error": "Помилка",
+        "success": "Успішно",
+        "passwordChangedSuccessfully": "Пароль успішно змінено",
+        "personalDataUpdatedSuccessfully": "Особисті дані успішно оновлено"
+    },
+    "categories": {
+        "noSubjects": "Тем поки немає :( Ви можете стати першим",
+        "allCategories": "Усі категорії",
+        "allCategoriesDescription": "На цій сторінці представлені всі доступні в системі категорії для спілкування. У кожній категорії містяться теми, створені користувачами. Оберіть тему, потім користувача та розпочніть спілкування.",
+        "createTopicDescription": "Ви також можете створити власну тему для обговорення в одній із доступних категорій на сторінці «Мої теми». Приємного спілкування!"
+    },
+    "subjects": {
+        "email": "Електронна пошта",
+        "username": "Ім’я користувача",
+        "status": "Статус",
+        "itsYou": "Це ви",
+        "bookSession": "Забронювати сесію",
+        "startSessionNow": "Розпочати сесію зараз",
+        "error": "Помилка",
+        "success": "Успішно",
+        "sessionBookedSuccessfully": "Сесію успішно заброньовано",
+        "bookingModal": {
+            "title": "Забронювати сесію",
+            "description": "Оберіть дату та доступний часовий слот.",
+            "selectDate": "Оберіть дату",
+            "availableDatesDescription": "Доступні дати показано нижче",
+            "availableTime": "Доступний час",
+            "availableSlots": "Доступно: {count}",
+            "noAvailableSlots": "Немає доступних слотів",
+            "tryAnotherDate": "Оберіть іншу дату, щоб знайти доступний час.",
+            "timeZone": "Часовий пояс: {timezone}",
+            "yourLocalTime": "Ваш місцевий час",
+            "selectTimeToContinue": "Оберіть час, щоб продовжити",
+            "cancel": "Скасувати",
+            "bookSession": "Забронювати сесію"
+        }
+    },
+    "support": {
+        "title": "Зв’язатися з підтримкою",
+        "description": "Опишіть своє запитання або проблему, і ми зв’яжемося з вами.",
+        "email": "Електронна пошта",
+        "subject": "Тема",
+        "subjectPlaceholder": "Чим ми можемо вам допомогти?",
+        "message": "Повідомлення",
+        "messagePlaceholder": "Напишіть своє повідомлення тут...",
+        "sendMessage": "Надіслати повідомлення",
+        "error": "Помилка",
+        "sentSuccessfully": "Успішно надіслано",
+        "sentDescription": "Ваше повідомлення успішно надіслано. Ми відповімо на вашу електронну пошту."
+    },
+    "mySessions": {
+        "title": "Мої сесії",
+        "sessions": "Сесії",
+        "dateFrom": "Дата з",
+        "dateTo": "Дата до",
+        "bookedWithMe": "Заброньовані зі мною",
+        "myBookings": "Мої бронювання",
+        "myBooking": "Моє бронювання",
+        "all": "Усі",
+        "invalidDateRange": "Некоректний діапазон дат",
+        "dateRangeDescription": "Початкова дата не може бути пізнішою за кінцеву.",
+        "couldNotLoadSessions": "Не вдалося завантажити сесії",
+        "tryAgain": "Спробувати ще раз",
+        "withUser": "З користувачем {name}",
+        "statusBooked": "Заброньована",
+        "statusCompleted": "Завершена",
+        "statusCancelled": "Скасована",
+        "statusOnline": "У мережі",
+        "statusOffline": "Не в мережі",
+        "statusBusy": "Зайнятий",
+        "permanentBookedWithYou": "Це постійна сесія. Заброньована з вами {date}",
+        "permanentCreatedByYou": "Це постійна сесія. Ви створили її {date}",
+        "startAt": "Початок о {date}",
+        "startNow": "Розпочати зараз",
+        "start": "Розпочати",
+        "noSessions": "У вас немає сесій",
+        "changeFilters": "Спробуйте змінити тип сесії або діапазон дат.",
+        "loadingMore": "Завантажуємо ще сесії...",
+        "userNumber": "Користувач №{id}"
+    },
+    "mySubjects": {
+        "title": "Мої теми",
+        "addNewSubject": "Додати нову тему",
+        "error": "Помилка",
+        "success": "Успішно",
+        "updatedSuccessfully": "Тему успішно оновлено",
+        "deletedSuccessfully": "Тему успішно видалено",
+        "createSubjectModal": {
+            "title": "Створити власну тему",
+            "category": "Категорія",
+            "subjectName": "Назва теми",
+            "createSubject": "Створити тему",
+            "error": "Помилка",
+            "success": "Успішно",
+            "createdSuccessfully": "Тему успішно створено"
+        },
+        "editSubjectModal": {
+            "title": "Редагувати тему «{name}»",
+            "category": "Категорія",
+            "subjectName": "Назва теми",
+            "editSubject": "Зберегти зміни"
+        },
+        "deleteSubjectModal": {
+            "title": "Видалити тему",
+            "content": "Ви впевнені, що хочете видалити тему «{name}»?",
+            "confirmButtonText": "Видалити тему"
+        }
+    },
+    "userSlots": {
+        "title": "Мої слоти",
+        "category": "Категорія",
+        "subject": "Тема",
+        "addSlot": "Додати слот",
+        "from": "З",
+        "to": "До",
+        "saveSchedule": "Зберегти розклад",
+        "singleSlots": "Разові слоти",
+        "createSingleSlot": "Створити разовий слот",
+        "dateFrom": "Дата з",
+        "dateTo": "Дата до",
+        "monday": "Понеділок",
+        "tuesday": "Вівторок",
+        "wednesday": "Середа",
+        "thursday": "Четвер",
+        "friday": "П’ятниця",
+        "saturday": "Субота",
+        "sunday": "Неділя",
+        "deleteSingleSlot": "Видалити разовий слот",
+        "error": "Помилка",
+        "success": "Успішно",
+        "deletedSuccessfully": "Успішно видалено",
+        "categoryRequired": "Оберіть категорію.",
+        "subjectRequired": "Оберіть тему.",
+        "timeFromAfterTimeTo": "Час початку ({from}) не може бути пізнішим за час завершення ({to}).",
+        "timeConflict": "Конфлікт часу: інтервал {from}–{to} перетинається з {conflictFrom}–{conflictTo}.",
+        "scheduleSavedSuccessfully": "Розклад успішно збережено",
+        "slotCreatedSuccessfully": "Слот успішно створено",
+        "CreateSingleSlotModal": {
+            "title": "Створити разовий слот",
+            "timeFrom": "Час з",
+            "timeTo": "Час до",
+            "save": "Зберегти"
+        },
+        "DeleteSingleSlotModal": {
+            "title": "Видалити разовий слот",
+            "description": "Цю дію неможливо скасувати.",
+            "content": "Ви впевнені, що хочете видалити цей разовий слот?",
+            "dateFrom": "Дата з",
+            "dateTo": "Дата до",
+            "cancel": "Скасувати",
+            "deleteSlot": "Видалити слот"
+        }
+    },
+    "zodI18n": {
+        "errors": {
+            "custom": "Некоректне значення",
+            "invalid_type": "Очікувався тип {expected}, отримано {received}",
+            "invalid_type_received_undefined": "Обов’язкове поле",
+            "invalid_string": {
+                "email": "Введіть коректну адресу електронної пошти",
+                "url": "Введіть коректне посилання",
+                "uuid": "Введіть коректний UUID",
+                "regex": "Некоректний формат"
+            },
+            "too_small": {
+                "string": {
+                    "exact": "Введіть рівно {minimum} символів",
+                    "inclusive": "Введіть щонайменше {minimum} символів",
+                    "not_inclusive": "Введіть більше ніж {minimum} символів"
+                }
+            },
+            "too_big": {
+                "string": {
+                    "exact": "Введіть рівно {maximum} символів",
+                    "inclusive": "Введіть не більше ніж {maximum} символів",
+                    "not_inclusive": "Введіть менше ніж {maximum} символів"
+                }
+            }
+        },
+        "types": {
+            "string": "рядок",
+            "number": "число",
+            "boolean": "логічне значення",
+            "undefined": "невизначене значення"
+        },
+        "validations": {
+            "email": "адреса електронної пошти",
+            "url": "посилання",
+            "uuid": "UUID",
+            "regex": "формат"
+        }
+    }
+}

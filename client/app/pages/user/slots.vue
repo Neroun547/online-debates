@@ -14,10 +14,10 @@
       :end-time="activeDeleteSingleSlot?.endTime"
       @confirm="deleteSingleSlot"
     />
-    <h2 class="text-4xl">My slots</h2>
+    <h2 class="text-4xl">{{ $t("userSlots.title") }}</h2>
     <div class="max-w-[300px]">
       <div class="mt-5">
-        <label>Category</label>
+        <label>{{ $t("userSlots.category") }}</label>
         <PaginationCategoriesSelect v-model="selectedCategoryId" class="mt-2" />
 
         <div class="text-red-600 mt-2" v-if="isCategoryValidationError">
@@ -29,7 +29,7 @@
         class="mt-4"
         v-if="selectedCategoryId !== -1 && selectedCategoryId !== undefined"
       >
-        <label>Subject</label>
+        <label>{{ $t("userSlots.subject") }}</label>
         <PaginationSubjectSelect
           v-model="selectedSubjectId"
           :category-id="selectedCategoryId ?? undefined"
@@ -60,19 +60,19 @@
                   icon="lucide:plus"
                   size="xs"
                   class="cursor-pointer"
-                  label="Add slot"
+                  :label="$t('userSlots.addSlot')"
                   @click="addTimeToSlot(slot.weekday)"
                 />
               </div>
               <div v-for="time in slot.intervals">
                 <div class="mt-5 flex items-center">
-                  <label>From</label>
+                  <label>{{ $t("userSlots.from") }}</label>
                   <UInputTime
                     :hour-cycle="24"
                     v-model="time.timeFrom"
                     class="ml-2"
                   />
-                  <label class="ml-10">To</label>
+                  <label class="ml-10">{{ $t("userSlots.to") }}</label>
                   <UInputTime
                     :hour-cycle="24"
                     v-model="time.timeTo"
@@ -95,7 +95,7 @@
           </div>
           <div class="ml-auto m-5 w-max">
             <UButton
-              label="Save schedule"
+              :label="$t('userSlots.saveSchedule')"
               @click="saveRegularSlots"
               class="cursor-pointer"
               icon="lucide:import"
@@ -107,12 +107,12 @@
       </div>
       <div class="mt-10 border rounded border-gray-300 shadow p-5">
         <div>
-          <h2 class="text-2xl">Single slots</h2>
+          <h2 class="text-2xl">{{ $t("userSlots.singleSlots") }}</h2>
         </div>
         <div class="w-min ml-auto">
           <UButton
             icon="lucide:plus"
-            label="Create single slot"
+            :label="$t('userSlots.createSingleSlot')"
             class="cursor-pointer"
             :disabled="isSaveSingleSlotButtonDisabled"
             @click="openCreateSingleSlotModal"
@@ -121,12 +121,12 @@
         <div>
           <div class="flex">
             <div>
-              <label for="">Date from</label>
+              <label for="">{{ $t("userSlots.dateFrom") }}</label>
               <input type="date" class="ml-2" v-model="singleSlotsDateFrom" />
             </div>
 
             <div class="ml-20">
-              <label for="">Date to</label>
+              <label for="">{{ $t("userSlots.dateTo") }}</label>
               <input type="date" class="ml-2" v-model="singleSlotsDateTo" />
             </div>
           </div>
@@ -160,18 +160,23 @@ import type { TableColumn } from "@nuxt/ui";
 import DeleteSingleSlotModal from "~/components/slots/DeleteSingleSlotModal.vue";
 import { useInfiniteScroll } from "@vueuse/core";
 
+const { t, locale } = useI18n();
+
 const UButton = resolveComponent("UButton");
 
 const slotsStore = useSlotsStore();
-const weekDaysMap = new Map();
-
-weekDaysMap.set(1, "Monday");
-weekDaysMap.set(2, "Tuesday");
-weekDaysMap.set(3, "Wednesday");
-weekDaysMap.set(4, "Thursday");
-weekDaysMap.set(5, "Friday");
-weekDaysMap.set(6, "Saturday");
-weekDaysMap.set(7, "Sunday");
+const weekDaysMap = computed(
+  () =>
+    new Map<number, string>([
+      [1, t("userSlots.monday")],
+      [2, t("userSlots.tuesday")],
+      [3, t("userSlots.wednesday")],
+      [4, t("userSlots.thursday")],
+      [5, t("userSlots.friday")],
+      [6, t("userSlots.saturday")],
+      [7, t("userSlots.sunday")],
+    ]),
+);
 
 export interface SlotItem {
   weekday: number; // 1-7 monday-sunday
@@ -217,38 +222,39 @@ const singleSlotsDateTo = ref();
 const singleSlotsPage = ref(1);
 const singleSlotsLimit = ref(20);
 
-const singleSlotsTableColumns: TableColumn<GetSingleSlotsResponseDataItemInterface>[] =
-  [
-    {
-      accessorKey: "startTime",
-      header: "Date from",
+const singleSlotsTableColumns = computed<
+  TableColumn<GetSingleSlotsResponseDataItemInterface>[]
+>(() => [
+  {
+    accessorKey: "startTime",
+    header: t("userSlots.dateFrom"),
+  },
+  {
+    accessorKey: "endTime",
+    header: t("userSlots.dateTo"),
+  },
+  {
+    id: "actions",
+    meta: {
+      class: {
+        td: "text-right",
+      },
     },
-    {
-      accessorKey: "endTime",
-      header: "Date to",
-    },
-    {
-      id: "actions",
-      meta: {
-        class: {
-          td: "text-right",
+    cell: ({ row }) => {
+      return h(UButton, {
+        icon: "i-lucide-trash-2",
+        color: "",
+        class: "bg-red-600 text-white cursor-pointer",
+        variant: "ghost",
+        size: "xs",
+        "aria-label": t("userSlots.deleteSingleSlot"),
+        onClick: () => {
+          openDeleteSingleSlotModal(row.original);
         },
-      },
-      cell: ({ row }) => {
-        return h(UButton, {
-          icon: "i-lucide-trash-2",
-          color: "",
-          class: "bg-red-600 text-white cursor-pointer",
-          variant: "ghost",
-          size: "xs",
-          "aria-label": "Delete single slot",
-          onClick: () => {
-            openDeleteSingleSlotModal(row.original);
-          },
-        });
-      },
+      });
     },
-  ];
+  },
+]);
 
 const singleSlotsScrollContainer = useTemplateRef("singleSlotsScrollContainer");
 const singleSlots = ref<GetSingleSlotsResponseDataItemInterface[]>([]);
@@ -367,7 +373,7 @@ async function deleteSingleSlot() {
 
     if (slotsStore.isError) {
       toast.add({
-        title: "Error",
+        title: t("userSlots.error"),
         description: slotsStore.errorMessage,
         progress: {
           color: "error",
@@ -375,8 +381,8 @@ async function deleteSingleSlot() {
       });
     } else {
       toast.add({
-        title: "Success",
-        description: "Deleted successfully",
+        title: t("userSlots.success"),
+        description: t("userSlots.deletedSuccessfully"),
         progress: {
           color: "success",
         },
@@ -413,7 +419,7 @@ function validateCategoryAndSubject(): boolean {
     selectedCategoryId.value === undefined ||
     selectedCategoryId.value === null
   ) {
-    categoryValidationErrorMessage.value = "Category is required.";
+    categoryValidationErrorMessage.value = t("userSlots.categoryRequired");
     isCategoryValidationError.value = true;
   } else {
     isCategoryValidationError.value = false;
@@ -423,7 +429,7 @@ function validateCategoryAndSubject(): boolean {
     selectedSubjectId.value === undefined ||
     selectedSubjectId.value === null
   ) {
-    subjectValidationErrorMessage.value = "\nSubject is required.";
+    subjectValidationErrorMessage.value = t("userSlots.subjectRequired");
     isSubjectValidationError.value = true;
   } else {
     isSubjectValidationError.value = false;
@@ -453,7 +459,10 @@ function validateSlots(): boolean {
 
       if (timeFromInSeconds > timeToInSeconds) {
         slot.isError = true;
-        slot.errorMessage = `Time from cannot be greater than time to. (${time.timeFrom.toString().substring(0, 5)} ${time.timeTo.toString().substring(0, 5)})`;
+        slot.errorMessage = t("userSlots.timeFromAfterTimeTo", {
+          from: time.timeFrom.toString().substring(0, 5),
+          to: time.timeTo.toString().substring(0, 5),
+        });
 
         return false;
       }
@@ -488,7 +497,12 @@ function validateSlots(): boolean {
 
       if (conflictSlot) {
         slot.isError = true;
-        slot.errorMessage = `Time Conflict. (${time.timeFrom.toString().substring(0, 5)} ${time.timeTo.toString().substring(0, 5)} and (${conflictSlot.timeFrom.toString().substring(0, 5)} ${conflictSlot.timeTo.toString().substring(0, 5)})`;
+        slot.errorMessage = t("userSlots.timeConflict", {
+          from: time.timeFrom.toString().substring(0, 5),
+          to: time.timeTo.toString().substring(0, 5),
+          conflictFrom: conflictSlot.timeFrom.toString().substring(0, 5),
+          conflictTo: conflictSlot.timeTo.toString().substring(0, 5),
+        });
         isSaveRegularSlotsButtonDisabled.value = true;
         return false;
       }
@@ -544,7 +558,7 @@ async function saveRegularSlots() {
 
     if (slotsStore.isError) {
       toast.add({
-        title: "Error",
+        title: t("userSlots.error"),
         description: slotsStore.errorMessage,
         progress: {
           color: "error",
@@ -552,8 +566,8 @@ async function saveRegularSlots() {
       });
     } else {
       toast.add({
-        title: "Success",
-        description: "Schedule saved successfully",
+        title: t("userSlots.success"),
+        description: t("userSlots.scheduleSavedSuccessfully"),
         progress: {
           color: "success",
         },
@@ -692,13 +706,15 @@ async function saveSingleSlot(data: {
 
     await slotsStore.createSingleSlot({
       subjectId: selectedSubjectId.value,
-      startTime: data.date.toString() + " " + data.timeFrom.toString().substring(0, 5),
-      endTime: data.date.toString() + " " + data.timeTo.toString().substring(0, 5),
+      startTime:
+        data.date.toString() + " " + data.timeFrom.toString().substring(0, 5),
+      endTime:
+        data.date.toString() + " " + data.timeTo.toString().substring(0, 5),
     });
 
     if (slotsStore.isError) {
       toast.add({
-        title: "Error",
+        title: t("userSlots.error"),
         description: slotsStore.errorMessage,
         progress: {
           color: "error",
@@ -706,8 +722,8 @@ async function saveSingleSlot(data: {
       });
     } else {
       toast.add({
-        title: "Success",
-        description: "Slot created successfully",
+        title: t("userSlots.success"),
+        description: t("userSlots.slotCreatedSuccessfully"),
         progress: {
           color: "success",
         },
@@ -800,7 +816,7 @@ watch(selectedSubjectId, () => {
   getTemplateSlots();
   getSingleSlotsCount().then(() => {
     getSingleSlots(true);
-  })
+  });
 });
 
 watch(singleSlotsDateFrom, () => {

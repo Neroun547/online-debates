@@ -1,8 +1,8 @@
 <template>
   <UModal
     v-model:open="isModalOpen"
-    title="Book a session"
-    description="Choose a date and an available time slot."
+    :title="$t('subjects.bookingModal.title')"
+    :description="$t('subjects.bookingModal.description')"
     :ui="{ content: 'sm:max-w-3xl' }"
   >
     <template #body>
@@ -19,10 +19,10 @@
             </span>
             <div>
               <p class="text-sm font-semibold text-gray-900 dark:text-white">
-                Select a date
+                {{ $t("subjects.bookingModal.selectDate") }}
               </p>
               <p class="text-xs text-gray-500 dark:text-gray-400">
-                Available dates are shown below
+                {{ $t("subjects.bookingModal.availableDatesDescription") }}
               </p>
             </div>
           </div>
@@ -53,7 +53,7 @@
               </span>
               <div>
                 <p class="text-sm font-semibold text-gray-900 dark:text-white">
-                  Available time
+                  {{ $t("subjects.bookingModal.availableTime") }}
                 </p>
                 <p class="text-xs text-gray-500 dark:text-gray-400">
                   {{ formattedSelectedDate }}
@@ -66,7 +66,11 @@
               color="neutral"
               variant="soft"
             >
-              {{ availableSlots.length }} available
+              {{
+                $t("subjects.bookingModal.availableSlots", {
+                  count: availableSlots.length,
+                })
+              }}
             </UBadge>
           </div>
 
@@ -112,12 +116,12 @@
                 />
               </span>
               <p class="text-sm font-medium text-gray-700 dark:text-gray-200">
-                No available slots
+                {{ $t("subjects.bookingModal.noAvailableSlots") }}
               </p>
               <p
                 class="mt-1 max-w-52 text-xs leading-5 text-gray-500 dark:text-gray-400"
               >
-                Try another date to find an available time.
+                {{ $t("subjects.bookingModal.tryAnotherDate") }}
               </p>
             </div>
           </div>
@@ -129,7 +133,13 @@
               name="i-lucide-globe-2"
               class="size-4 shrink-0"
             />
-            <span>Time zone: {{ timezone }}</span>
+            <span>
+              {{
+                $t("subjects.bookingModal.timeZone", {
+                  timezone: displayedTimezone,
+                })
+              }}
+            </span>
           </div>
         </section>
       </div>
@@ -147,20 +157,20 @@
             </span>
           </template>
           <template v-else>
-            Select a time to continue
+            {{ $t("subjects.bookingModal.selectTimeToContinue") }}
           </template>
         </p>
 
         <div class="flex shrink-0 justify-end gap-3">
           <UButton
-            label="Cancel"
+            :label="$t('subjects.bookingModal.cancel')"
             color="neutral"
             variant="outline"
             class="cursor-pointer"
             @click="isModalOpen = false"
           />
           <UButton
-            label="Book session"
+            :label="$t('subjects.bookingModal.bookSession')"
             icon="i-lucide-calendar-check-2"
             class="cursor-pointer"
             :disabled="!selectedSlot"
@@ -178,6 +188,8 @@ import { getLocalTimeZone, today } from '@internationalized/date'
 import { DateTime } from 'luxon'
 import type { GetSlotsForBookingResponseInterface } from '~/store/slots/interfaces/get-slots-for-booking-response.interface'
 
+const { t, locale } = useI18n()
+
 interface Props {
   availableSlots?: GetSlotsForBookingResponseInterface[]
   isLoading?: boolean
@@ -188,7 +200,7 @@ interface Props {
 const props = withDefaults(defineProps<Props>(), {
   availableSlots: () => [],
   isLoading: false,
-  timezone: 'Your local time',
+  timezone: '',
   isBookingButtonLoading: false
 })
 
@@ -209,8 +221,12 @@ const selectedSlot = computed(() => {
   return props.availableSlots.find(slot => slot.id === selectedSlotId.value)
 })
 
+const displayedTimezone = computed(() => {
+  return props.timezone || t('subjects.bookingModal.yourLocalTime')
+})
+
 const formattedSelectedDate = computed(() => {
-  return new Intl.DateTimeFormat('en-US', {
+  return new Intl.DateTimeFormat(locale.value, {
     weekday: 'short',
     month: 'long',
     day: 'numeric'

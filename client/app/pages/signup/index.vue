@@ -76,7 +76,7 @@ const fields: Array<PropsFieldItemInterface> = [
 
 const formSchema = z.object({
   username: z.string().trim().min(6).max(50),
-  email: z.email(),
+  email: z.string().email(),
   password: z.string().trim().min(8).max(50),
   timezone: z.string().min(1).max(50),
 });

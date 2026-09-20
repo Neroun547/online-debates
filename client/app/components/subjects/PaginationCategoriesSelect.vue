@@ -88,14 +88,14 @@ onMounted(() => {
   >
     <template #empty>
       <span>
-        {{ loading ? "Loading..." : "No categories found" }}
+        {{ loading ? $t("loading") + "..." : $t("noCategoriesFound") }}
       </span>
     </template>
 
     <template #content-bottom>
       <div v-if="isLoadMoreAvailable" class="border-default border-t p-2">
         <UButton
-          label="Load more"
+          :label="$t('loadMore')"
           variant="ghost"
           color="neutral"
           class="w-full justify-center"

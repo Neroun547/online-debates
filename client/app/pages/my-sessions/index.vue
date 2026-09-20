@@ -1,9 +1,9 @@
 <template>
   <div class="mt-15">
-    <h2 class="text-4xl">My sessions</h2>
+    <h2 class="text-4xl">{{ $t("mySessions.title") }}</h2>
 
     <div class="mt-10 flex flex-wrap items-end gap-4">
-      <UFormField label="Sessions">
+      <UFormField :label="$t('mySessions.sessions')">
         <USelect
           v-model="selectedSessionFilterOption"
           :items="filtersSessionsSelectOptions"
@@ -12,7 +12,7 @@
         />
       </UFormField>
 
-      <UFormField label="Date from">
+      <UFormField :label="$t('mySessions.dateFrom')">
         <input
           id="sessions-date-from"
           v-model="dateFrom"
@@ -22,7 +22,7 @@
         />
       </UFormField>
 
-      <UFormField label="Date to">
+      <UFormField :label="$t('mySessions.dateTo')">
         <input
           id="sessions-date-to"
           v-model="dateTo"
@@ -38,8 +38,8 @@
       class="mt-6"
       color="error"
       variant="soft"
-      title="Invalid date range"
-      description="Date from cannot be later than date to."
+      :title="$t('mySessions.invalidDateRange')"
+      :description="$t('mySessions.dateRangeDescription')"
       icon="i-lucide-calendar-x"
     />
 
@@ -48,7 +48,7 @@
       class="mt-6"
       color="error"
       variant="soft"
-      title="Could not load sessions"
+      :title="$t('mySessions.couldNotLoadSessions')"
       :description="errorMessage"
       icon="i-lucide-circle-alert"
     >
@@ -59,7 +59,7 @@
           size="xs"
           @click="loadSessions(true)"
         >
-          Try again
+          {{ $t("mySessions.tryAgain") }}
         </UButton>
       </template>
     </UAlert>
@@ -92,12 +92,16 @@
                   variant="soft"
                   class="capitalize"
                 >
-                  {{ session.status }}
+                  {{ getSessionStatusLabel(session.status) }}
                 </UBadge>
               </div>
 
               <p class="mt-1 text-sm text-muted">
-                With {{ getCounterpartName(session) }}
+                {{
+                  $t("mySessions.withUser", {
+                    name: getCounterpartName(session),
+                  })
+                }}
                 <UBadge
                   v-if="
                     userStore.userId !== session.creatorId && session.creator
@@ -106,7 +110,7 @@
                   :color="
                     session.creator.status === 'offline' ? 'neutral' : 'success'
                   "
-                  >{{ session.creator.status }}</UBadge
+                  >{{ getUserStatusLabel(session.creator.status) }}</UBadge
                 >
                 <UBadge
                   v-if="
@@ -118,7 +122,7 @@
                       ? 'neutral'
                       : 'success'
                   "
-                  >{{ session.customer.status }}</UBadge
+                  >{{ getUserStatusLabel(session.customer.status) }}</UBadge
                 >
               </p>
             </div>
@@ -142,8 +146,11 @@
             "
           >
             <p class="font-medium text-highlighted">
-              This is a permanent session. Booked with you at
-              {{ session.createdAt }}
+              {{
+                $t("mySessions.permanentBookedWithYou", {
+                  date: session.createdAt,
+                })
+              }}
             </p>
           </div>
           <div
@@ -154,8 +161,11 @@
             "
           >
             <p class="font-medium text-highlighted">
-              This is a permanent session. You created it at
-              {{ session.createdAt }}
+              {{
+                $t("mySessions.permanentCreatedByYou", {
+                  date: session.createdAt,
+                })
+              }}
             </p>
           </div>
         </div>
@@ -173,14 +183,22 @@
           </div>
           <div class="ml-auto">
             <UTooltip
-              :text="'Start at ' + session.slot?.startTime"
+              :text="
+                $t('mySessions.startAt', {
+                  date: session.slot?.startTime,
+                })
+              "
               v-if="
                 !isSessionStarted(session.slot?.startTime ?? '') &&
                 session.status === 'booked' &&
                 session.slot
               "
             >
-              <UButton label="Start" class="cursor-pointer" :disabled="true" />
+              <UButton
+                :label="$t('mySessions.start')"
+                class="cursor-pointer"
+                :disabled="true"
+              />
             </UTooltip>
             <UTooltip
               v-if="
@@ -188,20 +206,20 @@
                 session.status === 'booked' &&
                 session.slot
               "
-              :text="'Start now'"
+              :text="$t('mySessions.startNow')"
             >
               <UButton
-                label="Start"
+                :label="$t('mySessions.start')"
                 class="cursor-pointer"
                 @click="startSession(session.id)"
               />
             </UTooltip>
             <UTooltip
               v-if="session.status === 'booked' && !session.slot"
-              :text="'Start now'"
+              :text="$t('mySessions.startNow')"
             >
               <UButton
-                label="Start"
+                :label="$t('mySessions.start')"
                 class="cursor-pointer"
                 @click="startSession(session.id)"
               />
@@ -217,10 +235,10 @@
     >
       <UIcon name="i-lucide-calendar-x-2" class="mx-auto size-9 text-muted" />
       <h2 class="mt-3 font-semibold text-highlighted">
-        You don't have sessions
+        {{ $t("mySessions.noSessions") }}
       </h2>
       <p class="mt-1 text-sm text-muted">
-        Try changing the session type or date range.
+        {{ $t("mySessions.changeFilters") }}
       </p>
     </div>
 
@@ -231,7 +249,7 @@
       class="flex items-center justify-center gap-2 py-8 text-sm text-muted"
     >
       <UIcon name="i-lucide-loader-circle" class="size-5 animate-spin" />
-      Loading more sessions...
+      {{ $t("mySessions.loadingMore") }}
     </div>
   </div>
 </template>
@@ -243,11 +261,14 @@ import { userAuthGuard } from "~/guards/user-auth.guard";
 import { useAppStore } from "~/store/app-store";
 import type {
   SessionStatus,
+  SessionUserInterface,
   UserSessionInterface,
   UserSessionsFilter,
 } from "~/store/sessions/interfaces/get-user-sessions.interface";
 import { useSessionsStore } from "~/store/sessions/sessions.store";
 import { useUserStore } from "~/store/user/user.store";
+
+const { t } = useI18n();
 
 const router = useRouter();
 
@@ -256,23 +277,25 @@ const sessionsStore = useSessionsStore();
 const userStore = useUserStore();
 const { errorMessage, isError } = storeToRefs(sessionsStore);
 
-const filtersSessionsSelectOptions: Array<{
-  label: string;
-  value: UserSessionsFilter;
-}> = [
-  {
-    label: "Booked with me",
-    value: "booked_with_me",
-  },
-  {
-    label: "My bookings",
-    value: "my_booking",
-  },
-  {
-    label: "All",
-    value: "all",
-  },
-];
+const filtersSessionsSelectOptions = computed<
+  Array<{
+    label: string;
+    value: UserSessionsFilter;
+  }>
+>(() => [
+    {
+      label: t("mySessions.bookedWithMe"),
+      value: "booked_with_me",
+    },
+    {
+      label: t("mySessions.myBookings"),
+      value: "my_booking",
+    },
+    {
+      label: t("mySessions.all"),
+      value: "all",
+    },
+  ]);
 
 const now = DateTime.now();
 const selectedSessionFilterOption = ref<UserSessionsFilter>("all");
@@ -382,8 +405,8 @@ function isSentinelVisible(): boolean {
 
 function getSessionRoleLabel(session: UserSessionInterface): string {
   return session.creatorId === userStore.userId
-    ? "Booked with me"
-    : "My booking";
+    ? t("mySessions.bookedWithMe")
+    : t("mySessions.myBooking");
 }
 
 function getCounterpartName(session: UserSessionInterface): string {
@@ -391,7 +414,31 @@ function getCounterpartName(session: UserSessionInterface): string {
   const counterpart = isCreator ? session.customer : session.creator;
   const counterpartId = isCreator ? session.customerId : session.creatorId;
 
-  return counterpart?.username ?? `User #${counterpartId}`;
+  return counterpart?.username ?? t("mySessions.userNumber", {
+    id: counterpartId,
+  });
+}
+
+function getSessionStatusLabel(status: SessionStatus): string {
+  if (status === "booked") {
+    return t("mySessions.statusBooked");
+  }
+  if (status === "completed") {
+    return t("mySessions.statusCompleted");
+  }
+
+  return t("mySessions.statusCancelled");
+}
+
+function getUserStatusLabel(status: SessionUserInterface["status"]): string {
+  if (status === "online") {
+    return t("mySessions.statusOnline");
+  }
+  if (status === "busy") {
+    return t("mySessions.statusBusy");
+  }
+
+  return t("mySessions.statusOffline");
 }
 
 function formatSessionTime(dateFromValue: string, dateToValue: string): string {

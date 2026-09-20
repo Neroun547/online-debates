@@ -47,7 +47,7 @@ const formFields: Array<PropsFieldItemInterface> = [
 ];
 
 const formSchema = z.object({
-  email: z.email(),
+  email: z.string().email(),
 });
 
 async function sendRecoveryLink(data: { email: string }) {

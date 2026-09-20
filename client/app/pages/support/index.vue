@@ -7,9 +7,9 @@
         >
           <UIcon name="lucide:mail" class="size-6" />
         </div>
-        <h1 class="text-4xl font-semibold">Contact support</h1>
+        <h1 class="text-4xl font-semibold">{{ $t("support.title") }}</h1>
         <p class="mt-3 text-muted">
-          Describe your question or problem and we will get back to you.
+          {{ $t("support.description") }}
         </p>
       </div>
 
@@ -20,26 +20,36 @@
           class="space-y-6"
           @submit="saveMessage"
         >
-          <UFormField label="Email" name="email" required class="w-full">
+          <UFormField
+            :label="$t('support.email')"
+            name="email"
+            required
+            class="w-full"
+          >
             <UInput
               v-model="formState.email"
               name="email"
-              placeholder="Email"
+              :placeholder="$t('support.email')"
               class="w-full"
             />
           </UFormField>
-          <UFormField label="Subject" name="subject" required class="w-full">
+          <UFormField
+            :label="$t('support.subject')"
+            name="subject"
+            required
+            class="w-full"
+          >
             <UInput
               v-model="formState.subject"
               name="subject"
-              placeholder="What can we help you with?"
+              :placeholder="$t('support.subjectPlaceholder')"
               :maxlength="150"
               class="w-full"
             />
           </UFormField>
 
           <UFormField
-            label="Message"
+            :label="$t('support.message')"
             name="message"
             required
             :hint="`${formState.message.length}/5000`"
@@ -48,7 +58,7 @@
             <UTextarea
               v-model="formState.message"
               name="message"
-              placeholder="Write your message here..."
+              :placeholder="$t('support.messagePlaceholder')"
               :rows="8"
               :maxrows="16"
               :maxlength="5000"
@@ -60,7 +70,7 @@
           <div class="flex justify-end">
             <UButton
               type="submit"
-              label="Send message"
+              :label="$t('support.sendMessage')"
               icon="lucide:send"
               class="cursor-pointer"
             />
@@ -75,13 +85,15 @@ import { z } from "zod";
 import { useAppStore } from "~/store/app-store";
 import { useSupportStore } from "~/store/support/support.store";
 
+const { t } = useI18n();
+
 const appStore = useAppStore();
 const supportStore = useSupportStore();
 
 const toast = useToast();
 
 const feedbackSchema = z.object({
-  email: z.email().trim(),
+  email: z.string().email().trim(),
   subject: z.string().trim().min(1).max(150),
   message: z.string().trim().min(1).max(5000),
 });
@@ -103,15 +115,14 @@ async function saveMessage(e: Event) {
 
   if (supportStore.isError) {
     toast.add({
-      title: "Error",
+      title: t("support.error"),
       description: supportStore.errorMessage,
       color: "error",
     });
   } else {
     toast.add({
-      title: "Sent successfully",
-      description:
-        "Your message sent successfully. We will write letter to your email",
+      title: t("support.sentSuccessfully"),
+      description: t("support.sentDescription"),
       color: "success",
     });
   }

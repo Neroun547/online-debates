@@ -12,39 +12,47 @@
       @close="() => (isConfirmNewEmailModalShow = false)"
     />
 
-    <h2 class="text-4xl">Settings</h2>
+    <h2 class="text-4xl">{{ $t("settings.title") }}</h2>
     <div class="flex flex-col shadow p-5 mt-10">
       <div class="flex justify-between max-md:flex-col">
         <div class="flex flex-col w-full mr-5">
           <div class="w-full">
-            <h2 class="text-2xl">Personal info</h2>
+            <h2 class="text-2xl">{{ $t("settings.personalInfo") }}</h2>
             <UForm
               class="mt-5"
               @submit.prevent="updateUserPersonalInfo"
               :state="user"
               :schema="updateEmailUserSchema"
             >
-              <UFormField name="email" label="Email">
+              <UFormField name="email" :label="$t('settings.email')">
                 <UInput
-                  placeholder="Email"
+                  :placeholder="$t('settings.email')"
                   class="w-full"
                   v-model="user.email"
                   name="email"
                 />
               </UFormField>
-              <UFormField label="Username" name="username" class="mt-5 w-full">
+              <UFormField
+                :label="$t('settings.username')"
+                name="username"
+                class="mt-5 w-full"
+              >
                 <UInput
-                  placeholder="Username"
+                  :placeholder="$t('settings.username')"
                   class="w-full"
                   v-model="user.username"
                   name="username"
                 />
               </UFormField>
-              <UFormField label="Timezone" name="timezone" class="mt-5 w-full">
+              <UFormField
+                :label="$t('settings.timezone')"
+                name="timezone"
+                class="mt-5 w-full"
+              >
                 <TimezoneSelect v-model="user.timezone" />
               </UFormField>
               <UFormField
-                label="Is available for permanent sessions"
+                :label="$t('settings.availableForPermanentSessions')"
                 name="isAvailableForPermanentSessions"
                 class="mt-5 w-full"
               >
@@ -53,21 +61,27 @@
                   color="success"
                 />
                 <p class="italic mt-5 text-xs">
-                  By enabling this option, users can establish a persistent
-                  session with you to communicate with you at any time.
+                  {{ $t("settings.permanentSessionsDescription") }}
                 </p>
               </UFormField>
 
+              <div class="mt-5">
+                <label for="" class="text-sm font-bold">
+                  {{ $t("settings.language") }}
+                </label>
+                <LanguageSelect class="mt-2" />
+              </div>
+
               <UButton
                 class="w-min mt-5 block cursor-pointer"
-                label="Save new personal data"
+                :label="$t('settings.savePersonalData')"
                 type="submit"
               />
             </UForm>
           </div>
         </div>
         <div class="flex flex-col w-full ml-5 max-md:ml-0 max-md:mt-10">
-          <h2 class="text-2xl">Change password</h2>
+          <h2 class="text-2xl">{{ $t("settings.changePassword") }}</h2>
           <UForm
             class="mt-5"
             :schema="updatePasswordSchema"
@@ -77,12 +91,12 @@
             <UFormField
               name="oldPassword"
               class="w-full"
-              label="Write your old password"
+              :label="$t('settings.enterOldPassword')"
             >
               <UInput
                 class="w-full"
                 name="oldPassword"
-                placeholder="Old password"
+                :placeholder="$t('settings.oldPassword')"
                 v-model="updatePasswordState.oldPassword"
                 type="password"
               />
@@ -90,11 +104,11 @@
             <UFormField
               name="newPassword"
               class="mt-5 w-full"
-              label="Write your new password"
+              :label="$t('settings.enterNewPassword')"
             >
               <UInput
                 name="newPassword"
-                placeholder="New password"
+                :placeholder="$t('settings.newPassword')"
                 v-model="updatePasswordState.newPassword"
                 class="w-full"
                 type="password"
@@ -103,26 +117,30 @@
             <UFormField
               name="confirmNewPassword"
               class="mt-5 w-full"
-              label="Confirm your new password"
+              :label="$t('settings.confirmNewPassword')"
             >
               <UInput
                 name="confirmNewPassword"
-                placeholder="Confirm new password"
+                :placeholder="$t('settings.confirmNewPasswordPlaceholder')"
                 v-model="updatePasswordState.confirmNewPassword"
                 class="w-full"
                 type="password"
               />
             </UFormField>
 
-            <UButton label="Update password" type="submit" class="mt-5" />
+            <UButton
+              :label="$t('settings.updatePassword')"
+              type="submit"
+              class="mt-5"
+            />
           </UForm>
         </div>
       </div>
 
       <div class="mt-10">
-        <h2 class="text-red-600">Danger zone</h2>
+        <h2 class="text-red-600">{{ $t("settings.dangerZone") }}</h2>
         <UButton
-          label="Delete account"
+          :label="$t('settings.deleteAccount')"
           class="bg-red-600 mt-5 hover:bg-red-600 cursor-pointer active:bg-red-600"
           active-class="bg-red-600"
           @click="showDeleteAccountModal"
@@ -139,23 +157,27 @@ import DeleteAccountModal from "~/components/settings/DeleteAccountModal.vue";
 import { z } from "zod";
 import ConfirmYourNewEmailModal from "~/components/settings/ConfirmYourNewEmailModal.vue";
 
+const { t } = useI18n();
+
 const updateEmailUserSchema = z.object({
-  email: z.email(),
+  email: z.string().email(),
   username: z.string().trim().min(6).max(50),
   timezone: z.string(),
   isAvailableForPermanentSessions: z.boolean(),
 });
 
-const updatePasswordSchema = z
-  .object({
-    oldPassword: z.string().trim().min(8).max(50),
-    newPassword: z.string().trim().min(8).max(50),
-    confirmNewPassword: z.string().trim().min(8).max(50),
-  })
-  .refine((data) => data.newPassword === data.confirmNewPassword, {
-    message: "Password do not match",
-    path: ["confirmNewPassword"],
-  });
+const updatePasswordSchema = computed(() =>
+  z
+    .object({
+      oldPassword: z.string().trim().min(8).max(50),
+      newPassword: z.string().trim().min(8).max(50),
+      confirmNewPassword: z.string().trim().min(8).max(50),
+    })
+    .refine((data) => data.newPassword === data.confirmNewPassword, {
+      message: t("settings.passwordsDoNotMatch"),
+      path: ["confirmNewPassword"],
+    }),
+);
 
 const updatePasswordState = ref({
   oldPassword: "",
@@ -201,7 +223,7 @@ async function updatePassword() {
 
   if (userStore.isError) {
     toast.add({
-      title: "Error",
+      title: t("settings.error"),
       description: userStore.errorMessage,
       progress: {
         color: "error",
@@ -209,8 +231,8 @@ async function updatePassword() {
     });
   } else {
     toast.add({
-      title: "Success",
-      description: "Password changed success",
+      title: t("settings.success"),
+      description: t("settings.passwordChangedSuccessfully"),
       progress: {
         color: "success",
       },
@@ -225,7 +247,8 @@ async function getUser() {
     user.value.username = data.username;
     user.value.email = data.email;
     user.value.timezone = data.timezone;
-    user.value.isAvailableForPermanentSessions = data.isAvailableForPermanentSessions;
+    user.value.isAvailableForPermanentSessions =
+      data.isAvailableForPermanentSessions;
 
     oldUserData.value.username = data.username;
     oldUserData.value.email = data.email;
@@ -244,8 +267,8 @@ async function updateUserPersonalInfo() {
 
   if (!result.isMailSent && !userStore.isError) {
     toast.add({
-      title: "Success",
-      description: "Personal data updated successfully",
+      title: t("settings.success"),
+      description: t("settings.personalDataUpdatedSuccessfully"),
       progress: {
         color: "success",
       },
@@ -253,7 +276,7 @@ async function updateUserPersonalInfo() {
   }
   if (userStore.isError) {
     toast.add({
-      title: "Error",
+      title: t("settings.error"),
       description: userStore.errorMessage,
       progress: {
         color: "error",

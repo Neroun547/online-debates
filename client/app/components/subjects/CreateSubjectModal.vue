@@ -1,20 +1,30 @@
 <template>
-  <UModal v-model:open="isModalOpen" title="Create your own subject">
+  <UModal
+    v-model:open="isModalOpen"
+    :title="$t('mySubjects.createSubjectModal.title')"
+  >
     <template #body>
       <UForm
         :schema="formSchema"
         :state="formState"
         @submit.prevent="createSubject"
       >
-        <UFormField name="categoryId" label="Category">
+        <UFormField
+          name="categoryId"
+          :label="$t('mySubjects.createSubjectModal.category')"
+        >
           <PaginationCategoriesSelect
             name="categoryId"
             v-model="formState.categoryId"
           />
         </UFormField>
-        <UFormField name="name" label="Subject name" class="w-full mt-5">
+        <UFormField
+          name="name"
+          :label="$t('mySubjects.createSubjectModal.subjectName')"
+          class="w-full mt-5"
+        >
           <UInput
-            placeholder="Subject name"
+            :placeholder="$t('mySubjects.createSubjectModal.subjectName')"
             name="name"
             class="w-full"
             v-model="formState.name"
@@ -23,7 +33,7 @@
 
         <div class="mt-10 ml-auto w-max">
           <UButton
-            label="Create subject"
+            :label="$t('mySubjects.createSubjectModal.createSubject')"
             type="submit"
             class="cursor-pointer"
           />
@@ -36,6 +46,8 @@
 import { z } from "zod";
 import PaginationCategoriesSelect from "./PaginationCategoriesSelect.vue";
 import { useCategoriesStore } from "~/store/categories/categories.store.ts";
+
+const { t } = useI18n();
 
 const emit = defineEmits(["createdNew"]);
 
@@ -63,7 +75,7 @@ async function createSubject() {
 
   if (categoriesStore.isError) {
     toast.add({
-      title: "Error",
+      title: t("mySubjects.createSubjectModal.error"),
       description: categoriesStore.errorMessage,
       progress: {
         color: "error",
@@ -71,8 +83,8 @@ async function createSubject() {
     });
   } else {
     toast.add({
-      title: "Success",
-      description: "Subject created success",
+      title: t("mySubjects.createSubjectModal.success"),
+      description: t("mySubjects.createSubjectModal.createdSuccessfully"),
       progress: {
         color: "success",
       },

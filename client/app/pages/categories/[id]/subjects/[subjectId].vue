@@ -28,10 +28,12 @@ import type { GetSubjectByIdResponseInterface } from "~/store/categories/interfa
 import type { GetUsersBySubjectResponseInterface } from "~/store/user/interfaces/get-users-by-subject-response.interface";
 import BookSessionModal from "~/components/subjects/BookSessionModal.vue";
 import { useSlotsStore } from "~/store/slots/slots.store";
-import type { UserInterface } from "~/store/user/interfaces/user-response.interface";
 import type { GetSlotsForBookingResponseInterface } from "~/store/slots/interfaces/get-slots-for-booking-response.interface";
 import { DateTime } from "luxon";
 import { useSessionsStore } from "~/store/sessions/sessions.store";
+import type { TableColumn } from "@nuxt/ui";
+
+const { t } = useI18n();
 
 const sessionStore = useSessionsStore();
 
@@ -57,64 +59,66 @@ const isSlotsLoading = ref<boolean>(false);
 const isBookingButtonLoading = ref<boolean>(false);
 const isBookSessionModalOpen = ref<boolean>(false);
 
-const activeBookingUser = ref<UserInterface>();
+const activeBookingUser = ref<GetUsersBySubjectResponseInterface>();
 
 const bookingSlots = ref<GetSlotsForBookingResponseInterface[]>([]);
 
-const usersTableColumns = [
-  {
-    accessorKey: "email",
-    header: "Email",
-  },
-  {
-    accessorKey: "username",
-    header: "Username",
-  },
-  {
-    accessorKey: "status",
-    header: "Status",
-  },
-  {
-    id: "actions",
-    meta: {
-      class: {
-        td: "text-right",
+const usersTableColumns = computed<
+  TableColumn<GetUsersBySubjectResponseInterface>[]
+>(() => [
+    {
+      accessorKey: "email",
+      header: t("subjects.email"),
+    },
+    {
+      accessorKey: "username",
+      header: t("subjects.username"),
+    },
+    {
+      accessorKey: "status",
+      header: t("subjects.status"),
+    },
+    {
+      id: "actions",
+      meta: {
+        class: {
+          td: "text-right",
+        },
+      },
+      cell: ({ row }) => {
+        if (row.original.id === usersStore.userId) {
+          return t("subjects.itsYou");
+        }
+        if (row.original.isAvailableForPermanentSessions) {
+          return [
+            h(UButton, {
+              label: t("subjects.bookSession"),
+              class: "cursor-pointer",
+              onClick: function () {
+                activeBookingUser.value = row.original;
+                openBookSessionModal();
+              },
+            }),
+            h(UButton, {
+              label: t("subjects.startSessionNow"),
+              class: "cursor-pointer ml-5",
+              onClick: function () {
+                startSessionNow(row.original.id);
+              },
+            }),
+          ];
+        }
+        return h(UButton, {
+          label: t("subjects.bookSession"),
+          class: "cursor-pointer",
+          onClick: function () {
+            activeBookingUser.value = row.original;
+            openBookSessionModal();
+          },
+        });
       },
     },
-    cell: ({ row }) => {
-      if (row.original.id === usersStore.userId) {
-        return "It's you";
-      }
-      if (row.original.isAvailableForPermanentSessions) {
-        return [
-          h(UButton, {
-            label: "Book session",
-            class: "cursor-pointer",
-            onClick: function () {
-              activeBookingUser.value = row.original;
-              openBookSessionModal();
-            },
-          }),
-          h(UButton, {
-            label: "Start session now",
-            class: "cursor-pointer ml-5",
-            onClick: function () {
-              startSessionNow(row.original.id);
-            },
-          }),
-        ];
-      }
-      return h(UButton, {
-        label: "Book session",
-        class: "cursor-pointer",
-        onClick: function () {
-          activeBookingUser.value = row.original;
-          openBookSessionModal();
-        },
-      });
-    },
-  },
-];
+  ]);
 
 async function bookSession(params: {
   date: string;
@@ -130,7 +134,7 @@ async function bookSession(params: {
 
   if (slotsStore.isError) {
     toast.add({
-      title: "Error",
+      title: t("subjects.error"),
       description: slotsStore.errorMessage,
       progress: {
         color: "error",
@@ -138,8 +142,8 @@ async function bookSession(params: {
     });
   } else {
     toast.add({
-      title: "Success",
-      description: "Session booked successfully",
+      title: t("subjects.success"),
+      description: t("subjects.sessionBookedSuccessfully"),
       progress: {
         color: "success",
       },
@@ -159,15 +163,15 @@ async function startSessionNow(userId: number) {
 
   if (sessionStore.isError) {
     toast.add({
-      title: "Error",
+      title: t("subjects.error"),
       description: sessionStore.errorMessage,
       color: "error",
     });
   } else {
     if (response && typeof response.sessionId === "number") {
       toast.add({
-        title: "Success",
-        description: "Session booked successfully",
+        title: t("subjects.success"),
+        description: t("subjects.sessionBookedSuccessfully"),
       });
 
       window.location.href = "/my-sessions/" + response.sessionId;

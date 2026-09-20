@@ -1,8 +1,14 @@
 <template>
   <BaseDeleteModal
-    confirm-button-text="Delete subject"
-    title="Delete subject"
-    :content="`Are you sure you want to delete your subject (${activeDeleteSubject?.name})?`"
+    :confirm-button-text="
+      $t('mySubjects.deleteSubjectModal.confirmButtonText')
+    "
+    :title="$t('mySubjects.deleteSubjectModal.title')"
+    :content="
+      $t('mySubjects.deleteSubjectModal.content', {
+        name: activeDeleteSubject?.name,
+      })
+    "
     v-model:is-open="isDeleteSubjectModalOpen"
     @close="isDeleteSubjectModalOpen = false"
     @confirm="deleteSubject"
@@ -13,7 +19,11 @@
     v-model:is-open="isEditSubjectModalOpen"
     :name="activeEditSubject?.name"
     :category-id="activeEditSubject?.categoryId"
-    :modal-title="'Edit ' + activeEditSubject.name"
+    :modal-title="
+      $t('mySubjects.editSubjectModal.title', {
+        name: activeEditSubject.name,
+      })
+    "
     @close="isEditSubjectModalOpen = false"
     @update="
       (newData: { name: string; categoryId: number }) => editSubject(newData)

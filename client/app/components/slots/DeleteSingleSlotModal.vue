@@ -1,8 +1,8 @@
 <template>
   <UModal
     v-model:open="isModalOpen"
-    title="Delete single slot"
-    description="This action cannot be undone."
+    :title="$t('userSlots.DeleteSingleSlotModal.title')"
+    :description="$t('userSlots.DeleteSingleSlotModal.description')"
   >
     <template #body>
       <div class="flex gap-3">
@@ -13,7 +13,7 @@
 
         <div>
           <p class="text-sm text-gray-700 dark:text-gray-300">
-            Are you sure you want to delete this single slot?
+            {{ $t("userSlots.DeleteSingleSlotModal.content") }}
           </p>
 
           <dl
@@ -25,7 +25,7 @@
               class="flex justify-between gap-6"
             >
               <dt class="text-gray-500 dark:text-gray-400">
-                Date from
+                {{ $t("userSlots.DeleteSingleSlotModal.dateFrom") }}
               </dt>
               <dd class="font-medium text-gray-900 dark:text-white">
                 {{ props.startTime }}
@@ -36,7 +36,7 @@
               class="flex justify-between gap-6"
             >
               <dt class="text-gray-500 dark:text-gray-400">
-                Date to
+                {{ $t("userSlots.DeleteSingleSlotModal.dateTo") }}
               </dt>
               <dd class="font-medium text-gray-900 dark:text-white">
                 {{ props.endTime }}
@@ -50,14 +50,14 @@
     <template #footer>
       <div class="flex w-full justify-end gap-3">
         <UButton
-          label="Cancel"
+          :label="$t('userSlots.DeleteSingleSlotModal.cancel')"
           color="neutral"
           variant="outline"
           class="cursor-pointer"
           @click="isModalOpen = false"
         />
         <UButton
-          label="Delete slot"
+          :label="$t('userSlots.DeleteSingleSlotModal.deleteSlot')"
           icon="i-lucide-trash-2"
           color="error"
           class="cursor-pointer"

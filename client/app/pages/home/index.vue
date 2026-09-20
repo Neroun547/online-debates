@@ -1,15 +1,14 @@
 <template>
   <div class="mt-15">
-    <h2 class="text-4xl text-center">All categories</h2>
+    <h2 class="text-4xl text-center">
+      {{ $t("categories.allCategories") }}
+    </h2>
     <div>
       <p class="text-justify text-xl m-auto mt-5">
-        This page contains all the communication categories available in the
-        system. Each category contains user-created topics. Select a topic, then
-        a user, and start a conversation.
+        {{ $t("categories.allCategoriesDescription") }}
       </p>
       <p class="text-justify text-xl m-auto mt-5">
-        You can also create your own discussion topic in one of the available
-        categories on the "My Topics" page. Enjoy!
+        {{ $t("categories.createTopicDescription") }}
       </p>
     </div>
     <BaseList :items="categories" />
@@ -71,4 +70,3 @@ onMounted(() => {
   getCategories().then(() => appStore.setIsLoading(false));
 });
 </script>
-

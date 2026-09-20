@@ -107,7 +107,7 @@ watch(
   >
     <template #empty>
       <span>
-        {{ loading ? "Loading..." : "No subjects found" }}
+        {{ loading ? $t("loading") + "..." : $t("noSubjectsFound") }}
       </span>
     </template>
 

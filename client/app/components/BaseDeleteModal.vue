@@ -51,7 +51,7 @@ function confirm() {
     <template #footer>
       <div class="flex w-full justify-end gap-3">
         <UButton
-          label="Cancel"
+          :label="$t('baseDeleteModal.cancel')"
           color="neutral"
           variant="outline"
           @click="cancel"

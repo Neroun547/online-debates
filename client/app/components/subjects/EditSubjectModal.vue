@@ -6,15 +6,22 @@
         :state="formState"
         @submit.prevent="editSubject"
       >
-        <UFormField name="categoryId" label="Category">
+        <UFormField
+          name="categoryId"
+          :label="$t('mySubjects.editSubjectModal.category')"
+        >
           <PaginationCategoriesSelect
             name="categoryId"
             v-model="formState.categoryId"
           />
         </UFormField>
-        <UFormField name="name" label="Subject name" class="w-full mt-5">
+        <UFormField
+          name="name"
+          :label="$t('mySubjects.editSubjectModal.subjectName')"
+          class="w-full mt-5"
+        >
           <UInput
-            placeholder="Subject name"
+            :placeholder="$t('mySubjects.editSubjectModal.subjectName')"
             name="name"
             class="w-full"
             v-model="formState.name"
@@ -22,7 +29,11 @@
         </UFormField>
 
         <div class="mt-10 ml-auto w-max">
-          <UButton label="Edit subject" type="submit" class="cursor-pointer" />
+          <UButton
+            :label="$t('mySubjects.editSubjectModal.editSubject')"
+            type="submit"
+            class="cursor-pointer"
+          />
         </div>
       </UForm>
     </template>

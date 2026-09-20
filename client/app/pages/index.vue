@@ -3,28 +3,26 @@
     <div class="mt-10 flex justify-between max-[1290px]:flex-col">
       <div class="max-w-[500px]">
         <h4 class="uppercase text-primary mt-20 max-[1290px]:mt-5">
-          More people better conversation
+          {{ $t("landing.morePeopleBetterConversation") }}
         </h4>
-        <h2 class="text-4xl max-md:text-2xl font-bold mt-5">Talk about what</h2>
+        <h2 class="text-4xl max-md:text-2xl font-bold mt-5">
+          {{ $t("landing.talkAboutWhat") }}
+        </h2>
         <h2 class="text-4xl max-md:text-2xl font-bold text-primary">
-          interests you
+          {{ $t("landing.interestsYou") }}
         </h2>
         <p class="font-bold text-xl mt-5 max-md:text-base">
-          Find like-minded people, meet someone new, or join engaging
-          discussions
+          {{ $t("landing.findLikeMindedPeople") }}
         </p>
         <div class="mt-5">
-          <p>Wanna talk is a space to connect through shared interests.</p>
-          <p>
-            Choose subject, find people, and start a discussion when it suits
-            you.
-          </p>
+          <p>{{ $t("landing.sharedInterestsSpace") }}</p>
+          <p>{{ $t("landing.chooseSubjectAndStart") }}</p>
         </div>
         <ULink to="/signup">
           <button
             class="bg-blue-500 cursor-pointer pl-10 pr-10 pt-2 pb-2 text-white rounded-xl mt-5 flex items-center max-md:text-sm"
           >
-            <div>Try now</div>
+            <div>{{ $t("landing.tryNow") }}</div>
             <UIcon name="lucide:arrow-right" class="block ml-2" />
           </button>
         </ULink>
@@ -34,21 +32,22 @@
           <p
             class="absolute bottom-[30px] italic right-[75px] max-w-[400px] sub-globe-text max-md:text-base"
           >
-            Wanna talk helps you find people with similar interests. Simply
-            choose a topic, find a booking, or create your own subject
+            {{ $t("landing.findPeopleDescription") }}
           </p>
           <p
             class="absolute bottom-[230px] right-[50px] rotate-[-25deg] italic text-blue-500 globe-text"
           >
-            The world is closer than you think
+            {{ $t("landing.worldIsCloser") }}
           </p>
           <div class="globe-text-underline-block"></div>
         </div>
       </div>
     </div>
     <div class="mt-5">
-      <h2 class="text-4xl max-md:text-2xl font-bold">How it works ?</h2>
-      <p class="mt-1">Just a few steps — and you´re in the conversation.</p>
+      <h2 class="text-4xl max-md:text-2xl font-bold">
+        {{ $t("landing.howItWorks") }}
+      </h2>
+      <p class="mt-1">{{ $t("landing.fewStepsToConversation") }}</p>
 
       <div
         class="flex w-full justify-between mt-10 max-[1290px]:flex-col max-[1290px]:items-center max-[1290px]:gap-10"
@@ -67,8 +66,10 @@
                 <UIcon name="lucide:search" class="w-[30px] h-[30px]" />
               </div>
               <div class="w-[200px] text-center">
-                <h2 class="font-bold mt-3">Choose a subject</h2>
-                <p class="text-sm">to talk about</p>
+                <h2 class="font-bold mt-3">
+                  {{ $t("landing.chooseSubject") }}
+                </h2>
+                <p class="text-sm">{{ $t("landing.toTalkAbout") }}</p>
               </div>
             </div>
           </div>
@@ -92,8 +93,10 @@
                 <UIcon name="lucide:calendar" class="w-[30px] h-[30px]" />
               </div>
               <div class="w-[200px] text-center">
-                <h2 class="font-bold mt-3">Select date and time</h2>
-                <p class="text-sm">to make booking</p>
+                <h2 class="font-bold mt-3">
+                  {{ $t("landing.selectDateAndTime") }}
+                </h2>
+                <p class="text-sm">{{ $t("landing.toMakeBooking") }}</p>
               </div>
             </div>
           </div>
@@ -117,8 +120,8 @@
                 <UIcon name="lucide:clock" class="w-[30px] h-[30px]" />
               </div>
               <div class="w-[200px] text-center">
-                <h2 class="font-bold mt-3">Wait</h2>
-                <p class="text-sm">for session start time</p>
+                <h2 class="font-bold mt-3">{{ $t("landing.wait") }}</h2>
+                <p class="text-sm">{{ $t("landing.forSessionStart") }}</p>
               </div>
             </div>
           </div>
@@ -142,7 +145,9 @@
                 <UIcon name="lucide:smile" class="w-[30px] h-[30px]" />
               </div>
               <div class="w-[200px] text-center">
-                <h2 class="font-bold mt-3">Enjoy the discussion</h2>
+                <h2 class="font-bold mt-3">
+                  {{ $t("landing.enjoyDiscussion") }}
+                </h2>
               </div>
             </div>
           </div>
@@ -150,9 +155,7 @@
       </div>
       <div class="mt-10">
         <p class="italic">
-          You can also create your own topic for discussion in the list of
-          existing categories or select an existing topic and create slots in
-          it.
+          {{ $t("landing.createOwnTopicDescription") }}
         </p>
       </div>
       <div class="mt-10">
@@ -164,12 +167,12 @@
             class="flex justify-between items-center mt-10 max-[890px]:flex-col max-[890px]:items-start"
           >
             <h2 class="font-bold text-4xl max-md:text-2xl">
-              Today's most popular categories
+              {{ $t("landing.popularCategoriesToday") }}
             </h2>
             <ULink
               to="/home"
               class="text-primary flex items-center max-[890px]:mt-5"
-              >View all categories
+              >{{ $t("landing.viewAllCategories") }}
               <UIcon name="lucide:arrow-right" class="ml-2"
             /></ULink>
           </div>

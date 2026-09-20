@@ -6,11 +6,11 @@
     />
     <div class="flex justify-between items-center">
       <div>
-        <h2 class="text-4xl">My subjects</h2>
+        <h2 class="text-4xl">{{ $t("mySubjects.title") }}</h2>
       </div>
       <div>
         <UButton
-          label="Add new subject"
+          :label="$t('mySubjects.addNewSubject')"
           icon="lucide:plus"
           class="cursor-pointer"
           @click="openCreateSubjectModal"
@@ -47,6 +47,8 @@ import { useAppStore } from "~/store/app-store";
 import { useCategoriesStore } from "~/store/categories/categories.store";
 import type { SubjectItem } from "~/store/categories/interfaces/get-subjects-response.interface";
 
+const { t } = useI18n();
+
 const toast = useToast();
 
 const appStore = useAppStore();
@@ -71,7 +73,7 @@ async function updateSubject(subject: {
 
   if (categoriesStore.isError) {
     toast.add({
-      title: "Error",
+      title: t("mySubjects.error"),
       description: categoriesStore.errorMessage,
       progress: {
         color: "error",
@@ -79,8 +81,8 @@ async function updateSubject(subject: {
     });
   } else {
     toast.add({
-      title: "Success",
-      description: "Subject updated successfully",
+      title: t("mySubjects.success"),
+      description: t("mySubjects.updatedSuccessfully"),
       progress: {
         color: "success",
       },
@@ -95,7 +97,7 @@ async function deleteSubject(subject: SubjectItem) {
 
   if (categoriesStore.isError) {
     toast.add({
-      title: "Error",
+      title: t("mySubjects.error"),
       description: categoriesStore.errorMessage,
       progress: {
         color: "error",
@@ -103,8 +105,8 @@ async function deleteSubject(subject: SubjectItem) {
     });
   } else {
     toast.add({
-      title: "Success",
-      description: "Subject deleted successfully",
+      title: t("mySubjects.success"),
+      description: t("mySubjects.deletedSuccessfully"),
       progress: {
         color: "success",
       },

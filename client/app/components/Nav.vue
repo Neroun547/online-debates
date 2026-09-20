@@ -48,9 +48,9 @@ const localIsOnlineState = ref(false);
 
 const isUserOnlineText = computed(() => {
   if (localIsOnlineState.value) {
-    return "I am online";
+    return $t("nav.onlineStatusLabel");
   }
-  return "I am offline";
+  return $t("nav.offlineStatusLabel");
 });
 
 function goBack() {
@@ -72,7 +72,7 @@ watch(localIsOnlineState, () => {
 });
 
 onMounted(() => {
-  console.log(userStore.isOnline)
+  console.log(userStore.isOnline);
   localIsOnlineState.value = userStore.isOnline;
 });
 </script>

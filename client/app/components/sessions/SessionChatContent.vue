@@ -7,7 +7,7 @@
       <UButton
         v-if="props.isLoadMoreAvailable"
         type="button"
-        label="Load more"
+        :label="$t('sessionChatContent.loadMore')"
         icon="lucide:refresh-ccw"
         @click="emit('loadMore')"
       />
@@ -52,15 +52,15 @@
           v-model="message"
           @keydown.enter.exact.prevent="sendMessage"
           rows="1"
-          aria-label="Message"
-          placeholder="Write a message..."
+          :aria-label="$t('sessionChatContent.messageAriaLabel')"
+          :placeholder="$t('sessionChatContent.messagePlaceholder')"
           class="max-h-28 min-h-9 flex-1 resize-none bg-transparent px-2 py-2 text-sm text-slate-900 outline-none placeholder:text-slate-400"
           maxlength="5000"
         />
         <UButton
           type="submit"
           icon="lucide:send"
-          aria-label="Send message"
+          :aria-label="$t('sessionChatContent.sendMessage')"
           :disabled="!message.trim()"
           class="mb-0.5 shrink-0 cursor-pointer rounded-lg"
         />

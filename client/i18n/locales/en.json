@@ -227,6 +227,22 @@
             "deleteSlot": "Delete slot"
         }
     },
+    "sessionChat": {
+        "ariaLabel": "Session chat",
+        "title": "Session chat",
+        "closeChat": "Close chat",
+        "openChat": "Open chat"
+    },
+    "mobileChat": {
+        "ariaLabel": "Session chat",
+        "title": "Session chat"
+    },
+    "sessionChatContent": {
+        "loadMore": "Load more",
+        "messageAriaLabel": "Message",
+        "messagePlaceholder": "Write a message...",
+        "sendMessage": "Send message"
+    },
     "zodI18n": {
         "errors": {
             "custom": "Invalid value",

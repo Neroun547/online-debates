@@ -1,6 +1,6 @@
 <template>
   <section
-    aria-label="Session chat"
+    :aria-label="$t('mobileChat.ariaLabel')"
     class="flex h-[min(620px,calc(100dvh-2rem))] w-full flex-col overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm"
   >
     <header class="flex items-center gap-3 border-b border-slate-200 px-5 py-4">
@@ -10,7 +10,9 @@
         <UIcon name="lucide:messages-square" class="size-5" />
       </div>
 
-      <h2 class="truncate font-semibold text-slate-900">Session chat</h2>
+      <h2 class="truncate font-semibold text-slate-900">
+        {{ $t("mobileChat.title") }}
+      </h2>
     </header>
 
     <SessionChatContent

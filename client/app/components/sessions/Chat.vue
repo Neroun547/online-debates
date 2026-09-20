@@ -10,7 +10,7 @@
     >
       <section
         v-if="isOpen"
-        aria-label="Session chat"
+        :aria-label="$t('sessionChat.ariaLabel')"
         class="fixed left-4 bottom-4 z-50 flex h-[min(620px,calc(100dvh-2rem))] w-[min(390px,calc(100vw-2rem))] flex-col overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-2xl"
       >
         <header
@@ -25,7 +25,7 @@
 
             <div class="min-w-0">
               <h2 class="truncate font-semibold text-slate-900">
-                Session chat
+                {{ $t("sessionChat.title") }}
               </h2>
             </div>
           </div>
@@ -35,7 +35,7 @@
             icon="lucide:x"
             color="neutral"
             variant="ghost"
-            aria-label="Close chat"
+            :aria-label="$t('sessionChat.closeChat')"
             class="cursor-pointer rounded-full"
             @click="isOpen = false"
           />
@@ -53,7 +53,7 @@
     <UButton
       v-if="!isOpen"
       type="button"
-      label="Open chat"
+      :label="$t('sessionChat.openChat')"
       icon="lucide:message-circle"
       size="lg"
       class="cursor-pointer rounded-full shadow-lg"

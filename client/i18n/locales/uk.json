@@ -227,6 +227,22 @@
             "deleteSlot": "Видалити слот"
         }
     },
+    "sessionChat": {
+        "ariaLabel": "Чат сесії",
+        "title": "Чат сесії",
+        "closeChat": "Закрити чат",
+        "openChat": "Відкрити чат"
+    },
+    "mobileChat": {
+        "ariaLabel": "Чат сесії",
+        "title": "Чат сесії"
+    },
+    "sessionChatContent": {
+        "loadMore": "Завантажити ще",
+        "messageAriaLabel": "Повідомлення",
+        "messagePlaceholder": "Напишіть повідомлення...",
+        "sendMessage": "Надіслати повідомлення"
+    },
     "zodI18n": {
         "errors": {
             "custom": "Некоректне значення",

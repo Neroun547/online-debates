@@ -124,7 +124,7 @@ const limit = ref(20);
 const subjects = ref<SubjectItem[]>([]);
 
 async function loadSubjects() {
-  const response = await categoriesStore.getSubjects({
+  const response = await categoriesStore.getUserSubjects({
     page: page.value,
     limit: limit.value,
   });

@@ -73,7 +73,7 @@ export const useCategoriesStore = defineStore("categories", {
                 this.clearError();
 
                 let url = `/user/subjects?page=${params.page}&limit=${params.limit}`;
-
+                
                 if(params.categoryId) {
                     url += `&categoryId=${params.categoryId}`;
                 }

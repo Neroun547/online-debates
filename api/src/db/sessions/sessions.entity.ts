@@ -36,7 +36,7 @@ export class Sessions {
     @Column({ nullable: true })
     subjectId!: number;
 
-    @ManyToOne(() => Subject, { nullable: true })
+    @ManyToOne(() => Subject, { nullable: true, onDelete: "SET NULL", onUpdate: "CASCADE" })
     @JoinColumn({ name: "subjectId" })
     subject!: Subject;
 

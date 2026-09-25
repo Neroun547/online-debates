@@ -26,9 +26,12 @@ import { useCategoriesStore } from "~/store/categories/categories.store";
 import LoadMoreButton from "~/components/LoadMoreButton.vue";
 import { useAppStore } from "~/store/app-store";
 import type { ListItem } from "~/components/BaseList.vue";
+import type { CategoryItem } from "~/store/categories/interfaces/get-categories-response.interface";
 
 const appStore = useAppStore();
 const categoriesStore = useCategoriesStore();
+
+const { locale } = useI18n();
 
 const page = ref(1);
 const limit = ref(20);
@@ -44,12 +47,25 @@ async function getCategories() {
     categories.value.push(
       ...response.data.map((item) => ({
         isLink: true,
-        title: item.name,
+        title: getCategoryItemTranslate(item),
         link: "/categories/" + item.id,
       })),
     );
     isLoadMoreButtonShow.value = response.isLoadMoreAvailable;
   }
+}
+
+function getCategoryItemTranslate(category: CategoryItem) {
+  if (locale.value === "en" && category.translateNameEn) {
+    return category.translateNameEn;
+  }
+  if (locale.value === "uk" && category.translateNameUk) {
+    return category.translateNameUk;
+  }
+  if (locale.value === "ru" && category.translateNameRu) {
+    return category.translateNameRu;
+  }
+  return category.name;
 }
 
 function incrementPage() {

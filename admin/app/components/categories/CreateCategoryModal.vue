@@ -2,10 +2,26 @@
   <UModal title="Create category">
     <template #body>
       <UForm :schema="formSchema" :state="formState" @submit="submitForm">
-        <UFormField name="name" label="Name" class="w-full">
+        <UFormField name="translateNameUk" label="Ukrainian" class="w-full">
           <UInput
-            v-model="formState.name"
-            placeholder="Name:"
+            v-model="formState.translateNameUk"
+            placeholder="Ukrainian:"
+            name="name"
+            class="w-full"
+          />
+        </UFormField>
+        <UFormField name="translateNameRu" label="Russian" class="mt-5 w-full">
+          <UInput
+            v-model="formState.translateNameRu"
+            placeholder="Russian:"
+            name="name"
+            class="w-full"
+          />
+        </UFormField>
+        <UFormField name="translateNameEn" label="English" class="mt-5 w-full">
+          <UInput
+            v-model="formState.translateNameEn"
+            placeholder="English:"
             name="name"
             class="w-full"
           />
@@ -45,12 +61,16 @@ function submitForm(event: Event) {
 }
 
 const formSchema = zod.object({
-  name: zod.string().min(1).max(500),
   priority: zod.number().min(1),
+  translateNameEn: zod.string().min(1).max(500),
+  translateNameRu: zod.string().min(1).max(500),
+  translateNameUk: zod.string().min(1).max(500),
 });
 
 const formState = reactive({
-  name: "",
   priority: 1,
+  translateNameEn: "",
+  translateNameRu: "",
+  translateNameUk: "",
 });
 </script>

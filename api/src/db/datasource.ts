@@ -11,6 +11,7 @@ import { Sessions } from './sessions/sessions.entity';
 import { SlotsLock } from './slots-lock/slots-lock.entity';
 import { Messages } from './messages/messages.entity';
 import { Support } from './support/support.entity';
+import { CategoriesTranslates } from './translates/categories/categories-translates.entity';
 
 dotenv.config();
 
@@ -23,7 +24,7 @@ export default new DataSource({
   password: process.env.DB_PASSWORD,
 
   synchronize: false,
-  entities: [User, Category, Subject, Admin, Slots, SlotsTemplates, Sessions, SlotsLock, Messages, Support],
+  entities: [User, Category, Subject, Admin, Slots, SlotsTemplates, Sessions, SlotsLock, Messages, Support, CategoriesTranslates],
   migrations: [
     join(process.cwd(), 'src/db/migrations/*{.ts,.js}'),
   ],

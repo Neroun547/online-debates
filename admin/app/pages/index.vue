@@ -98,8 +98,10 @@ async function openCreateCategoryModal() {
 
   if (result && typeof result === "object") {
     await categoriesStore.createCategory({
-      name: result.name,
       priority: result.priority,
+      translateNameEn: result.translateNameEn,
+      translateNameRu: result.translateNameRu,
+      translateNameUk: result.translateNameUk,
     });
 
     if (categoriesStore.isError) {
@@ -147,7 +149,9 @@ async function openDeleteCategoryModal(category: CategoryItem) {
 
 async function openUpdateCategoryModal(category: CategoryItem) {
   const result = await updateCategoryModal.open({
-    name: category.name,
+    translateNameEn: category.translateNameEn ?? category.name,
+    translateNameRu: category.translateNameRu ?? "",
+    translateNameUk: category.translateNameUk ?? "",
     priority: category.priority,
     subjects: category.subjects,
   });
@@ -157,7 +161,9 @@ async function openUpdateCategoryModal(category: CategoryItem) {
     result.type === ActionType.update
   ) {
     await categoriesStore.updateCategoryById(category.id, {
-      name: result.name,
+      translateNameEn: result.translateNameEn,
+      translateNameRu: result.translateNameRu,
+      translateNameUk: result.translateNameUk,
       priority: result.priority,
     });
 

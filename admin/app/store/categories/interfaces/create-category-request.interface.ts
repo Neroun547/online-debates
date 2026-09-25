@@ -1,4 +1,6 @@
 export interface CreateCategoryRequestInterface {
-    name: string;
     priority: number;
+    translateNameUk: string;
+    translateNameEn: string;
+    translateNameRu: string;
 }

@@ -1,4 +1,7 @@
 export interface UpdateCategoryRequestDto {
-    name: string;
     priority: number;
+    translateNameUk: string;
+    translateNameEn: string;
+    translateNameRu: string;
 }
+

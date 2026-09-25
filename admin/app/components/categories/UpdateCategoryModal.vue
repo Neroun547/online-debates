@@ -2,12 +2,28 @@
   <UModal title="Update category">
     <template #body>
       <UForm @submit="saveChanges" :schema="formSchema" :state="formState">
-        <UFormField class="w-full" label="Name" name="name">
+        <UFormField name="translateNameUk" label="Ukrainian" class="w-full">
           <UInput
-            v-model="formState.name"
-            placeholder="Name:"
+            v-model="formState.translateNameUk"
+            placeholder="Ukrainian:"
+            name="translateNameUk"
             class="w-full"
-            name="name"
+          />
+        </UFormField>
+        <UFormField name="translateNameRu" label="Russian" class="mt-5 w-full">
+          <UInput
+            v-model="formState.translateNameRu"
+            placeholder="Russian:"
+            name="translateNameRu"
+            class="w-full"
+          />
+        </UFormField>
+        <UFormField name="translateNameEn" label="English" class="mt-5 w-full">
+          <UInput
+            v-model="formState.translateNameEn"
+            placeholder="English:"
+            name="translateNameEn"
+            class="w-full"
           />
         </UFormField>
         <UFormField class="w-full mt-5" label="Priority" name="priority">
@@ -68,7 +84,9 @@ import { ActionType } from "./enums/action-type.enum.ts";
 import * as zod from "zod";
 
 interface Props {
-  name: string;
+  translateNameUk: string;
+  translateNameRu: string;
+  translateNameEn: string;
   priority: number;
   subjects?: SubjectItem[];
 }
@@ -79,12 +97,16 @@ const confirmDeleteModal = overlay.create(BaseDeleteModal);
 const props = defineProps<Props>();
 
 const formState = reactive({
-  name: "",
+  translateNameUk: "",
+  translateNameRu: "",
+  translateNameEn: "",
   priority: 1,
 });
 
 const formSchema = zod.object({
-  name: zod.string().min(1).max(500),
+  translateNameUk: zod.string().min(1).max(500),
+  translateNameRu: zod.string().min(1).max(500),
+  translateNameEn: zod.string().min(1).max(500),
   priority: zod.number().min(1),
 });
 
@@ -95,8 +117,10 @@ function saveChanges(event: Event) {
 
   emit("close", {
     type: ActionType.update,
-    name: formState.name,
     priority: formState.priority,
+    translateNameUk: formState.translateNameUk,
+    translateNameRu: formState.translateNameRu,
+    translateNameEn: formState.translateNameEn,
   });
 }
 
@@ -118,7 +142,9 @@ async function openConfirmDeleteModal(subject: SubjectItem) {
 watch(
   props,
   () => {
-    formState.name = props.name;
+    formState.translateNameEn = props.translateNameEn;
+    formState.translateNameRu = props.translateNameRu;
+    formState.translateNameUk = props.translateNameUk;
     formState.priority = props.priority;
   },
   { immediate: true },

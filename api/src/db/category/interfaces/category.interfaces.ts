@@ -10,6 +10,9 @@ export interface CategoryDomainInterface {
     id: number;
     name: string;
     priority: number;
+    translateNameRu?: string;
+    translateNameUk?: string;
+    translateNameEn?: string;
     subjects?: SubjectDomainInterface[]; 
 }
 

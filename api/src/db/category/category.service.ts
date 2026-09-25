@@ -30,7 +30,7 @@ export class CategoryServiceDb {
         return await this.repository.count({ where: { id: id } });
     }
     async findById(id: number): Promise<CategoryDomainInterface | null> {
-        const data = await this.repository.findOne({ where: { id: id } });
+        const data = await this.repository.findOne({ where: { id: id }, relations: { translates: true } });
 
         if(!data) {
             return null;
@@ -42,14 +42,19 @@ export class CategoryServiceDb {
 
         await this.repository.save(model);
     }
+    async saveAndReturn(data: CategoryInterface): Promise<CategoryDomainInterface> {
+        const model = CategoryMapper.toSave(data);
+
+        return CategoryMapper.toDomain(await this.repository.save(model));
+    }
     async find(page: number, limit: number) {
-        const data = await this.repository.find({ where: {}, order: { priority: "ASC" }, take: limit, skip: (page - 1) * limit });
+        const data = await this.repository.find({ where: {}, order: { priority: "ASC" }, take: limit, skip: (page - 1) * limit, relations: { translates: true } });
 
         return data.map(item => CategoryMapper.toDomain(item));
     }
     async findWithSubjectsAndSearchByName(page: number, limit: number, searchName?: string): Promise<CategoryDomainInterface[]> {
         if(!searchName) {
-            const data = await this.repository.find({ where: {}, order: { priority: "ASC" }, take: limit, skip: (page - 1) * limit, relations: { subjects: true } });
+            const data = await this.repository.find({ where: {}, order: { priority: "ASC" }, take: limit, skip: (page - 1) * limit, relations: { subjects: true, translates: true } });
 
             return data.map(item => CategoryMapper.toDomain(item));
         } else {

@@ -1,12 +1,18 @@
 import { Injectable, NotFoundException } from "@nestjs/common";
 import { CategoryServiceDb } from "src/db/category/category.service";
-import { CategoryDomainInterface, CategoryInterface } from "src/db/category/interfaces/category.interfaces";
+import { CategoryDomainInterface } from "src/db/category/interfaces/category.interfaces";
 import { UpdateCategoryDto } from "../dto/update-category.dto";
 import { GetCategoriesResponseDto } from "../dto/get-categories-response.dto";
+import { SaveCategoryDto } from "../dto/save-category.dto";
+import { CategoriesTranslatesServiceDb } from "src/db/translates/categories/categories-translates.service";
+import { CategoriesTranslatesPropertyNames } from "src/db/translates/categories/categories-translates.entity";
 
 @Injectable()
 export class CategoriesService {
-    constructor(private categoriesServiceDb: CategoryServiceDb) {}
+    constructor(
+        private categoriesServiceDb: CategoryServiceDb,
+        private categoriesTranslatesServiceDb: CategoriesTranslatesServiceDb
+    ) {}
 
     async getCategoryById(id: number): Promise<CategoryDomainInterface | null> {
         return await this.categoriesServiceDb.findById(id);
@@ -30,8 +36,32 @@ export class CategoriesService {
             count: count
         }
     }
-    async saveCategory(body: CategoryInterface) {
-        await this.categoriesServiceDb.save(body);
+    async saveCategory(body: SaveCategoryDto) {
+        const savedData = await this.categoriesServiceDb.saveAndReturn({
+            name: body.translateNameEn,
+            priority: body.priority
+        });
+
+        await this.categoriesTranslatesServiceDb.saveMany([
+            {
+                property: CategoriesTranslatesPropertyNames.name,
+                value: body.translateNameEn,
+                categoryId: savedData.id,
+                language: "en"
+            },
+            {
+                property: CategoriesTranslatesPropertyNames.name,
+                value: body.translateNameRu,
+                categoryId: savedData.id,
+                language: "ru"
+            },
+            {
+                property: CategoriesTranslatesPropertyNames.name,
+                value: body.translateNameUk,
+                categoryId: savedData.id,
+                language: "uk"
+            }
+        ]);
     }
     async deleteCategoryById(id: number) {
         const categoryInDb = await this.categoriesServiceDb.findById(id);
@@ -47,7 +77,27 @@ export class CategoriesService {
         if(!categoryInDb) {
             throw new NotFoundException({ message: "Category not found" });
         }
-        await this.categoriesServiceDb.updateById(id, body);
+        await this.categoriesServiceDb.updateById(id, { priority: body.priority, name: body.translateNameEn });
+        await this.categoriesTranslatesServiceDb.upsertMany([
+            {
+                property: CategoriesTranslatesPropertyNames.name,
+                value: body.translateNameEn,
+                categoryId: id,
+                language: "en"
+            },
+            {
+                property: CategoriesTranslatesPropertyNames.name,
+                value: body.translateNameRu,
+                categoryId: id,
+                language: "ru"
+            },
+            {
+                property: CategoriesTranslatesPropertyNames.name,
+                value: body.translateNameUk,
+                categoryId: id,
+                language: "uk"
+            }
+        ]);      
     }
     async getTheMostPopularCategories(count: number): Promise<CategoryDomainInterface[]> {
         return await this.categoriesServiceDb.getCategoriesWithTheLargestNumberOfUsers(count);

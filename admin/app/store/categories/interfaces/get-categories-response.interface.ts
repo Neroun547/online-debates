@@ -8,6 +8,9 @@ export interface SubjectItem {
 export interface CategoryItem {
     id: number;
     name: string;
+    translateNameRu?: string;
+    translateNameUk?: string;
+    translateNameEn?: string;
     priority: number;
     subjects?: SubjectItem[];
 }

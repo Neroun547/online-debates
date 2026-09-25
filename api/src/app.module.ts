@@ -23,6 +23,7 @@ import { SessionsModule } from './sessions/sessions.module';
 import { Messages } from './db/messages/messages.entity';
 import { SupportModule } from './support/support.module';
 import { Support } from './db/support/support.entity';
+import { CategoriesTranslates } from './db/translates/categories/categories-translates.entity';
 
 @Module({
   imports: [
@@ -49,7 +50,8 @@ import { Support } from './db/support/support.entity';
         Sessions, 
         SlotsLock,
         Messages,
-        Support
+        Support,
+        CategoriesTranslates
       ],
       type: "mariadb"  
     }),

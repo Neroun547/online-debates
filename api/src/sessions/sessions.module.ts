@@ -11,9 +11,10 @@ import { MessagesModuleDb } from "src/db/messages/messages.module";
 import { UserSessionsChatController } from "./user-sessions-chat.controller";
 import { SessionsController } from "./sessions.controller";
 import { SessionsSchedule } from "./sessions.schedule";
+import { MailerModule } from "src/integrations/mailer/mailer.module";
 
 @Module({
-    imports: [SlotsModuleDb, UserModuleDb, SessionsModuleDb, WebRTCModule, MessagesModuleDb],
+    imports: [SlotsModuleDb, UserModuleDb, SessionsModuleDb, WebRTCModule, MessagesModuleDb, MailerModule],
     providers: [SessionsService, SessionsGateway, SessionsSchedule],
     controllers: [UserSessionsController, WebRTCController, UserSessionsChatController, SessionsController],
     exports: [SessionsService]

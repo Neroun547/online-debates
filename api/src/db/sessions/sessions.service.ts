@@ -18,6 +18,14 @@ export class SessionsServiceDb {
         private em: EntityManager
     ) {}
 
+    async findByIdWithCreatorAndCustomer(id: number): Promise<SessionsDomainInterface | null> {
+        const data = await this.sessionsRepository.findOne({ where: { id: id }, relations: { creator: true, customer: true } });
+
+        if(!data) {
+            return null;
+        }
+        return SessionsMapper.toDomain(data);
+    }
     async updateSessionsExpiredStatus() {
         const now = new Date();
         const date10MinPrev = DateTime.fromJSDate(now).minus({ minutes: 10 }).toFormat("yyyy-MM-dd HH:mm:ss");

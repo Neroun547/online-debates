@@ -101,7 +101,7 @@ export class UserService {
                     from: mailFrom,
                     to: params.email,
                     subject: mailSubject,
-                    html: `<p>Confirm your new email by link. <a href="${newEmailConfirmLink + randomHash}">Click here</a>`
+                    html: this.mailerService.addBaseTemplateToLetter(`<p>Confirm your new email by link. <a href="${newEmailConfirmLink + randomHash}">Click here</a>`)
                 });
                 isMailSent = true;
             } catch(error) {
@@ -234,7 +234,7 @@ export class UserService {
             from: passwordRecoveryMailFrom,
             to: email,
             subject: passwordRecoveryMailSubject,
-            html: `<a href="${passwordRecoveryMailLink + randomHash}">Click to recover password</a>`
+            html: this.mailerService.addBaseTemplateToLetter(`<a href="${passwordRecoveryMailLink + randomHash}">Click to recover password</a>`)
         });
     }
 

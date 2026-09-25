@@ -1,6 +1,7 @@
 import { Injectable } from "@nestjs/common";
 import { Resend } from 'resend';
 import * as dotenv from "dotenv";
+import { ConfigService } from "@nestjs/config";
 
 dotenv.config();
 
@@ -8,7 +9,7 @@ const resend = new Resend(process.env.MAILER_TOKEN);
 
 @Injectable()
 export class MailerService {
-    constructor() {}
+    constructor(private configService: ConfigService) {}
 
     async sendMailWithHtml(params: {
         from: string,
@@ -23,6 +24,45 @@ export class MailerService {
             subject: params.subject,
             html: params.html
         });
+    }
+
+    getTemplateForSessionStartNotification(username: string, lang: "en" | "ru" | "uk", linkToSession: string) {
+        const baseUrl = this.configService.getOrThrow("BASE_URL");
+
+        if(lang === "uk") {
+            return `
+                <a href="${baseUrl}"><h2 style="color: #00a6f4; font-family: sans-serif; text-align: center;">wanna-talk.app</h2></a>
+                <p>${username} щойно підключився до сессії. <a href="${linkToSession}">Підключитися</a></p> 
+            `;
+        } else if(lang === "ru") {
+            return `
+                <a href="${baseUrl}"><h2 style="color: #00a6f4; font-family: sans-serif; text-align: center;">wanna-talk.app</h2></a>
+                <p>${username} только что подключился к сессии. <a href="${linkToSession}">Присоединиться</a></p> 
+            `;
+        } else {
+            return `
+                <a href="${baseUrl}"><h2 style="color: #00a6f4; font-family: sans-serif; text-align: center;">wanna-talk.app</h2></a>
+                <p>${username} just joined the session. <a href="${linkToSession}">Connect</a></p> 
+            `;
+        }
+    }
+
+    addBaseTemplateToLetter(html: string) {
+        const baseUrl = this.configService.getOrThrow("BASE_URL");
+
+        return `
+            <a href="${baseUrl}"><h2 style="color: #00a6f4; font-family: sans-serif; text-align: center;">wanna-talk.app</h2></a>
+        ` + html;
+    }
+
+    getUserStartedSessionLetterSubject(lang: "en" | "ru" | "uk") {
+        if(lang === "uk") {
+            return "Користувач підключився до сесії";
+        } else if(lang === "ru") {
+            return "Пользователь подключился к сессии";
+        } else {
+            return "User connected to session";
+        }
     }
 }
 

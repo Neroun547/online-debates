@@ -17,6 +17,7 @@ import { SessionsService } from './service/sessions.service';
 import { parseMessageDateForRecipient } from './utils/utils';
 import { MessagesDomainInterface } from 'src/db/messages/interfaces/messages.interfaces';
 import * as dotenv from "dotenv";
+import { MailerService } from 'src/integrations/mailer/mailer.service';
 
 dotenv.config();
 
@@ -94,7 +95,8 @@ export class SessionsGateway implements OnGatewayConnection, OnGatewayDisconnect
     private readonly configService: ConfigService,
     private readonly sessionsServiceDb: SessionsServiceDb,
     private readonly sessionsService: SessionsService,
-    private readonly webRTCService: WebRTCService
+    private readonly webRTCService: WebRTCService,
+    private readonly mailerService: MailerService
   ) {}
 
   handleDisconnect(client: SessionSocket) {
@@ -171,7 +173,7 @@ export class SessionsGateway implements OnGatewayConnection, OnGatewayDisconnect
     @ConnectedSocket() client: SessionSocket,
     @MessageBody() payload: SessionPayload,
   ): Promise<{ sessionId: number }> {
-    const sessionId = this.validateSessionId(payload?.sessionId);
+    const sessionId = this.validateSessionId(payload.sessionId);
     const user = this.getAuthenticatedUser(client);
     const isParticipant = await this.sessionsServiceDb.isUserParticipant(
       sessionId,
@@ -181,7 +183,31 @@ export class SessionsGateway implements OnGatewayConnection, OnGatewayDisconnect
     if (!isParticipant) {
       throw new WsException('Session not found');
     }
+    const sessionInDb = await this.sessionsServiceDb.findByIdWithCreatorAndCustomer(sessionId);
+
     await client.join(this.getSessionRoomName(sessionId));
+
+    
+    const sendToUser = sessionInDb?.creator?.email === user.email ? sessionInDb.customer : sessionInDb?.creator;
+
+    if(sendToUser) {
+      const joinSessionMailFrom = this.configService.getOrThrow("JOIN_SESSION_MAIL_FROM");
+      const baseSessionLink = this.configService.getOrThrow("BASE_SESSION_LINK");
+
+      this.mailerService.sendMailWithHtml({
+        from: joinSessionMailFrom,
+        to: sendToUser.email,
+        subject: this.mailerService.getUserStartedSessionLetterSubject((sendToUser.language) as "ru" | "en" | "uk" ?? "en"),
+        html: this.mailerService.getTemplateForSessionStartNotification(
+          user.email,
+          (sendToUser.language) as "ru" | "en" | "uk" ?? "en", 
+          baseSessionLink + sessionId
+        )
+      })  
+      .catch((error) => {
+        console.log("session:join send mail error", error);
+      });
+    }
 
     if(client.data.sessionsIds) {
         client.data.sessionsIds.push(sessionId);

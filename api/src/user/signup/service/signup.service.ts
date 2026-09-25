@@ -47,7 +47,7 @@ export class SignupService {
                 from: mailFrom,
                 subject: mailSubject,
                 to: body.email,
-                html: `<p>Please confirm your mail by link <a href="${baseUrl + randomHash}">Confirm</a></p>`
+                html: this.mailerService.addBaseTemplateToLetter(`<p>Please confirm your mail by link <a href="${baseUrl + randomHash}">Confirm</a></p>`)
             })
         } catch(error) {
             console.log("Signup error:", error);

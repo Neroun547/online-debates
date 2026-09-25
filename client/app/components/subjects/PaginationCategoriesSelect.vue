@@ -2,6 +2,8 @@
 import { useCategoriesStore } from "~/store/categories/categories.store";
 import type { CategoryItem } from "~/store/categories/interfaces/get-categories-response.interface";
 
+const { locale } = useI18n();
+
 const props = defineProps({
   limit: {
     type: Number,
@@ -45,8 +47,8 @@ async function loadCategories(targetPage = 1, reset = false) {
     }
 
     categories.value = reset
-      ? response.data
-      : [...categories.value, ...response.data];
+      ? response.data.map(item => mapCategoryWithTranslate(item))
+      : [...categories.value, ...response.data].map(item => mapCategoryWithTranslate(item));
 
     page.value = targetPage;
     isLoadMoreAvailable.value = response.isLoadMoreAvailable;
@@ -59,6 +61,28 @@ async function loadCategories(targetPage = 1, reset = false) {
       loading.value = false;
     }
   }
+}
+
+function mapCategoryWithTranslate(category: CategoryItem) {
+  if(locale.value === "en" && category.translateNameEn) {
+    return {
+      ...category,
+      name: category.translateNameEn
+    }
+  }
+  if(locale.value === "uk" && category.translateNameUk) {
+    return {
+      ...category,
+      name: category.translateNameUk
+    }
+  }
+  if(locale.value === "ru" && category.translateNameRu) {
+    return {
+      ...category,
+      name: category.translateNameRu
+    }
+  }
+  return category;
 }
 
 function loadNextPage() {

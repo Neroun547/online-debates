@@ -108,10 +108,13 @@ onMounted(() => {
     :search-input="{
       placeholder: 'Search categories...',
     }"
-    class="w-full"
+    :ui="{
+      placeholder: 'max-sm:text-xs',
+    }"
+    class="w-full max-sm:text-xs"
   >
     <template #empty>
-      <span>
+      <span class="max-sm:text-xs">
         {{ loading ? $t("loading") + "..." : $t("noCategoriesFound") }}
       </span>
     </template>
@@ -122,7 +125,7 @@ onMounted(() => {
           :label="$t('loadMore')"
           variant="ghost"
           color="neutral"
-          class="w-full justify-center"
+          class="w-full justify-center max-sm:text-xs"
           :loading="loading"
           @click.stop="loadNextPage"
         />

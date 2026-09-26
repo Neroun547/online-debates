@@ -34,7 +34,7 @@
       v-for="subject in props.data"
       class="w-full flex justify-between border-gray-200 border p-2 rounded mt-5"
     >
-      <div>
+      <div class="max-md:text-sm">
         {{ subject.name }}
       </div>
       <div>

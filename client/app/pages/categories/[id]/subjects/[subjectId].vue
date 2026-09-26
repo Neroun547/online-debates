@@ -12,7 +12,7 @@
       "
     />
     <div v-if="currentSubject">
-      <h2 class="text-4xl text-center">{{ currentSubject.name }}</h2>
+      <h2 class="text-4xl max-md:text-2xl text-center">{{ currentSubject.name }}</h2>
       <div class="mt-10">
         <UTable :data="users" :columns="usersTableColumns" />
       </div>
@@ -69,20 +69,39 @@ const usersTableColumns = computed<
     {
       accessorKey: "email",
       header: t("subjects.email"),
+      meta: {
+        class: {
+          th: "max-md:text-xs",
+          td: "max-md:text-xs"
+        }
+      }
     },
     {
       accessorKey: "username",
       header: t("subjects.username"),
+      meta: {
+        class: {
+          th: "max-md:text-xs",
+          td: "max-md:text-xs"
+        }
+      }
     },
     {
       accessorKey: "status",
       header: t("subjects.status"),
+      meta: {
+        class: {
+          th: "max-md:text-xs",
+          td: "max-md:text-xs"
+        }
+      }
     },
     {
       id: "actions",
       meta: {
         class: {
-          td: "text-right",
+          td: "text-right max-md:text-xs",
+          th: "max-md:text-xs",
         },
       },
       cell: ({ row }) => {
@@ -93,7 +112,7 @@ const usersTableColumns = computed<
           return [
             h(UButton, {
               label: t("subjects.bookSession"),
-              class: "cursor-pointer",
+              class: "cursor-pointer max-md:text-xs",
               onClick: function () {
                 activeBookingUser.value = row.original;
                 openBookSessionModal();
@@ -101,7 +120,7 @@ const usersTableColumns = computed<
             }),
             h(UButton, {
               label: t("subjects.startSessionNow"),
-              class: "cursor-pointer ml-5",
+              class: "cursor-pointer ml-5 max-md:text-xs",
               onClick: function () {
                 startSessionNow(row.original.id);
               },

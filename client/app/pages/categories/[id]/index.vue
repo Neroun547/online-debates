@@ -14,7 +14,7 @@
         />
       </div>
       <div v-if="!subjects.length">
-        <h2 class="text-4xl text-center">
+        <h2 class="text-4xl max-md:text-2xl max-sm:text-xl text-center">
           {{ $t("categories.noSubjects") }}
         </h2>
       </div>

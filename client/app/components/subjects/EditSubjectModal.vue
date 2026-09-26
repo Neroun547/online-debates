@@ -32,7 +32,7 @@
           <UButton
             :label="$t('mySubjects.editSubjectModal.editSubject')"
             type="submit"
-            class="cursor-pointer"
+            class="cursor-pointer max-sm:text-xs"
           />
         </div>
       </UForm>

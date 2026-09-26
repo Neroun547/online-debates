@@ -12,12 +12,12 @@
       @close="() => (isConfirmNewEmailModalShow = false)"
     />
 
-    <h2 class="text-4xl">{{ $t("settings.title") }}</h2>
+    <h2 class="text-4xl max-md:text-2xl">{{ $t("settings.title") }}</h2>
     <div class="flex flex-col shadow p-5 mt-10">
       <div class="flex justify-between max-md:flex-col">
         <div class="flex flex-col w-full mr-5">
           <div class="w-full">
-            <h2 class="text-2xl">{{ $t("settings.personalInfo") }}</h2>
+            <h2 class="text-2xl max-md:text-xl">{{ $t("settings.personalInfo") }}</h2>
             <UForm
               class="mt-5"
               @submit.prevent="updateUserPersonalInfo"
@@ -73,7 +73,7 @@
               </div>
 
               <UButton
-                class="w-min mt-5 block cursor-pointer"
+                class="w-min mt-5 block cursor-pointer max-sm:text-xs"
                 :label="$t('settings.savePersonalData')"
                 type="submit"
               />
@@ -81,7 +81,7 @@
           </div>
         </div>
         <div class="flex flex-col w-full ml-5 max-md:ml-0 max-md:mt-10">
-          <h2 class="text-2xl">{{ $t("settings.changePassword") }}</h2>
+          <h2 class="text-2xl max-sm:text-xl">{{ $t("settings.changePassword") }}</h2>
           <UForm
             class="mt-5"
             :schema="updatePasswordSchema"
@@ -131,7 +131,7 @@
             <UButton
               :label="$t('settings.updatePassword')"
               type="submit"
-              class="mt-5"
+              class="mt-5 max-sm:text-xs"
             />
           </UForm>
         </div>
@@ -141,7 +141,7 @@
         <h2 class="text-red-600">{{ $t("settings.dangerZone") }}</h2>
         <UButton
           :label="$t('settings.deleteAccount')"
-          class="bg-red-600 mt-5 hover:bg-red-600 cursor-pointer active:bg-red-600"
+          class="bg-red-600 mt-5 hover:bg-red-600 cursor-pointer active:bg-red-600 max-sm:text-xs"
           active-class="bg-red-600"
           @click="showDeleteAccountModal"
         />

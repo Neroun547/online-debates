@@ -1,13 +1,13 @@
 <template>
   <div class="mt-15">
-    <h2 class="text-4xl">{{ $t("mySessions.title") }}</h2>
+    <h2 class="text-4xl max-md:text-2xl">{{ $t("mySessions.title") }}</h2>
 
     <div class="mt-10 flex flex-wrap items-end gap-4">
       <UFormField :label="$t('mySessions.sessions')">
         <USelect
           v-model="selectedSessionFilterOption"
           :items="filtersSessionsSelectOptions"
-          class="min-w-48"
+          class="min-w-48 max-sm:text-xs"
           :ui="{ content: 'min-w-fit' }"
         />
       </UFormField>
@@ -18,7 +18,7 @@
           v-model="dateFrom"
           type="date"
           :max="dateTo || undefined"
-          class="h-8 rounded-md border border-default bg-default px-2.5 text-sm text-highlighted outline-none focus-visible:ring-2 focus-visible:ring-primary"
+          class="max-sm:text-xs h-8 rounded-md border border-default bg-default px-2.5 text-sm text-highlighted outline-none focus-visible:ring-2 focus-visible:ring-primary"
         />
       </UFormField>
 
@@ -28,7 +28,7 @@
           v-model="dateTo"
           type="date"
           :min="dateFrom || undefined"
-          class="h-8 rounded-md border border-default bg-default px-2.5 text-sm text-highlighted outline-none focus-visible:ring-2 focus-visible:ring-primary"
+          class="max-sm:text-xs h-8 rounded-md border border-default bg-default px-2.5 text-sm text-highlighted outline-none focus-visible:ring-2 focus-visible:ring-primary"
         />
       </UFormField>
     </div>
@@ -143,7 +143,7 @@
                   </span>
                   <span
                     v-else
-                    class="mr-1 inline-flex size-2 rounded-full bg-neutral-400"
+                    class="mr-1 inline-flex size-2 rounded-full bg-neutral-400 max-sm:text-xs"
                   />
                   {{
                     $t(
@@ -158,10 +158,10 @@
           </div>
 
           <div v-if="session.slot" class="text-left sm:text-right">
-            <p class="font-medium text-highlighted">
+            <p class="font-medium text-highlighted max-sm:text-sm">
               {{ session.slot.startTime }}
             </p>
-            <p class="mt-1 text-sm text-muted">
+            <p class="mt-1 text-sm text-muted max-sm:text-xs">
               {{
                 formatSessionTime(session.slot.startTime, session.slot.endTime)
               }}
@@ -174,7 +174,7 @@
               session.creatorId === userStore.userId
             "
           >
-            <p class="font-medium text-highlighted">
+            <p class="font-medium text-highlighted max-sm:text-xs">
               {{
                 $t("mySessions.permanentBookedWithYou", {
                   date: session.createdAt,
@@ -189,7 +189,7 @@
               session.creatorId !== userStore.userId
             "
           >
-            <p class="font-medium text-highlighted">
+            <p class="font-medium text-highlighted max-sm:text-xs">
               {{
                 $t("mySessions.permanentCreatedByYou", {
                   date: session.createdAt,
@@ -225,7 +225,7 @@
             >
               <UButton
                 :label="$t('mySessions.start')"
-                class="cursor-pointer"
+                class="cursor-pointer max-sm:text-xs"
                 :disabled="true"
               />
             </UTooltip>
@@ -239,7 +239,7 @@
             >
               <UButton
                 :label="$t('mySessions.start')"
-                class="cursor-pointer"
+                class="cursor-pointer max-sm:text-xs"
                 @click="startSession(session.id)"
               />
             </UTooltip>
@@ -249,7 +249,7 @@
             >
               <UButton
                 :label="$t('mySessions.start')"
-                class="cursor-pointer"
+                class="cursor-pointer max-sm:text-xs"
                 @click="startSession(session.id)"
               />
             </UTooltip>

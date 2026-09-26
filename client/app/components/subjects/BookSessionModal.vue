@@ -166,13 +166,13 @@
             :label="$t('subjects.bookingModal.cancel')"
             color="neutral"
             variant="outline"
-            class="cursor-pointer"
+            class="cursor-pointer max-sm:text-xs"
             @click="isModalOpen = false"
           />
           <UButton
             :label="$t('subjects.bookingModal.bookSession')"
             icon="i-lucide-calendar-check-2"
-            class="cursor-pointer"
+            class="cursor-pointer max-sm:text-xs"
             :disabled="!selectedSlot"
             :loading="props.isBookingButtonLoading"
             @click="bookSession"

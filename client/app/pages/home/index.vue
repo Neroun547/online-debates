@@ -1,13 +1,13 @@
 <template>
   <div class="mt-15">
-    <h2 class="text-4xl text-center">
+    <h2 class="text-4xl max-md:text-2xl text-center">
       {{ $t("categories.allCategories") }}
     </h2>
     <div>
-      <p class="text-justify text-xl m-auto mt-5">
+      <p class="text-justify text-xl m-auto mt-5 max-md:text-base">
         {{ $t("categories.allCategoriesDescription") }}
       </p>
-      <p class="text-justify text-xl m-auto mt-5">
+      <p class="text-justify text-xl m-auto mt-5 max-md:text-base">
         {{ $t("categories.createTopicDescription") }}
       </p>
     </div>
@@ -15,7 +15,7 @@
     <LoadMoreButton
       @load-more="incrementPage"
       :is-loading="isLoadMoreButtonLoading"
-      class="m-auto block mt-15"
+      class="m-auto block mt-15 max-sm:text-xs"
       v-if="isLoadMoreButtonShow"
     />
   </div>

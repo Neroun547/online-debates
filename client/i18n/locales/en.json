@@ -247,7 +247,7 @@
     },
     "signup": {
         "title": "Sign up",
-        "successMessage": "Confirm your email address. A message was sent to your email.",
+        "successMessage": "Confirm your email address. A message was sent to your email. If you don't find the email, check spam.",
         "submit": "Sign up",
         "alreadyHaveAccount": "Already have an account?",
         "signIn": "Sign in",

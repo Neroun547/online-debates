@@ -39,7 +39,7 @@
         <UButton
           :label="$t('userSlots.CreateSingleSlotModal.save')"
           @click="save"
-          class="cursor-pointer"
+          class="cursor-pointer max-sm:text-xs"
           :loading="props.isSaveSingleSlotLoading"
         />
       </div>

@@ -4,20 +4,20 @@
       v-model:is-modal-open="isCreateSubjectModalOpen"
       @createdNew="reloadSubjects"
     />
-    <div class="flex justify-between items-center">
+    <div class="flex justify-between items-center max-sm:block">
       <div>
-        <h2 class="text-4xl">{{ $t("mySubjects.title") }}</h2>
+        <h2 class="text-4xl max-md:text-2xl max-sm:text-xl">{{ $t("mySubjects.title") }}</h2>
       </div>
-      <div>
+      <div class="max-sm:float-end max-sm:mt-10">
         <UButton
           :label="$t('mySubjects.addNewSubject')"
           icon="lucide:plus"
-          class="cursor-pointer"
+          class="cursor-pointer max-sm:text-xs"
           @click="openCreateSubjectModal"
         />
       </div>
     </div>
-
+    <div class="max-sm:clear-both"></div>
     <div class="mt-10">
       <UserSubjectsList
         :data="subjects"

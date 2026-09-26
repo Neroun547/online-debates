@@ -8,7 +8,7 @@
       >
         <ULink
           v-if="item.isLink"
-          class="text-primary cursor-pointer underline"
+          class="text-primary cursor-pointer underline max-sm:text-base"
           :to="item.link"
         >
           {{ item.title }}

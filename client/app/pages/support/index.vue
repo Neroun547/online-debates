@@ -7,7 +7,7 @@
         >
           <UIcon name="lucide:mail" class="size-6" />
         </div>
-        <h1 class="text-4xl font-semibold">{{ $t("support.title") }}</h1>
+        <h1 class="text-4xl font-semibold max-md:text-2xl">{{ $t("support.title") }}</h1>
         <p class="mt-3 text-muted">
           {{ $t("support.description") }}
         </p>
@@ -72,7 +72,8 @@
               type="submit"
               :label="$t('support.sendMessage')"
               icon="lucide:send"
-              class="cursor-pointer"
+              class="cursor-pointer max-sm:text-xs max-sm:w-full"
+              :ui="{ label: 'text-center w-full' }"
             />
           </div>
         </UForm>

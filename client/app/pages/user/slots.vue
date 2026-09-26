@@ -14,10 +14,10 @@
       :end-time="activeDeleteSingleSlot?.endTime"
       @confirm="deleteSingleSlot"
     />
-    <h2 class="text-4xl">{{ $t("userSlots.title") }}</h2>
+    <h2 class="text-4xl max-md:text-2xl">{{ $t("userSlots.title") }}</h2>
     <div class="max-w-[300px]">
       <div class="mt-5">
-        <label>{{ $t("userSlots.category") }}</label>
+        <label class="max-sm:text-xs">{{ $t("userSlots.category") }}</label>
         <PaginationCategoriesSelect v-model="selectedCategoryId" class="mt-2" />
 
         <div class="text-red-600 mt-2" v-if="isCategoryValidationError">
@@ -29,7 +29,7 @@
         class="mt-4"
         v-if="selectedCategoryId !== -1 && selectedCategoryId !== undefined"
       >
-        <label>{{ $t("userSlots.subject") }}</label>
+        <label class="max-sm:text-xs">{{ $t("userSlots.subject") }}</label>
         <PaginationSubjectSelect
           v-model="selectedSubjectId"
           :category-id="selectedCategoryId ?? undefined"
@@ -51,7 +51,7 @@
                 @change="onEnableSlot(slot.weekday)"
               />
               <div class="ml-2">
-                <h2>{{ weekDaysMap.get(slot.weekday) }}</h2>
+                <h2 class="max-md:text-sm">{{ weekDaysMap.get(slot.weekday) }}</h2>
               </div>
             </div>
             <div v-if="slot.enabled">
@@ -59,26 +59,26 @@
                 <UButton
                   icon="lucide:plus"
                   size="xs"
-                  class="cursor-pointer"
+                  class="cursor-pointer max-md:mt-5"
                   :label="$t('userSlots.addSlot')"
                   @click="addTimeToSlot(slot.weekday)"
                 />
               </div>
               <div v-for="time in slot.intervals">
-                <div class="mt-5 flex items-center">
+                <div class="mt-5 flex items-center max-md:text-xs max-md:flex-col max-md:items-start">
                   <label>{{ $t("userSlots.from") }}</label>
                   <UInputTime
                     :hour-cycle="24"
                     v-model="time.timeFrom"
-                    class="ml-2"
+                    class="ml-2 max-md:text-xs max-md:mt-2"
                   />
-                  <label class="ml-10">{{ $t("userSlots.to") }}</label>
+                  <label class="ml-10 max-md:ml-0 max-md:mt-5">{{ $t("userSlots.to") }}</label>
                   <UInputTime
                     :hour-cycle="24"
                     v-model="time.timeTo"
-                    class="ml-2"
+                    class="ml-2 max-md:text-xs max-md:mt-2"
                   />
-                  <div class="ml-5 mt-1">
+                  <div class="ml-5 mt-1 max-md:ml-auto">
                     <UButton
                       icon="lucide:trash-2"
                       size="xs"
@@ -97,7 +97,7 @@
             <UButton
               :label="$t('userSlots.saveSchedule')"
               @click="saveRegularSlots"
-              class="cursor-pointer"
+              class="cursor-pointer max-sm:text-xs"
               icon="lucide:import"
               :disabled="isSaveRegularSlotsButtonDisabled"
               :loading="isSaveTemplateButtonLoading"
@@ -107,25 +107,25 @@
       </div>
       <div class="mt-10 border rounded border-gray-300 shadow p-5">
         <div>
-          <h2 class="text-2xl">{{ $t("userSlots.singleSlots") }}</h2>
+          <h2 class="text-2xl max-md:text-xl">{{ $t("userSlots.singleSlots") }}</h2>
         </div>
         <div class="w-min ml-auto">
           <UButton
             icon="lucide:plus"
             :label="$t('userSlots.createSingleSlot')"
-            class="cursor-pointer"
+            class="cursor-pointer max-md:mt-5 max-md:text-xs"
             :disabled="isSaveSingleSlotButtonDisabled"
             @click="openCreateSingleSlotModal"
           />
         </div>
         <div>
-          <div class="flex">
-            <div>
-              <label for="">{{ $t("userSlots.dateFrom") }}</label>
+          <div class="flex mt-5 max-md:justify-between max-[426px]:flex-col max-[426px]:mt-10">
+            <div class="max-md:text-sm max-sm:text-xs max-[426px]:text-sm!">
+              <label for="" >{{ $t("userSlots.dateFrom") }}</label>
               <input type="date" class="ml-2" v-model="singleSlotsDateFrom" />
             </div>
 
-            <div class="ml-20">
+            <div class="ml-20 max-md:ml-0 max-sm:text-xs max-md:text-sm max-[426px]:text-sm! max-[426px]:mt-2">
               <label for="">{{ $t("userSlots.dateTo") }}</label>
               <input type="date" class="ml-2" v-model="singleSlotsDateTo" />
             </div>
@@ -228,10 +228,22 @@ const singleSlotsTableColumns = computed<
   {
     accessorKey: "startTime",
     header: t("userSlots.dateFrom"),
+    meta: {
+      class: {
+        td: "max-md:text-xs",
+        th: "max-md:text-xs"
+      }
+    }
   },
   {
     accessorKey: "endTime",
     header: t("userSlots.dateTo"),
+    meta: {
+      class: {
+        td: "max-md:text-xs",
+        th: "max-md:text-xs"
+      }
+    }
   },
   {
     id: "actions",

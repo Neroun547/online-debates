@@ -71,14 +71,14 @@ watch(
           :class="[
             'min-h-[100vh]',
             !isCurrentSessionPage || !userStore.isAuth
-              ? 'flex-10 w-[85%] ml-auto max-[1300px]:w-full mt-5'
+              ? 'flex-10 w-[95%] ml-auto max-[1300px]:w-full mt-5'
               : 'w-full',
-            isCurrentSessionPage ? 'w-full' : ''
+            isCurrentSessionPage ? 'w-full' : '',
           ]"
           style="transition: 0.3s all"
         >
           <NuxtPage
-            class="m-auto w-[85%]"
+            class="m-auto w-[95%]"
             :class="!appStore.isPageLoading ? '' : 'hidden'"
           />
           <PageLoader :class="appStore.isPageLoading ? '' : 'hidden'" />
@@ -86,18 +86,18 @@ watch(
         <Footer
           :class="[
             !isCurrentSessionPage
-              ? 'w-[85%] ml-auto max-[1300px]:w-full mt-10'
+              ? 'w-[95%] ml-auto max-[1300px]:w-full mt-10'
               : 'w-full',
           ]"
         />
       </div>
       <div v-if="showPublicLayout" class="min-h-screen h-full">
         <LandingNav />
-        <NuxtPage class="m-auto w-[85%] min-h-screen" />
+        <NuxtPage class="m-auto w-[95%] min-h-screen" />
         <Footer
           :class="[
             !isCurrentSessionPage && !showPublicLayout
-              ? 'w-[85%] ml-auto max-[1300px]:w-full mt-10'
+              ? 'w-[95%] ml-auto max-[1300px]:w-full mt-10'
               : 'w-full',
           ]"
         />

@@ -35,7 +35,7 @@
           <UButton
             :label="$t('mySubjects.createSubjectModal.createSubject')"
             type="submit"
-            class="cursor-pointer"
+            class="cursor-pointer max-sm:text-xs"
           />
         </div>
       </UForm>

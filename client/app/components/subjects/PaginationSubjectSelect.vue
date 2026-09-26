@@ -103,10 +103,13 @@ watch(
     :search-input="{
       placeholder: 'Search subjects...',
     }"
-    class="w-full"
+    :ui="{
+      placeholder: 'max-sm:text-xs',
+    }"
+    class="w-full max-sm:text-xs"
   >
     <template #empty>
-      <span>
+      <span class="max-sm:text-xs">
         {{ loading ? $t("loading") + "..." : $t("noSubjectsFound") }}
       </span>
     </template>

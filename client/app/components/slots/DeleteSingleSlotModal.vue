@@ -24,10 +24,10 @@
               v-if="props.startTime"
               class="flex justify-between gap-6"
             >
-              <dt class="text-gray-500 dark:text-gray-400">
+              <dt class="text-gray-500 dark:text-gray-400 max-md:text-xs">
                 {{ $t("userSlots.DeleteSingleSlotModal.dateFrom") }}
               </dt>
-              <dd class="font-medium text-gray-900 dark:text-white">
+              <dd class="font-medium text-gray-900 dark:text-white max-md:text-xs">
                 {{ props.startTime }}
               </dd>
             </div>
@@ -35,10 +35,10 @@
               v-if="props.endTime"
               class="flex justify-between gap-6"
             >
-              <dt class="text-gray-500 dark:text-gray-400">
+              <dt class="text-gray-500 dark:text-gray-400 max-md:text-xs">
                 {{ $t("userSlots.DeleteSingleSlotModal.dateTo") }}
               </dt>
-              <dd class="font-medium text-gray-900 dark:text-white">
+              <dd class="font-medium text-gray-900 dark:text-white max-md:text-xs">
                 {{ props.endTime }}
               </dd>
             </div>
@@ -53,14 +53,14 @@
           :label="$t('userSlots.DeleteSingleSlotModal.cancel')"
           color="neutral"
           variant="outline"
-          class="cursor-pointer"
+          class="cursor-pointer max-sm:text-xs"
           @click="isModalOpen = false"
         />
         <UButton
           :label="$t('userSlots.DeleteSingleSlotModal.deleteSlot')"
           icon="i-lucide-trash-2"
           color="error"
-          class="cursor-pointer"
+          class="cursor-pointer max-sm:text-xs"
           @click="emit('confirm')"
         />
       </div>

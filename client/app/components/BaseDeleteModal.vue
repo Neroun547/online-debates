@@ -55,7 +55,7 @@ function confirm() {
           color="neutral"
           variant="outline"
           @click="cancel"
-          class="cursor-pointer"
+          class="cursor-pointer max-sm:text-xs"
         />
         <UButton
           :label="confirmButtonText"
@@ -63,7 +63,7 @@ function confirm() {
           :disabled="loading"
           :loading="loading"
           @click="confirm"
-          class="cursor-pointer"
+          class="cursor-pointer max-sm:text-xs"
         />
       </div>
     </template>

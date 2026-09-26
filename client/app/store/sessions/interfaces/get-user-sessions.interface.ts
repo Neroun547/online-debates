@@ -29,6 +29,7 @@ export interface UserSessionInterface {
   creatorId: number
   customerId: number
   createdAt: string;
+  isAnotherUserInSession: boolean;
   creator?: SessionUserInterface
   customer?: SessionUserInterface
   slot?: SessionSlotInterface

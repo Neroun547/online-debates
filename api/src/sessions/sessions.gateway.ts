@@ -14,10 +14,12 @@ import { Server, Socket } from 'socket.io';
 import { SessionsServiceDb } from 'src/db/sessions/sessions.service';
 import { WebRTCService } from 'src/integrations/webRTC/webRTC.service';
 import { SessionsService } from './service/sessions.service';
-import { parseMessageDateForRecipient } from './utils/utils';
+import { generateCacheKeyForUserOnlineStatus, parseMessageDateForRecipient } from './utils/utils';
 import { MessagesDomainInterface } from 'src/db/messages/interfaces/messages.interfaces';
 import * as dotenv from "dotenv";
 import { MailerService } from 'src/integrations/mailer/mailer.service';
+import { CACHE_MANAGER, Cache } from '@nestjs/cache-manager';
+import { Inject } from '@nestjs/common';
 
 dotenv.config();
 
@@ -96,7 +98,8 @@ export class SessionsGateway implements OnGatewayConnection, OnGatewayDisconnect
     private readonly sessionsServiceDb: SessionsServiceDb,
     private readonly sessionsService: SessionsService,
     private readonly webRTCService: WebRTCService,
-    private readonly mailerService: MailerService
+    private readonly mailerService: MailerService,
+    @Inject(CACHE_MANAGER) private cacheManager: Cache
   ) {}
 
   handleDisconnect(client: SessionSocket) {
@@ -106,6 +109,11 @@ export class SessionsGateway implements OnGatewayConnection, OnGatewayDisconnect
       if(client.data.user && client.data.sessionsIds) {
         for(const sessionId of client.data.sessionsIds) {
           this.server.to(this.getSessionRoomName(sessionId)).except(this.getUserRoomName(client.data.user.id)).emit("session:leave");
+
+          this.cacheManager.del(generateCacheKeyForUserOnlineStatus(Number(sessionId), Number(client.data.user.id)))
+          .catch(error => {
+            console.log("Delete user session online status from cache error", error);
+          });
         }
       }
   }
@@ -193,13 +201,21 @@ export class SessionsGateway implements OnGatewayConnection, OnGatewayDisconnect
     if(sendToUser) {
       const joinSessionMailFrom = this.configService.getOrThrow("JOIN_SESSION_MAIL_FROM");
       const baseSessionLink = this.configService.getOrThrow("BASE_SESSION_LINK");
+      const userInSessionOnlineCacheTTL = this.configService.getOrThrow("USER_IN_SESSION_ONLINE_TTL");
+
+      const cacheKey = generateCacheKeyForUserOnlineStatus(sessionId, user.id);
+
+      this.cacheManager.set(cacheKey, String(sessionId), Number(userInSessionOnlineCacheTTL))
+      .catch(error => {
+        console.log("Set user session online status in cache error", error);
+      });
 
       this.mailerService.sendMailWithHtml({
         from: joinSessionMailFrom,
         to: sendToUser.email,
         subject: this.mailerService.getUserStartedSessionLetterSubject((sendToUser.language) as "ru" | "en" | "uk" ?? "en"),
         html: this.mailerService.getTemplateForSessionStartNotification(
-          user.email,
+          user.username,
           (sendToUser.language) as "ru" | "en" | "uk" ?? "en", 
           baseSessionLink + sessionId
         )
@@ -225,7 +241,15 @@ export class SessionsGateway implements OnGatewayConnection, OnGatewayDisconnect
     const sessionId = this.validateSessionId(payload?.sessionId);
 
     this.getAuthenticatedUser(client);
+
     await client.leave(this.getSessionRoomName(sessionId));
+
+    if(client.data.user) {
+      this.cacheManager.del(generateCacheKeyForUserOnlineStatus(Number(sessionId), Number(client.data.user.id)))
+        .catch(error => {
+          console.log("Delete user session online status from cache error", error);
+        });
+    }
 
     return { sessionId };
   }

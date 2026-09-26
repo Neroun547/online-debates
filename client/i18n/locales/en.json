@@ -152,7 +152,9 @@
         "noSessions": "You don't have sessions",
         "changeFilters": "Try changing the session type or date range.",
         "loadingMore": "Loading more sessions...",
-        "userNumber": "User #{id}"
+        "userNumber": "User #{id}",
+        "anotherUserInSession": "The other user is already in the session",
+        "anotherUserNotInSession": "The other user is not in the session yet"
     },
     "mySubjects": {
         "title": "My subjects",

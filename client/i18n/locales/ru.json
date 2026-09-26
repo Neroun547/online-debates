@@ -152,7 +152,9 @@
         "noSessions": "У вас нет сессий",
         "changeFilters": "Попробуйте изменить тип сессии или диапазон дат.",
         "loadingMore": "Загружаем ещё сессии...",
-        "userNumber": "Пользователь №{id}"
+        "userNumber": "Пользователь №{id}",
+        "anotherUserInSession": "Другой пользователь уже в сессии",
+        "anotherUserNotInSession": "Другой пользователь ещё не в сессии"
     },
     "mySubjects": {
         "title": "Мои темы",

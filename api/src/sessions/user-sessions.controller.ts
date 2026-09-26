@@ -18,7 +18,7 @@ export class UserSessionsController {
     
     @Get()
     async getAllUserSessions(@Query() query: GetAllUserSessionsRequestDto, @User() user: UserDomainInterface) {
-        return await this.sessionsService.getAllUsersSessions({
+        return await this.sessionsService.getAllUserSessions({
             dateFrom: query.dateFrom,
             dateTo: query.dateTo,
             page: query.page,

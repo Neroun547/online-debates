@@ -152,7 +152,9 @@
         "noSessions": "У вас немає сесій",
         "changeFilters": "Спробуйте змінити тип сесії або діапазон дат.",
         "loadingMore": "Завантажуємо ще сесії...",
-        "userNumber": "Користувач №{id}"
+        "userNumber": "Користувач №{id}",
+        "anotherUserInSession": "Інший користувач вже в сесії",
+        "anotherUserNotInSession": "Інший користувач ще не в сесії"
     },
     "mySubjects": {
         "title": "Мої теми",

@@ -10,3 +10,7 @@ export function parseMessageDateToSave(date: string, userTimezone: string) {
     return DateTime.fromFormat(date, "yyyy-MM-dd HH:mm", { zone: userTimezone }).toUTC().toFormat("yyyy-MM-dd HH:mm:ss");
 }
 
+export function generateCacheKeyForUserOnlineStatus(sessionId: number, userId: number): string {
+    return "session:" + sessionId + ":user:" + userId;
+}
+

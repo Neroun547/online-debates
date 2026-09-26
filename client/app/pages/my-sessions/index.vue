@@ -125,6 +125,35 @@
                   >{{ getUserStatusLabel(session.customer.status) }}</UBadge
                 >
               </p>
+              <div class="mt-2">
+                <UBadge
+                  :color="session.isAnotherUserInSession ? 'success' : 'neutral'"
+                  variant="soft"
+                >
+                  <span
+                    v-if="session.isAnotherUserInSession"
+                    class="relative mr-1 flex size-2"
+                  >
+                    <span
+                      class="absolute inline-flex size-full animate-ping rounded-full bg-success opacity-75"
+                    />
+                    <span
+                      class="relative inline-flex size-2 rounded-full bg-success"
+                    />
+                  </span>
+                  <span
+                    v-else
+                    class="mr-1 inline-flex size-2 rounded-full bg-neutral-400"
+                  />
+                  {{
+                    $t(
+                      session.isAnotherUserInSession
+                        ? "mySessions.anotherUserInSession"
+                        : "mySessions.anotherUserNotInSession",
+                    )
+                  }}
+                </UBadge>
+              </div>
             </div>
           </div>
 
@@ -283,19 +312,19 @@ const filtersSessionsSelectOptions = computed<
     value: UserSessionsFilter;
   }>
 >(() => [
-    {
-      label: t("mySessions.bookedWithMe"),
-      value: "booked_with_me",
-    },
-    {
-      label: t("mySessions.myBookings"),
-      value: "my_booking",
-    },
-    {
-      label: t("mySessions.all"),
-      value: "all",
-    },
-  ]);
+  {
+    label: t("mySessions.bookedWithMe"),
+    value: "booked_with_me",
+  },
+  {
+    label: t("mySessions.myBookings"),
+    value: "my_booking",
+  },
+  {
+    label: t("mySessions.all"),
+    value: "all",
+  },
+]);
 
 const now = DateTime.now();
 const selectedSessionFilterOption = ref<UserSessionsFilter>("all");
@@ -414,9 +443,12 @@ function getCounterpartName(session: UserSessionInterface): string {
   const counterpart = isCreator ? session.customer : session.creator;
   const counterpartId = isCreator ? session.customerId : session.creatorId;
 
-  return counterpart?.username ?? t("mySessions.userNumber", {
-    id: counterpartId,
-  });
+  return (
+    counterpart?.username ??
+    t("mySessions.userNumber", {
+      id: counterpartId,
+    })
+  );
 }
 
 function getSessionStatusLabel(status: SessionStatus): string {

@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable, InternalServerErrorException, NotFoundException } from "@nestjs/common";
+import { BadRequestException, Inject, Injectable, InternalServerErrorException, NotFoundException } from "@nestjs/common";
 import { GetAllUserSessionsStatus } from "../dto/get-all-user-sessions-request.dto";
 import { DateTime } from "luxon";
 import { SessionsServiceDb } from "src/db/sessions/sessions.service";
@@ -8,10 +8,11 @@ import { SessionsDomainInterface } from "src/db/sessions/interfaces/sessions.int
 import { parseStartTimeAndEndTimeForCustomer } from "src/slots/utils/utils";
 import { MessagesServiceDb } from "src/db/messages/messages.service";
 import type { GetMessagesResponseDto } from "../dto/get-messages-response.dto";
-import { parseMessageDateForRecipient, parseMessageDateToSave } from "../utils/utils";
+import { generateCacheKeyForUserOnlineStatus, parseMessageDateForRecipient, parseMessageDateToSave } from "../utils/utils";
 import { MessagesDomainInterface } from "src/db/messages/interfaces/messages.interfaces";
 import { MailerService } from "src/integrations/mailer/mailer.service";
 import { ConfigService } from "@nestjs/config";
+import { CACHE_MANAGER, Cache } from "@nestjs/cache-manager";
 
 @Injectable()
 export class SessionsService {
@@ -21,12 +22,13 @@ export class SessionsService {
         private usersServiceDb: UserServiceDb,
         private messagesServiceDb: MessagesServiceDb,
         private mailerService: MailerService,
-        private configService: ConfigService
+        private configService: ConfigService,
+        @Inject(CACHE_MANAGER) private cacheService: Cache
     ) {
 
     }
 
-    async getAllUsersSessions(params: {
+    async getAllUserSessions(params: {
             dateFrom: string;
             dateTo: string;
             page: number;
@@ -48,25 +50,33 @@ export class SessionsService {
             userId: params.userId
         });
 
-        return data.map(item => {
+        const result = await Promise.all(data.map(async item => {
             if(item.slot && item.customer && item.creator) {
                 const parseTimes = parseStartTimeAndEndTimeForCustomer(item.slot.startTime, item.slot.endTime, userInDb.timezone);
-                
+                const userOnlineStatusInCache = await this.cacheService.get(generateCacheKeyForUserOnlineStatus(item.id, item.customerId !== params.userId ? item.customerId : item.creatorId));
+
                 return {
                     ...item,
+                    isAnotherUserInSession: userOnlineStatusInCache ? true : false,  
                     slot: {
                         ...item.slot,
                         startTime: parseTimes.startTime,
                         endTime: parseTimes.endTime
                     }
                 }
+            } else if(item.customer && item.creator) {
+                const userOnlineStatusInCache = await this.cacheService.get(generateCacheKeyForUserOnlineStatus(item.id, item.customerId !== params.userId ? item.customerId : item.creatorId));
+                
+                return { 
+                    ...item,
+                    isAnotherUserInSession: userOnlineStatusInCache ? true : false,  
+                    isPermanent: true, 
+                    createdAt: parseMessageDateForRecipient(item.createdAt, userInDb.timezone)
+                }
             }   
-            return { 
-                ...item, 
-                isPermanent: true, 
-                createdAt: parseMessageDateForRecipient(item.createdAt, userInDb.timezone)
-            }
-        });
+        }));
+
+        return result.filter(item => item !== undefined);
     }
 
     async bookSession(slotId: number, userId: number, currentUserDateTime: string) {

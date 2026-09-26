@@ -32,7 +32,7 @@ export class Slots {
     @JoinColumn({ name: "subjectId" })
     subject!: Subject;
 
-    @ManyToOne(() => SlotsTemplates, { nullable: true, onDelete: "CASCADE", onUpdate: "CASCADE" })
+    @ManyToOne(() => SlotsTemplates, { nullable: true, onDelete: "SET NULL", onUpdate: "CASCADE" })
     @JoinColumn({ name: "slotsTemplateId" })
     slotsTemplate!: SlotsTemplates;
 

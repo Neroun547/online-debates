@@ -55,6 +55,64 @@ export class MailerService {
         ` + html;
     }
 
+    getTemplateForBookedSession(datetime: string, username: string, lang: "en" | "ru" | "uk") {
+        const baseUrl = this.configService.getOrThrow("BASE_URL");
+
+        if(lang === "uk") {
+            return `
+                <a href="${baseUrl}"><h2 style="color: #00a6f4; font-family: sans-serif; text-align: center;">wanna-talk.app</h2></a>
+                <p>Користувач ${username} забронював з вами сесію на ${datetime}</p>
+                <a href="${baseUrl}/my-sessions">Перейти в список моїх сесій</a>
+            `;
+        } else if(lang === "ru") {
+            return `
+                <a href="${baseUrl}"><h2 style="color: #00a6f4; font-family: sans-serif; text-align: center;">wanna-talk.app</h2></a>
+                <p>Пользователь ${username} забронировал с вами сессию на ${datetime}</p>
+                <a href="${baseUrl}/my-sessions">Перейти в список моих сессий</a>
+            `;
+        } else {
+            return `
+                <a href="${baseUrl}"><h2 style="color: #00a6f4; font-family: sans-serif; text-align: center;">wanna-talk.app</h2></a>
+                <p>User ${username} booked session with you at ${datetime}</p>
+                <a href="${baseUrl}/my-sessions">Go to my sessions</a>
+            `;
+        }
+    }
+
+    getSubjectForBookedSessionMail(lang: "en" | "ru" | "uk") {
+        if(lang === "uk") {
+            return "Сесія заброньована з вами";
+        } else if(lang === "ru") {
+            return "Сессия забронирована с вами";
+        } else {
+            return "Session booked with you";
+        }
+    }
+
+    getTemplateForBookedPermanentSession(username: string, lang: "en" | "ru" | "uk") {
+        const baseUrl = this.configService.getOrThrow("BASE_URL");
+
+        if(lang === "uk") {
+            return `
+                <a href="${baseUrl}"><h2 style="color: #00a6f4; font-family: sans-serif; text-align: center;">wanna-talk.app</h2></a>
+                <p>Користувач ${username} забронював з вами постійну сесію</p>
+                <a href="${baseUrl}/my-sessions">Перейти в список моїх сесій</a>
+            `;
+        } else if(lang === "ru") {
+            return `
+                <a href="${baseUrl}"><h2 style="color: #00a6f4; font-family: sans-serif; text-align: center;">wanna-talk.app</h2></a>
+                <p>Пользователь ${username} забронировал с вами постоянную сессию</p>
+                <a href="${baseUrl}/my-sessions">Перейти в список моих сессий</a>
+            `;
+        } else {
+            return `
+                <a href="${baseUrl}"><h2 style="color: #00a6f4; font-family: sans-serif; text-align: center;">wanna-talk.app</h2></a>
+                <p>User ${username} booked permanent session with you</p>
+                <a href="${baseUrl}/my-sessions">Go to my sessions</a>
+            `;
+        }
+    }
+
     getUserStartedSessionLetterSubject(lang: "en" | "ru" | "uk") {
         if(lang === "uk") {
             return "Користувач підключився до сесії";

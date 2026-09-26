@@ -33,7 +33,23 @@ export class SessionsServiceDb {
         await this.sessionsRepository.query(`UPDATE sessions AS session INNER JOIN slots AS slot ON slot.id = session.slotId SET session.status = '${SessionsStatus.COMPLETED}' WHERE slot.endTime < '${date10MinPrev}' AND session.status = '${SessionsStatus.BOOKED}'`);
     }
     async findPermanentSession(params: { customerId: number; creatorId: number; subjectId: number; }): Promise<SessionsDomainInterface | null> {
-        const data = await this.sessionsRepository.findOne({ where: { creatorId: params.creatorId,  customerId: params.customerId, subjectId: params.subjectId, slotId: IsNull() } });
+        const data = await this.sessionsRepository.findOne({ where: [
+                { 
+                    creatorId: params.creatorId,  
+                    customerId: params.customerId, 
+                    subjectId: params.subjectId, 
+                    slotId: IsNull(),
+                    status: SessionsStatus.BOOKED
+                },
+                {
+                    creatorId: params.customerId,
+                    customerId: params.creatorId,
+                    subjectId: params.subjectId,
+                    slotId: IsNull(),
+                    status: SessionsStatus.BOOKED
+                }
+            ] 
+        });
 
         if(!data) {
             return null;
@@ -79,7 +95,24 @@ export class SessionsServiceDb {
             if(!subjectInDb) {
                 throw new NotFoundException({ message: "Subject not found" });
             }
-            const permanentSessionInDb = await tx.findOne(Sessions, { where: { slotId: IsNull(), creatorId: params.creatorId, customerId: params.customerId, status: SessionsStatus.BOOKED } });
+            const permanentSessionInDb = await tx.findOne(Sessions, { 
+                where: [
+                    { 
+                        slotId: IsNull(), 
+                        creatorId: params.creatorId, 
+                        customerId: params.customerId, 
+                        subjectId: params.subjectId, 
+                        status: SessionsStatus.BOOKED 
+                    },
+                    {
+                        slotId: IsNull(), 
+                        creatorId: params.customerId, 
+                        customerId: params.creatorId, 
+                        subjectId: params.subjectId, 
+                        status: SessionsStatus.BOOKED 
+                    }
+                ] 
+            });
 
             if(permanentSessionInDb) {
                 throw new ConflictException({ message: "Permanent session already booked" });

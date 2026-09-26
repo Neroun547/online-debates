@@ -10,6 +10,8 @@ import { MessagesServiceDb } from "src/db/messages/messages.service";
 import type { GetMessagesResponseDto } from "../dto/get-messages-response.dto";
 import { parseMessageDateForRecipient, parseMessageDateToSave } from "../utils/utils";
 import { MessagesDomainInterface } from "src/db/messages/interfaces/messages.interfaces";
+import { MailerService } from "src/integrations/mailer/mailer.service";
+import { ConfigService } from "@nestjs/config";
 
 @Injectable()
 export class SessionsService {
@@ -17,7 +19,9 @@ export class SessionsService {
         private sessionsServiceDb: SessionsServiceDb,
         private slotsServiceDb: SlotsServiceDb,
         private usersServiceDb: UserServiceDb,
-        private messagesServiceDb: MessagesServiceDb
+        private messagesServiceDb: MessagesServiceDb,
+        private mailerService: MailerService,
+        private configService: ConfigService
     ) {
 
     }
@@ -92,6 +96,19 @@ export class SessionsService {
             slotAuthorId: slotInDb.userId,
             subjectId: null
         });    
+
+        const bookingSessionMailerFrom = this.configService.getOrThrow("BOOKING_SESSION_MAILER_FROM");
+        const parsedDateTime = parseStartTimeAndEndTimeForCustomer(slotInDb.startTime, slotInDb.endTime, slotInDb.user.timezone);
+
+        this.mailerService.sendMailWithHtml({
+            from: bookingSessionMailerFrom,
+            to: slotInDb.user.email,
+            subject: this.mailerService.getSubjectForBookedSessionMail((slotInDb.user.language) as "ru" | "en" | "uk" ?? "en"),
+            html: this.mailerService.getTemplateForBookedSession(parsedDateTime.startTime, slotInDb.user.username, (slotInDb.user.language) as "ru" | "en" | "uk" ?? "en")
+        })
+        .catch(error => {
+            console.log(`Book session send mail error. Slot id: ${slotInDb.id}.`, error);
+        });
     }
 
     async bookSessionNow(params: {
@@ -109,6 +126,11 @@ export class SessionsService {
         if(permanentSessionInDb) {
             return permanentSessionInDb.id;
         }
+        const creatorInDb = await this.usersServiceDb.findById(params.creatorId);
+
+        if(!creatorInDb) {
+            throw new NotFoundException({ message: "Creator not found" });
+        }
         const savedSessionId = await this.sessionsServiceDb.savePermanentSession({
             customerId: params.customerId,
             creatorId: params.creatorId,
@@ -118,6 +140,17 @@ export class SessionsService {
         if(!savedSessionId) {
             throw new InternalServerErrorException({ message: "Save session failed" });
         }
+        const bookingSessionMailerFrom = this.configService.getOrThrow("BOOKING_SESSION_MAILER_FROM");
+
+        this.mailerService.sendMailWithHtml({
+            from: bookingSessionMailerFrom,
+            to: creatorInDb.email,
+            subject: this.mailerService.getSubjectForBookedSessionMail((creatorInDb.language) as "ru" | "en" | "uk" ?? "en"),
+            html: this.mailerService.getTemplateForBookedPermanentSession(creatorInDb.username, (creatorInDb.language) as "ru" | "en" | "uk" ?? "en")
+        })
+        .catch(error => {
+            console.log("Book permanent session send mail error", error);
+        });
         return savedSessionId;
     }
 

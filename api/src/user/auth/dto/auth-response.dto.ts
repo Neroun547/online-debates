@@ -3,5 +3,6 @@ export interface AuthResponseDto {
     userId: number;
     isOnline: boolean;
     language: string | null;
+    avatarFilename: string | null;
 }
 

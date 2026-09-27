@@ -77,7 +77,23 @@
         "error": "Помилка",
         "success": "Успішно",
         "passwordChangedSuccessfully": "Пароль успішно змінено",
-        "personalDataUpdatedSuccessfully": "Особисті дані успішно оновлено"
+        "personalDataUpdatedSuccessfully": "Особисті дані успішно оновлено",
+        "avatar": {
+            "title": "Фото профілю",
+            "description": "Завантажте зображення, яке інші користувачі бачитимуть у вашому профілі.",
+            "currentAvatar": "Поточний аватар",
+            "currentAvatarDescription": "Зображення буде обрізано до квадрата",
+            "selectImage": "Перетягніть зображення сюди або натисніть, щоб вибрати",
+            "requirements": "PNG, JPG, JPEG або WebP, розмір файлу до 30 МБ",
+            "invalidFormat": "Дозволені лише зображення JPG, JPEG, PNG і WebP",
+            "fileTooLarge": "Розмір зображення не повинен перевищувати 30 МБ",
+            "removeAvatar": "Видалити фото",
+            "saveAvatar": "Зберегти фото",
+            "updatedSuccessfully": "Аватар оновлено успішно",
+            "updated": "Оновлено",
+            "deleted": "Видалено",
+            "deletedSuccessfully": "Аватар видалено успішно"
+        }
     },
     "categories": {
         "noSubjects": "Тем поки немає :( Ви можете стати першим",

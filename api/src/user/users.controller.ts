@@ -1,4 +1,4 @@
-import { BadRequestException, Body, Controller, Delete, Get, Param, Patch, Post, UseGuards } from "@nestjs/common";
+import { BadRequestException, Body, Controller, Delete, Get, Param, Patch, Post, UploadedFile, UseGuards, UseInterceptors } from "@nestjs/common";
 import { UpdateUserOnlineStatusDto } from "./dto/update-user-online-status.dto";
 import { AuthGuard } from "./auth/auth.guard";
 import { UserService } from "./service/users.service";
@@ -10,6 +10,9 @@ import type { UserDomainInterface } from "src/db/user/interfaces/user.interfaces
 import { SendPasswordRecoveryLink } from "./dto/send-password-recovery-link.dto";
 import { PasswordRecoveryDto } from "./dto/password-recovery.dto";
 import { UpdateUserLanguageDto } from "./dto/update-user-language.dto";
+import { FileInterceptor } from "@nestjs/platform-express";
+import { AvatarFileValidationPipe } from "./pipes/avatar-file-validation.pipe";
+import type { BaseUploadAvatarFileInterface } from "./interfaces/base-upload-avatar-file.interface";
 
 @Controller("users")
 export class UsersController {
@@ -36,6 +39,23 @@ export class UsersController {
         await this.usersService.updateUserLanguage(user.id, body.language);
 
         return;
+    }
+
+    @UseGuards(AuthGuard)
+    @Delete("avatar")
+    async deleteUserAvatar(@User() user: UserDomainInterface) {
+        await this.usersService.updateUserAvatar(user, null);
+
+        return;
+    }
+
+    @UseGuards(AuthGuard)
+    @UseInterceptors(FileInterceptor("file", { dest: process.env.BASE_USER_AVATAR_PATH }))
+    @Patch("avatar")
+    async updateUserAvatar(@UploadedFile(
+        new AvatarFileValidationPipe()
+    ) file: BaseUploadAvatarFileInterface, @User() user: UserDomainInterface) {
+        return await this.usersService.updateUserAvatar(user, file.filename);
     }
 
     @Patch("password-recovery/:hash")

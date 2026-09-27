@@ -10,6 +10,7 @@ import type { UpdateUsernameResponseInterface } from "./interfaces/update-userna
 import type { UpdateUserDataResponseInterface } from "./interfaces/update-user-data-response.interface";
 import type { UpdatePersonalInfoRequestInterface } from "./interfaces/update-personal-info-request.interface";
 import type { GetUsersBySubjectResponseInterface } from "./interfaces/get-users-by-subject-response.interface";
+import type { UpdateUserAvatarResponseInterface } from "./interfaces/update-user-avatar.response";
 
 export enum UserStatus {
     ONLINE="online",
@@ -25,7 +26,8 @@ export const useUserStore = defineStore("user", {
         token: "",
         isOnline: false,
         userId: undefined,
-        language: null
+        language: null,
+        avatarFilename: null
     }),
     getters: {
         getToken: (state: UserStore): string | null => {
@@ -41,6 +43,32 @@ export const useUserStore = defineStore("user", {
             this.token = "";
 
             window.location.href = "/auth";
+        },
+        async deleteAvatar() {
+            try {
+                await useApiFetch("/users/avatar", { method: "DELETE" });
+
+                this.setAvatarFilename(null);
+            } catch(error: any) {
+                this.setError(error.response._data.message);
+            }
+        },
+        async updateAvatar(file: File) {
+            try {
+                const formData = new FormData();
+
+                formData.append("file", file);
+                console.log(formData);
+
+                const response = await useApiFetch<UpdateUserAvatarResponseInterface>("/users/avatar", { method: "PATCH", body: formData });
+
+                if(response) {
+                    this.avatarFilename = response.avatarFilename;
+                    this.token = response.token;
+                }
+            } catch(error: any) {
+                this.setError(error.response._data.message);
+            }
         },
         async updatePassword(oldPassword: string, newPassword: string, confirmNewPassword: string) {
             try {
@@ -154,6 +182,9 @@ export const useUserStore = defineStore("user", {
         setLanguage(value: string | null) {
             this.language = value;
         },
+        setAvatarFilename(value: string | null) {
+            this.avatarFilename = value;
+        },
         async getUserInfo(): Promise<GetUserInfoResponseInterface | undefined> {
             try {
                 this.clearErrorState();
@@ -184,6 +215,7 @@ export const useUserStore = defineStore("user", {
                     this.setIsAuth(true);
                     this.setIsOnline(response.isOnline);
                     this.setLanguage(response.language);
+                    this.setAvatarFilename(response.avatarFilename);
                 }
                 return { language: response?.language }
             } catch(error: any) {
@@ -241,7 +273,8 @@ export const useUserStore = defineStore("user", {
             "token",
             "isAuth",
             "isOnline",
-            "language"
+            "language",
+            "avatarFilename"
         ]
     },
 });

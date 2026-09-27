@@ -77,7 +77,23 @@
         "error": "Ошибка",
         "success": "Успешно",
         "passwordChangedSuccessfully": "Пароль успешно изменён",
-        "personalDataUpdatedSuccessfully": "Личные данные успешно обновлены"
+        "personalDataUpdatedSuccessfully": "Личные данные успешно обновлены",
+        "avatar": {
+            "title": "Фото профиля",
+            "description": "Загрузите изображение, которое другие пользователи будут видеть в вашем профиле.",
+            "currentAvatar": "Текущий аватар",
+            "currentAvatarDescription": "Изображение будет обрезано до квадрата",
+            "selectImage": "Перетащите изображение сюда или нажмите, чтобы выбрать",
+            "requirements": "PNG, JPG, JPEG или WebP, размер файла до 30 МБ",
+            "invalidFormat": "Допускаются только изображения JPG, JPEG, PNG и WebP",
+            "fileTooLarge": "Размер изображения не должен превышать 30 МБ",
+            "removeAvatar": "Удалить фото",
+            "saveAvatar": "Сохранить фото",
+            "updatedSuccessfully": "Аватар обновлено успешно",
+            "updated": "Обновлено",
+            "deleted": "Удалено",
+            "deletedSuccessfully": "Аватар успешно удален"
+        }
     },
     "categories": {
         "noSubjects": "Тем пока нет :( Вы можете стать первым",

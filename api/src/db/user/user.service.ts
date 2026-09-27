@@ -1,4 +1,4 @@
-import { Injectable } from "@nestjs/common";
+import { Injectable, NotFoundException } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { User } from "./user.entity";
 import { EntityManager, Not, Repository, UpdateResult } from "typeorm";
@@ -176,6 +176,23 @@ export class UserServiceDb {
         } else {
             await this.repository.update({ id: id }, data);
         }
+    }
+
+    updateUserAvatar(userId: number, filename: string | null): Promise<string | null> {
+        return this.em.transaction("READ COMMITTED", async (tx) => {
+            const userInDb = await tx
+                .createQueryBuilder(User, "user")
+                .setLock("pessimistic_write")
+                .where("user.id = :id", { id: userId })
+                .getOne();
+
+            if(!userInDb) {
+                throw new NotFoundException({ message: "User not found" });
+            }
+            await tx.update(User, { id: userId }, { avatarFilename: filename });
+
+            return userInDb.avatarFilename;
+        });
     }
 }
 

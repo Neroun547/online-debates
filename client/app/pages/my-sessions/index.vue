@@ -79,9 +79,18 @@
             <span
               class="flex size-10 shrink-0 items-center justify-center rounded-full bg-primary/10 text-primary"
             >
-              <UIcon name="i-lucide-calendar-clock" class="size-5" />
+              <UAvatar
+                icon="i-lucide-user-round"
+                class="w-[45px] h-[45px] max-md:w-[35px] max-md:h-[35px]"
+                :src="
+                  session.creatorId !== userStore.userId && session.creator
+                    ? getAvatarFilenamePath(session.creator.avatarFilename)
+                    : session.customer
+                      ? getAvatarFilenamePath(session.customer.avatarFilename)
+                      : ''
+                "
+              />
             </span>
-
             <div class="min-w-0">
               <div class="flex flex-wrap items-center gap-2">
                 <h3 class="font-semibold text-highlighted">
@@ -127,7 +136,9 @@
               </p>
               <div class="mt-2">
                 <UBadge
-                  :color="session.isAnotherUserInSession ? 'success' : 'neutral'"
+                  :color="
+                    session.isAnotherUserInSession ? 'success' : 'neutral'
+                  "
                   variant="soft"
                 >
                   <span

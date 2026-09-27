@@ -12,7 +12,9 @@
       "
     />
     <div v-if="currentSubject">
-      <h2 class="text-4xl max-md:text-2xl text-center">{{ currentSubject.name }}</h2>
+      <h2 class="text-4xl max-md:text-2xl text-center">
+        {{ currentSubject.name }}
+      </h2>
       <div class="mt-10">
         <UTable :data="users" :columns="usersTableColumns" />
       </div>
@@ -40,6 +42,8 @@ const sessionStore = useSessionsStore();
 const toast = useToast();
 
 const UButton = resolveComponent("UButton");
+const UAvatar = resolveComponent("UAvatar");
+const UBadge = resolveComponent("UBadge");
 
 const route = useRoute();
 
@@ -66,78 +70,85 @@ const bookingSlots = ref<GetSlotsForBookingResponseInterface[]>([]);
 const usersTableColumns = computed<
   TableColumn<GetUsersBySubjectResponseInterface>[]
 >(() => [
-    {
-      accessorKey: "email",
-      header: t("subjects.email"),
-      meta: {
-        class: {
-          th: "max-md:text-xs",
-          td: "max-md:text-xs"
-        }
-      }
+  {
+    accessorKey: "avatarFilename",
+    header: "",
+    cell: ({ row }) => {
+      return h(UAvatar, {
+        src: getAvatarFilenamePath(row.original.avatarFilename),
+        class: "w-[45px] h-[45px] max-md:w-[30px] max-md:h-[30px]",
+      });
     },
-    {
-      accessorKey: "username",
-      header: t("subjects.username"),
-      meta: {
-        class: {
-          th: "max-md:text-xs",
-          td: "max-md:text-xs"
-        }
-      }
+  },
+  {
+    accessorKey: "username",
+    header: t("subjects.username"),
+    meta: {
+      class: {
+        th: "max-md:text-xs",
+        td: "max-md:text-xs",
+      },
     },
-    {
-      accessorKey: "status",
-      header: t("subjects.status"),
-      meta: {
-        class: {
-          th: "max-md:text-xs",
-          td: "max-md:text-xs"
-        }
-      }
+  },
+  {
+    accessorKey: "status",
+    header: t("subjects.status"),
+    meta: {
+      class: {
+        th: "max-md:text-xs",
+        td: "max-md:text-xs",
+      },
     },
-    {
-      id: "actions",
-      meta: {
-        class: {
-          td: "text-right max-md:text-xs",
-          th: "max-md:text-xs",
+    cell: ({ row }) => {
+      return h(UBadge, {
+        label: row.original.status,
+        color: row.original.status === "online" ? "success" : "neutral",
+        variant: "soft",
+      });
+    },
+  },
+  {
+    id: "actions",
+    meta: {
+      class: {
+        td: "text-right max-md:text-xs",
+        th: "max-md:text-xs",
+      },
+    },
+    cell: ({ row }) => {
+      if (row.original.id === usersStore.userId) {
+        return t("subjects.itsYou");
+      }
+      if (row.original.isAvailableForPermanentSessions) {
+        return [
+          h(UButton, {
+            label: t("subjects.bookSession"),
+            class: "cursor-pointer max-md:text-xs",
+            onClick: function () {
+              activeBookingUser.value = row.original;
+              openBookSessionModal();
+            },
+          }),
+          h(UButton, {
+            label: t("subjects.startSessionNow"),
+            class: "cursor-pointer ml-5 max-md:text-xs",
+            onClick: function () {
+              startSessionNow(row.original.id);
+            },
+          }),
+        ];
+      }
+      return h(UButton, {
+        label: t("subjects.bookSession"),
+        class: "cursor-pointer",
+        onClick: function () {
+          activeBookingUser.value = row.original;
+          openBookSessionModal();
         },
-      },
-      cell: ({ row }) => {
-        if (row.original.id === usersStore.userId) {
-          return t("subjects.itsYou");
-        }
-        if (row.original.isAvailableForPermanentSessions) {
-          return [
-            h(UButton, {
-              label: t("subjects.bookSession"),
-              class: "cursor-pointer max-md:text-xs",
-              onClick: function () {
-                activeBookingUser.value = row.original;
-                openBookSessionModal();
-              },
-            }),
-            h(UButton, {
-              label: t("subjects.startSessionNow"),
-              class: "cursor-pointer ml-5 max-md:text-xs",
-              onClick: function () {
-                startSessionNow(row.original.id);
-              },
-            }),
-          ];
-        }
-        return h(UButton, {
-          label: t("subjects.bookSession"),
-          class: "cursor-pointer",
-          onClick: function () {
-            activeBookingUser.value = row.original;
-            openBookSessionModal();
-          },
-        });
-      },
+      });
     },
-  ]);
+  },
+]);
 
 async function bookSession(params: {
   date: string;

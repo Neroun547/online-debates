@@ -5,6 +5,7 @@ export interface GetUsersBySubjectResponseInterface {
     status: string;
     timezone: string;
     isAvailableForPermanentSessions: boolean;
+    avatarFilename: string | null;
 }
 
 

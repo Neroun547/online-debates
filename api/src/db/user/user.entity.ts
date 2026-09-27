@@ -43,6 +43,9 @@ export class User {
     @Column({ nullable: true, type: "varchar" })
     language!: string | null;
 
+    @Column({ nullable: true, type: "varchar" })
+    avatarFilename!: string | null;
+
     @OneToMany(() => Subject, (subject: Subject) => subject.user)
     subjects?: Subject[];
 

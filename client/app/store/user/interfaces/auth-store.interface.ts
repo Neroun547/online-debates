@@ -6,5 +6,6 @@ export interface UserStore extends BaseStoreInterface {
     isOnline: boolean;
     userId: number | undefined;
     language: null | string;
+    avatarFilename: string | null;
 }
 

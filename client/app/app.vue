@@ -71,7 +71,7 @@ watch(
           :class="[
             'min-h-[100vh]',
             !isCurrentSessionPage || !userStore.isAuth
-              ? 'flex-10 max-sm:w-[95%] w-[85%] ml-auto max-[1300px]:w-full mt-5'
+              ? 'flex-10 max-sm:w-full w-[85%] ml-auto max-[1300px]:w-full mt-5'
               : 'w-full',
             isCurrentSessionPage ? 'w-full' : ''
           ]"
@@ -86,18 +86,18 @@ watch(
         <Footer
           :class="[
             !isCurrentSessionPage
-              ? 'max-sm:w-[95%] w-[85%] ml-auto max-[1300px]:w-full mt-10'
+              ? 'max-sm:w-full w-[85%] ml-auto max-[1300px]:w-full mt-10'
               : 'w-full',
           ]"
         />
       </div>
       <div v-if="showPublicLayout" class="min-h-screen h-full">
         <LandingNav />
-        <NuxtPage class="m-auto max-sm:w-[95%] w-[85%] min-h-screen" />
+        <NuxtPage class="m-auto max-sm:w-[90%] w-[85%] min-h-screen" />
         <Footer
           :class="[
             !isCurrentSessionPage && !showPublicLayout
-              ? 'max-sm:w-[95%] w-[85%] ml-auto max-[1300px]:w-full mt-10'
+              ? 'max-sm:w-full w-[85%] ml-auto max-[1300px]:w-full mt-10'
               : 'w-full',
           ]"
         />

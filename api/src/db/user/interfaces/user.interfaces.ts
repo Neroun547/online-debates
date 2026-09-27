@@ -10,6 +10,7 @@ export interface UserInterface {
     status: UserStatus;
     timezone: string;
     language: string | null;
+    avatarFilename: string | null;
     isAvailableForPermanentSessions: boolean;
 }
 
@@ -23,6 +24,7 @@ export interface UpdateUserInterface {
     status?: UserStatus;
     timezone?: string;
     language?: string | null;
+    avatarFilename?: string | null;
     isAvailableForPermanentSessions?: boolean;
 }
 
@@ -34,6 +36,7 @@ export interface UserDomainInterface {
     status: UserStatus;
     timezone: string;
     language: string | null;
+    avatarFilename: string | null; 
     isAvailableForPermanentSessions: boolean;
 }
 

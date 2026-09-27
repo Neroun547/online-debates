@@ -1,5 +1,5 @@
 import { BadRequestException, ForbiddenException, Inject, Injectable, InternalServerErrorException, NotFoundException } from "@nestjs/common";
-import { UpdateUserInterface, UserInterface } from "src/db/user/interfaces/user.interfaces";
+import { UpdateUserInterface, UserDomainInterface, UserInterface } from "src/db/user/interfaces/user.interfaces";
 import { UserServiceDb } from "src/db/user/user.service";
 import { createHmac } from "crypto";
 import { ConfigService } from "@nestjs/config";
@@ -10,6 +10,7 @@ import { UserStatus } from "src/db/user/user.entity";
 import { GetUsersResponseDto } from "../dto/get-users-response.dto";
 import { CreateUserRequestDto } from "../dto/create-user-request.dto";
 import { AuthService } from "../auth/service/auth.service";
+import { unlink } from "fs/promises";
 
 @Injectable()
 export class UserService {
@@ -137,7 +138,8 @@ export class UserService {
             timezone: (params.timezone && params.timezone !== params.oldTimeZone) ? params.timezone : params.oldTimeZone,
             isAvailableForPermanentSessions: typeof params.isAvailableForPermanentSessions === "boolean" ? params.isAvailableForPermanentSessions : userInDb.isAvailableForPermanentSessions,
             language: userInDb.language,
-            status: userInDb.status
+            status: userInDb.status,
+            avatarFilename: userInDb.avatarFilename
         });
 
         return { token: newToken, isMailSent: isMailSent };
@@ -171,7 +173,8 @@ export class UserService {
             timezone: userInDb.timezone,
             isAvailableForPermanentSessions: userInDb.isAvailableForPermanentSessions,
             language: userInDb.language,
-            status: userInDb.status
+            status: userInDb.status,
+            avatarFilename: userInDb.avatarFilename
         });
 
         return newToken;
@@ -211,7 +214,8 @@ export class UserService {
             status: UserStatus.OFFLINE,
             timezone: params.timezone,
             language: null,
-            isAvailableForPermanentSessions: true
+            isAvailableForPermanentSessions: true,
+            avatarFilename: null
         });
     }
 
@@ -279,6 +283,30 @@ export class UserService {
                 username: params.username,
             }
         )
+    }
+
+    async updateUserAvatar(user: UserDomainInterface, filename: string | null): Promise<{ token: string; avatarFilename: string | null }> {
+        const oldFilename = await this.usersServiceDb.updateUserAvatar(user.id, filename);
+
+        if(oldFilename) {   
+            unlink(this.configService.getOrThrow("BASE_USER_AVATAR_PATH") + "/" + oldFilename)
+                .catch(error => {
+                    console.log("Delete old file error", error);
+                });
+        }
+        return { 
+            token: await this.authService.generateJwtToken({
+                id: user.id,
+                username: user.username,
+                email: user.email,
+                status: user.status,
+                timezone: user.timezone,
+                language: user.language,
+                avatarFilename: filename,
+                isAvailableForPermanentSessions: user.isAvailableForPermanentSessions
+            }),
+            avatarFilename: filename
+        };
     }
 }
 

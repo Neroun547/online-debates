@@ -10,7 +10,8 @@ export class UserMapper {
             status: user.status,
             timezone: user.timezone,
             language: user.language,
-            isAvailableForPermanentSessions: user.isAvailableForPermanentSessions
+            isAvailableForPermanentSessions: user.isAvailableForPermanentSessions,
+            avatarFilename: user.avatarFilename
         }
     }
     static toDomainWithSecureParams(user: User): UserInterface {
@@ -23,6 +24,7 @@ export class UserMapper {
             status: user.status,
             timezone: user.timezone,
             language: user.language,
+            avatarFilename: user.avatarFilename,
             isAvailableForPermanentSessions: user.isAvailableForPermanentSessions
         }
     }
@@ -39,6 +41,7 @@ export class UserMapper {
         model.status = user.status;
         model.timezone = user.timezone;
         model.language = user.language;
+        model.avatarFilename = user.avatarFilename;
 
         return model;
     }

@@ -77,7 +77,23 @@
         "error": "Error",
         "success": "Success",
         "passwordChangedSuccessfully": "Password changed successfully",
-        "personalDataUpdatedSuccessfully": "Personal data updated successfully"
+        "personalDataUpdatedSuccessfully": "Personal data updated successfully",
+        "avatar": {
+            "title": "Profile photo",
+            "description": "Upload an image that other users will see in your profile.",
+            "currentAvatar": "Current avatar",
+            "currentAvatarDescription": "The image will be cropped to a square",
+            "selectImage": "Drop an image here or click to select",
+            "requirements": "PNG, JPG, JPEG or WebP, up to 30 MB",
+            "invalidFormat": "Only JPG, JPEG, PNG and WebP images are allowed",
+            "fileTooLarge": "The image must not exceed 30 MB",
+            "removeAvatar": "Remove photo",
+            "saveAvatar": "Save photo",
+            "updatedSuccessfully": "Avatar updated successfully",
+            "updated": "Updated",
+            "deleted": "Deleted",
+            "deletedSuccessfully": "Avatar deleted successfully"
+        }
     },
     "categories": {
         "noSubjects": "No subjects yet :( You can be the first",

@@ -10,6 +10,7 @@ export interface SessionUserInterface {
   email: string
   status: 'online' | 'busy' | 'offline'
   timezone: string
+  avatarFilename: string
 }
 
 export interface SessionSlotInterface {

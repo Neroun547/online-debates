@@ -13,7 +13,10 @@
     />
 
     <h2 class="text-4xl max-md:text-2xl">{{ $t("settings.title") }}</h2>
-    <div class="flex flex-col shadow p-5 mt-10">
+    <div class="mt-5">
+      <UploadAvatar/>
+    </div>
+    <div class="flex flex-col shadow border border-default p-5 mt-10">
       <div class="flex justify-between max-md:flex-col">
         <div class="flex flex-col w-full mr-5">
           <div class="w-full">
@@ -156,6 +159,7 @@ import { useUserStore } from "~/store/user/user.store";
 import DeleteAccountModal from "~/components/settings/DeleteAccountModal.vue";
 import { z } from "zod";
 import ConfirmYourNewEmailModal from "~/components/settings/ConfirmYourNewEmailModal.vue";
+import UploadAvatar from "~/components/settings/UploadAvatar.vue";
 
 const { t } = useI18n();
 

@@ -2,6 +2,8 @@ export function getAvatarFilenamePath(filename: string | null): string {
     if(!filename) {
         return "";
     }
-    return "/avatars/" + filename;
+    const runtimeConfig = useRuntimeConfig();
+    
+    return runtimeConfig.public.userAvatarsBaseUrl + filename;
 }
 

@@ -82,7 +82,7 @@
             "title": "Profile photo",
             "description": "Upload an image that other users will see in your profile.",
             "currentAvatar": "Current avatar",
-            "currentAvatarDescription": "The image will be cropped to a square",
+            "currentAvatarDescription": "The image will be cropped to a circle",
             "selectImage": "Drop an image here or click to select",
             "requirements": "PNG, JPG, JPEG or WebP, up to 30 MB",
             "invalidFormat": "Only JPG, JPEG, PNG and WebP images are allowed",

@@ -82,7 +82,7 @@
             "title": "Фото профілю",
             "description": "Завантажте зображення, яке інші користувачі бачитимуть у вашому профілі.",
             "currentAvatar": "Поточний аватар",
-            "currentAvatarDescription": "Зображення буде обрізано до квадрата",
+            "currentAvatarDescription": "Зображення буде обрізано до кола",
             "selectImage": "Перетягніть зображення сюди або натисніть, щоб вибрати",
             "requirements": "PNG, JPG, JPEG або WebP, розмір файлу до 30 МБ",
             "invalidFormat": "Дозволені лише зображення JPG, JPEG, PNG і WebP",

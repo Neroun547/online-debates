@@ -6,6 +6,7 @@ import { ConfigService } from "@nestjs/config";
 import { createHmac } from "crypto";
 import { UserStatus } from "src/db/user/user.entity";
 import { UserDomainInterface } from "src/db/user/interfaces/user.interfaces";
+import { AuthResponseDto } from "../dto/auth-response.dto";
 
 @Injectable()
 export class AuthService {
@@ -24,7 +25,7 @@ export class AuthService {
             isAvailableForPermanentSessions: params.isAvailableForPermanentSessions
         }, { secret: this.configService.getOrThrow("USER_AUTH_JWT_SECRET"), expiresIn: this.configService.getOrThrow("USER_AUTH_JWT_EXPIRES_IN") });
     }
-    async auth(body: AuthDto): Promise<{ token: string; userId: number; isOnline: boolean; language: string | null; avatarFilename: string | null }> {
+    async auth(body: AuthDto): Promise<AuthResponseDto> {
         const userInDb = await this.usersServiceDb.findByEmailOrUsernameWithSecureParams(body.usernameOrEmail);
 
         if(!userInDb) {
@@ -57,6 +58,31 @@ export class AuthService {
             language: userInDb.language,
             avatarFilename: userInDb.avatarFilename
         };
+    }
+    async refreshAuthToken(userId: number): Promise<AuthResponseDto> {
+        const userInDb = await this.usersServiceDb.findById(userId);
+
+        if(!userInDb) {
+            throw new NotFoundException({ message: "User not found" });
+        }
+        const newToken = await this.generateJwtToken({
+            id: userInDb.id,
+            username: userInDb.username,
+            email: userInDb.email,
+            status: userInDb.status,
+            timezone: userInDb.timezone,
+            language: userInDb.language,
+            avatarFilename: userInDb.avatarFilename,
+            isAvailableForPermanentSessions: userInDb.isAvailableForPermanentSessions
+        });
+
+        return {
+            token: newToken,
+            userId: userInDb.id,
+            isOnline: userInDb.status === UserStatus.ONLINE,
+            language: userInDb.language,
+            avatarFilename: userInDb.avatarFilename
+        }
     }
     private checkPassword(hash: string, password: string): boolean {
         const hashKey = this.configService.getOrThrow("PASSWORD_HASH_KEY");

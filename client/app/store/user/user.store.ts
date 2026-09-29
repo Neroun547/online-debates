@@ -44,6 +44,20 @@ export const useUserStore = defineStore("user", {
 
             window.location.href = "/auth";
         },
+        async refreshToken() {
+            try {
+                const response = await useApiFetch<AuthResponseInterface>("/users/auth/refresh-token", { method: "POST" });
+
+                if(response) {
+                    this.setToken(response.token);
+                    this.setUserId(response.userId);
+                    this.setLanguage(response.language);
+                    this.setAvatarFilename(response.avatarFilename);
+                }
+            } catch(error: any) {
+                this.setError(error.response._data.message);
+            }
+        },
         async deleteAvatar() {
             try {
                 await useApiFetch("/users/avatar", { method: "DELETE" });

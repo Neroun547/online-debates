@@ -26,6 +26,12 @@ onMounted(() => {
     showPublicLayout.value = isPublicPage(route.path).value;
   }
   isCurrentSessionPage.value = route.path.includes("/my-sessions/");
+
+  if(userStore.isAuth) {
+    setInterval(() => {
+      userStore.refreshToken();
+    }, 5000);
+  }
 });
 
 function showLandingNav() {

@@ -40,6 +40,11 @@ interface SessionChatMessagePayload {
   date: string;
 }
 
+interface MicrophoneTogglePayload {
+  value: boolean;
+  sessionId: number;
+}
+
 interface NewProducerPayload {
   sessionId: number;
   producerId: string;
@@ -57,6 +62,7 @@ interface ServerToClientEvents {
   'session:new-producer': (payload: NewProducerPayload) => void;
   'session:chat:message': (payload: { message: string; createdAt: string; }) => void;
   'session:leave': () => void;
+  'session:microphone-toggle': (payload: { value: boolean }) => void;
 }
 
 interface InterServerEvents {
@@ -252,6 +258,26 @@ export class SessionsGateway implements OnGatewayConnection, OnGatewayDisconnect
     }
 
     return { sessionId };
+  }
+
+  @SubscribeMessage("session:microphone-toggle")
+  async microphoneToggle(
+    @ConnectedSocket() client: SessionSocket,
+    @MessageBody() payload: MicrophoneTogglePayload
+  ) {
+    const sessionId = this.validateSessionId(payload.sessionId);
+    const user = this.getAuthenticatedUser(client);
+    const isParticipant = await this.sessionsServiceDb.isUserParticipant(
+      sessionId,
+      user.id,
+    );
+    if (!isParticipant) {
+      throw new WsException('Session not found');
+    }
+    this.server
+      .to(this.getSessionRoomName(sessionId)) 
+      .except(this.getUserRoomName(user.id))
+      .emit("session:microphone-toggle", { value: payload.value });
   }
 
   emitNewProducer(payload: NewProducerPayload): void {

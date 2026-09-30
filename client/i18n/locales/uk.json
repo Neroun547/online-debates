@@ -170,7 +170,10 @@
         "loadingMore": "Завантажуємо ще сесії...",
         "userNumber": "Користувач №{id}",
         "anotherUserInSession": "Інший користувач вже в сесії",
-        "anotherUserNotInSession": "Інший користувач ще не в сесії"
+        "anotherUserNotInSession": "Інший користувач ще не в сесії",
+        "microphoneOff": "Ваш мікрофон був вимкнений",
+        "anotherUserMicrophoneDisabled": "Мікрофон був вимкнений",
+        "permanentSession": "Постійна сесія"
     },
     "mySubjects": {
         "title": "Мої теми",

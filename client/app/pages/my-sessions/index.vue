@@ -444,6 +444,9 @@ function isSentinelVisible(): boolean {
 }
 
 function getSessionRoleLabel(session: UserSessionInterface): string {
+  if(!session.slot) {
+    return t("mySessions.permanentSession");
+  }
   return session.creatorId === userStore.userId
     ? t("mySessions.bookedWithMe")
     : t("mySessions.myBooking");

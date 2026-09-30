@@ -170,7 +170,10 @@
         "loadingMore": "Загружаем ещё сессии...",
         "userNumber": "Пользователь №{id}",
         "anotherUserInSession": "Другой пользователь уже в сессии",
-        "anotherUserNotInSession": "Другой пользователь ещё не в сессии"
+        "anotherUserNotInSession": "Другой пользователь ещё не в сессии",
+        "microphoneOff": "Ваш микрофон был выключен",
+        "anotherUserMicrophoneDisabled": "Микрофон был отключен",
+        "permanentSession": "Постоянная сессия"
     },
     "mySubjects": {
         "title": "Мои темы",

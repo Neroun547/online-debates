@@ -170,7 +170,10 @@
         "loadingMore": "Loading more sessions...",
         "userNumber": "User #{id}",
         "anotherUserInSession": "The other user is already in the session",
-        "anotherUserNotInSession": "The other user is not in the session yet"
+        "anotherUserNotInSession": "The other user is not in the session yet",
+        "microphoneOff": "Your microphone was disabled",
+        "anotherUserMicrophoneDisabled": "Microphone was disabled",
+        "permanentSession": "Permanent session"
     },
     "mySubjects": {
         "title": "My subjects",

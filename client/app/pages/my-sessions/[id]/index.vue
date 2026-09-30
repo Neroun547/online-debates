@@ -4,13 +4,18 @@
       {{ errorMessage }}
     </div>
     <div class="flex justify-between w-full m-auto max-md:flex-col">
-      <video
-        ref="localVideoElement"
-        autoplay
-        muted
-        playsinline
-        class="w-1/2 max-md:w-full"
-      ></video>
+      <div class="relative w-1/2 max-md:w-full">
+        <video
+          ref="localVideoElement"
+          autoplay
+          muted
+          playsinline
+          class="w-full"
+        ></video>
+        <div class="microphone-off-banner" v-if="isMicrophoneDisabled">
+          {{ $t("mySessions.microphoneOff") }}
+        </div>
+      </div>
       <div
         class="relative w-1/2 max-md:w-full bg-black flex justify-center items-center"
       >
@@ -28,6 +33,43 @@
             <h2 class="text-2xl text-white text-center">No video</h2>
           </div>
         </div>
+        <div v-if="isAnotherUserMicrophoneDisabled" class="microphone-off-banner">
+          {{ $t("mySessions.anotherUserMicrophoneDisabled") }}
+        </div>
+      </div>
+    </div>
+    <div class="w-1/2">
+      <div class="max-w-[150px] mt-[25px] w-full m-auto flex justify-between max-md:mb-10">
+        <button
+          class="w-[50px] h-[50px] bg-primary rounded-full text-white flex justify-center items-center cursor-pointer"
+          @click="toggleMicrophone"
+        >
+          <UIcon
+            name="lucide:mic-off"
+            class="w-[20px] h-[20px]"
+            v-if="isMicrophoneDisabled"
+          />
+          <UIcon
+            name="lucide:mic"
+            class="w-[20px] h-[20px]"
+            v-if="!isMicrophoneDisabled"
+          />
+        </button>
+        <button
+          class="w-[50px] h-[50px] bg-primary rounded-full text-white flex justify-center items-center cursor-pointer"
+          @click="toggleVideo"
+        >
+          <UIcon
+            name="lucide:video-off"
+            class="w-[20px] h-[20px]"
+            v-if="isVideoDisabled"
+          />
+          <UIcon
+            name="lucide:video"
+            class="w-[20px] h-[20px]"
+            v-if="!isVideoDisabled"
+          />
+        </button>
       </div>
     </div>
     <div class="mt-10 ml-5 md:visible max-md:hidden">
@@ -96,6 +138,11 @@ const chatMessages = ref<
   }>
 >([]);
 
+const isAnotherUserMicrophoneDisabled = ref<boolean>(false);
+
+const isMicrophoneDisabled = ref<boolean>(false);
+const isVideoDisabled = ref<boolean>(false);
+
 const route = useRoute();
 const consumers = new Map<string, mediasoupClient.types.Consumer>();
 
@@ -107,6 +154,36 @@ let localStream: MediaStream | undefined;
 let remoteStream: MediaStream | undefined;
 
 let loadedStreamTypes: Array<"audio" | "video"> = [];
+
+let videoProducer:
+  | mediasoupClient.types.Producer<mediasoupClient.types.AppData>
+  | undefined;
+let audioProducer:
+  | mediasoupClient.types.Producer<mediasoupClient.types.AppData>
+  | undefined;
+
+function toggleMicrophone() {
+  isMicrophoneDisabled.value = !isMicrophoneDisabled.value;
+
+  if (isMicrophoneDisabled.value && audioProducer) {
+    audioProducer.pause();
+  }
+  if (!isMicrophoneDisabled.value && audioProducer) {
+    audioProducer.resume();
+  }
+  $sessionsSocket.emit("session:microphone-toggle", { value: isMicrophoneDisabled.value, sessionId: Number(route.params.id) });
+}
+
+function toggleVideo() {
+  isVideoDisabled.value = !isVideoDisabled.value;
+
+  if (isVideoDisabled.value && videoProducer) {
+    videoProducer.pause();
+  }
+  if (!isVideoDisabled.value && videoProducer) {
+    videoProducer.resume();
+  }
+}
 
 function sendChatMessage(message: string) {
   const now = new Date();
@@ -355,7 +432,7 @@ async function createSendTransport() {
       const videoTrack = localStream.getVideoTracks()[0];
       const audioTrack = localStream.getAudioTracks()[0];
 
-      await transport.produce({
+      videoProducer = await transport.produce({
         track: videoTrack,
         encodings: [
           { maxBitrate: 100000 },
@@ -366,7 +443,7 @@ async function createSendTransport() {
           videoGoogleStartBitrate: 1000,
         },
       });
-      await transport.produce({
+      audioProducer = await transport.produce({
         track: audioTrack,
       });
     }
@@ -404,6 +481,10 @@ async function loadMoreChatMessages() {
   chatMessagesSkip.value += chatMessagesLimit.value;
 
   await getChatMessages();
+}
+
+function handleAnotherUserMicrophoneDisabled(payload: { value: boolean; }) {
+  isAnotherUserMicrophoneDisabled.value = payload.value;
 }
 
 async function handleNewProducer(payload: NewProducerPayload) {
@@ -445,7 +526,9 @@ onMounted(async () => {
   $sessionsSocket.on("session:chat:message", handleNewChatMessage);
   $sessionsSocket.on("session:leave", () => {
     isRemoteVideoAvailable.value = false;
+    isAnotherUserMicrophoneDisabled.value = false;
   });
+  $sessionsSocket.on("session:microphone-toggle", handleAnotherUserMicrophoneDisabled);
 
   await createSendTransport();
 
@@ -486,3 +569,18 @@ onBeforeUnmount(() => {
   localStream?.getTracks().forEach((track) => track.stop());
 });
 </script>
+<style scoped>
+.microphone-off-banner {
+  background-color: #6f6f6fbf;
+  border-radius: 25px;
+  text-align: center;
+  width: 290px;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  position: absolute;
+  bottom: 25px;
+  left: 50%;
+  transform: translateX(-50%);
+  color: #fff;
+}
+</style>

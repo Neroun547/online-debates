@@ -34,7 +34,10 @@ export class AdminUsersController {
             username: body.username,
             email: body.email,
             timezone: body.timezone,
-            password: body.password
+            password: body.password,
+            age: body.age,
+            description: body.description,
+            sex: body.sex
         });
 
         return;

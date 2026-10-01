@@ -20,7 +20,7 @@ export class SubjectMapper {
             id: model.id,
             categoryId: model.categoryId,
             name: model.name,
-            userId: 0,
+            userId: model.userId,
             user: domainUser,
             category: domainCategory
         }

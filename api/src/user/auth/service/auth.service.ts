@@ -18,11 +18,7 @@ export class AuthService {
 
     async generateJwtToken(params: UserDomainInterface) {
         return await this.jwtService.signAsync({
-            id: params.id,
-            email: params.email,
-            username: params.username,
-            timezone: params.timezone,
-            isAvailableForPermanentSessions: params.isAvailableForPermanentSessions
+            ...params
         }, { secret: this.configService.getOrThrow("USER_AUTH_JWT_SECRET"), expiresIn: this.configService.getOrThrow("USER_AUTH_JWT_EXPIRES_IN") });
     }
     async auth(body: AuthDto): Promise<AuthResponseDto> {
@@ -46,7 +42,10 @@ export class AuthService {
                 isAvailableForPermanentSessions: userInDb.isAvailableForPermanentSessions,
                 status: UserStatus.ONLINE,
                 language: userInDb.language,
-                avatarFilename: userInDb.avatarFilename
+                avatarFilename: userInDb.avatarFilename,
+                age: userInDb.age,
+                description: userInDb.description,
+                sex: userInDb.sex
             }
         );
         await this.usersServiceDb.updateById(userInDb.id ?? 0, { status: UserStatus.ONLINE });
@@ -69,11 +68,14 @@ export class AuthService {
             id: userInDb.id,
             username: userInDb.username,
             email: userInDb.email,
-            status: userInDb.status,
+            status: UserStatus.ONLINE,
             timezone: userInDb.timezone,
             language: userInDb.language,
             avatarFilename: userInDb.avatarFilename,
-            isAvailableForPermanentSessions: userInDb.isAvailableForPermanentSessions
+            isAvailableForPermanentSessions: userInDb.isAvailableForPermanentSessions,
+            age: userInDb.age,
+            description: userInDb.description,
+            sex: userInDb.sex
         });
 
         return {

@@ -1,4 +1,5 @@
-import { UserDomainInterface, UserInterface } from "./interfaces/user.interfaces";
+import { SubjectMapper } from "../subjects/subject.mapper";
+import { UserDomainInterface, UserInterface, UserWithSecureParams } from "./interfaces/user.interfaces";
 import { User } from "./user.entity";
 
 export class UserMapper {
@@ -11,10 +12,14 @@ export class UserMapper {
             timezone: user.timezone,
             language: user.language,
             isAvailableForPermanentSessions: user.isAvailableForPermanentSessions,
-            avatarFilename: user.avatarFilename
+            avatarFilename: user.avatarFilename,
+            age: user.age,
+            description: user.description,
+            subjects: user.subjects ? user.subjects.map(subject => SubjectMapper.toDomain(subject)) : undefined,
+            sex: user.sex
         }
     }
-    static toDomainWithSecureParams(user: User): UserInterface {
+    static toDomainWithSecureParams(user: User): UserWithSecureParams {
         return {
             id: user.id ?? 0,
             email: user.email,
@@ -25,7 +30,11 @@ export class UserMapper {
             timezone: user.timezone,
             language: user.language,
             avatarFilename: user.avatarFilename,
-            isAvailableForPermanentSessions: user.isAvailableForPermanentSessions
+            isAvailableForPermanentSessions: user.isAvailableForPermanentSessions,
+            age: user.age,
+            description: user.description,
+            subjects: user.subjects ? user.subjects.map(subject => SubjectMapper.toDomain(subject)) : undefined,
+            sex: user.sex
         }
     }
     static toSave(user: UserInterface): User {
@@ -42,6 +51,9 @@ export class UserMapper {
         model.timezone = user.timezone;
         model.language = user.language;
         model.avatarFilename = user.avatarFilename;
+        model.description = user.description;
+        model.age = user.age;
+        model.sex = user.sex;
 
         return model;
     }

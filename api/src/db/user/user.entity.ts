@@ -10,6 +10,11 @@ export enum UserStatus {
     OFFLINE="offline"
 }
 
+export enum UserSex {
+    MALE="male",
+    FEMALE="female"
+}
+
 @Entity({ name: "users" })
 export class User {
     @PrimaryGeneratedColumn()
@@ -45,6 +50,15 @@ export class User {
 
     @Column({ nullable: true, type: "varchar" })
     avatarFilename!: string | null;
+
+    @Column({ nullable: false, default: 18 })
+    age!: number;
+
+    @Column({ type: "text", nullable: true })
+    description!: string | null;
+
+    @Column({ type: "enum", enum: UserSex, default: UserSex.MALE })
+    sex!: UserSex;
 
     @OneToMany(() => Subject, (subject: Subject) => subject.user)
     subjects?: Subject[];

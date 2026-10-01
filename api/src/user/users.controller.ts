@@ -1,4 +1,4 @@
-import { BadRequestException, Body, Controller, Delete, Get, Param, Patch, Post, UploadedFile, UseGuards, UseInterceptors } from "@nestjs/common";
+import { BadRequestException, Body, Controller, Delete, Get, NotFoundException, Param, ParseIntPipe, Patch, Post, Put, UploadedFile, UseGuards, UseInterceptors } from "@nestjs/common";
 import { UpdateUserOnlineStatusDto } from "./dto/update-user-online-status.dto";
 import { AuthGuard } from "./auth/auth.guard";
 import { UserService } from "./service/users.service";
@@ -13,10 +13,20 @@ import { UpdateUserLanguageDto } from "./dto/update-user-language.dto";
 import { FileInterceptor } from "@nestjs/platform-express";
 import { AvatarFileValidationPipe } from "./pipes/avatar-file-validation.pipe";
 import type { BaseUploadAvatarFileInterface } from "./interfaces/base-upload-avatar-file.interface";
+import { UpdateUserAboutInfoDto } from "./dto/update-user-about-info.dto";
+import { FindByIdWithSubjectsResponseDto } from "./dto/find-by-id-with-subjects-response.dto";
 
 @Controller("users")
 export class UsersController {
     constructor(private usersService: UserService) {}
+
+    @UseGuards(AuthGuard)
+    @Put("about")
+    async updateUserAboutInfo(@Body() body: UpdateUserAboutInfoDto, @User() user: UserDomainInterface) {
+        await this.usersService.updateUserAboutInfo(user.id, body);
+
+        return;
+    }
 
     @UseGuards(AuthGuard)
     @Patch("status")
@@ -106,13 +116,21 @@ export class UsersController {
 
     @UseGuards(AuthGuard)
     @Get()
-    async getUserInfo(@User() user: UserDomainInterface) {
+    async getUserInfo(@User() userFromToken: UserDomainInterface) {
+        const user = await this.usersService.findById(userFromToken.id);
+
+        if(!user) {
+            throw new NotFoundException({ message: "User not found" });
+        }
         return {
             id: user.id,
             username: user.username,
             email: user.email,
             timezone: user.timezone,
-            isAvailableForPermanentSessions: user.isAvailableForPermanentSessions
+            isAvailableForPermanentSessions: user.isAvailableForPermanentSessions,
+            age: user.age,
+            description: user.description,
+            sex: user.sex
         }
     } 
 
@@ -122,5 +140,11 @@ export class UsersController {
         await this.usersService.deleteUserById(user.id);
 
         return;
+    }
+
+    @UseGuards(AuthGuard)
+    @Get(":id")
+    async getUserById(@Param("id", new ParseIntPipe()) id: number): Promise<FindByIdWithSubjectsResponseDto> {
+        return await this.usersService.findByIdWithSubjects(id);
     }
 }

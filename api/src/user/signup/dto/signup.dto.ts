@@ -1,4 +1,5 @@
-import { IsEmail, IsString, Length } from "class-validator";
+import { IsEmail, IsEnum, IsInt, IsOptional, IsString, Length } from "class-validator";
+import { UserSex } from "src/db/user/user.entity";
 
 export class SignupDto {
     @IsEmail()
@@ -15,5 +16,16 @@ export class SignupDto {
     @IsString()
     @Length(1, 50)
     timezone!: string;
+
+    @IsInt()
+    age!: number;
+
+    @IsOptional()
+    @IsString()
+    @Length(1, 5000)
+    description?: string;
+
+    @IsEnum(UserSex)
+    sex!: UserSex;
 }
 

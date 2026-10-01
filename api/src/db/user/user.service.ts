@@ -8,6 +8,7 @@ import { Slots } from "../slots/slots.entity";
 import { parseStartTimeAndEndTimeForCustomer } from "src/slots/utils/utils";
 import { SlotsMapper } from "../slots/slots.mapper";
 import { DateTime } from "luxon";
+import { Subject } from "../subjects/subject.entity";
 
 @Injectable()
 export class UserServiceDb {
@@ -15,6 +16,34 @@ export class UserServiceDb {
         @InjectRepository(User) private repository: Repository<User>,
         private em: EntityManager
     ) {}
+
+    async findByIdWithSubjects(id: number): Promise<UserDomainInterface | null> {
+        const [data, subjects] = await Promise.all([
+            this.repository.findOne({ where: { id } }),
+            this.em
+                .createQueryBuilder(Subject, "subject")
+                .leftJoinAndSelect("subject.category", "category")
+                .leftJoinAndSelect("category.translates", "categoryTranslate")
+                .where(queryBuilder => {
+                    const userSlots = queryBuilder
+                        .subQuery()
+                        .select("1")
+                        .from(Slots, "slot")
+                        .where("slot.subjectId = subject.id")
+                        .andWhere("slot.userId = :id")
+                        .getQuery();
+
+                    return `EXISTS ${userSlots}`;
+                })
+                .setParameter("id", id)
+                .getMany()
+        ]);
+        if(!data) {
+            return null;
+        }
+        data.subjects = subjects;
+        return UserMapper.toDomain(data);
+    }
 
     async findByEmail(email: string): Promise<UserDomainInterface | null> {
         const data = await this.repository.findOne({ where: { email: email } });
@@ -195,4 +224,3 @@ export class UserServiceDb {
         });
     }
 }
-

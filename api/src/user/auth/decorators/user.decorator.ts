@@ -17,7 +17,10 @@ export const User = createParamDecorator<UserDomainInterface>(
         timezone: request.user.timezone,
         isAvailableForPermanentSessions: request.user.isAvailableForPermanentSessions,
         language: request.user.language,
-        avatarFilename: request.user.avatarFilename
+        avatarFilename: request.user.avatarFilename,
+        age: request.user.age,
+        description: request.user.description,
+        sex: request.user.sex
     };
   },
 );

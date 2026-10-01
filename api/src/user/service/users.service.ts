@@ -11,6 +11,8 @@ import { GetUsersResponseDto } from "../dto/get-users-response.dto";
 import { CreateUserRequestDto } from "../dto/create-user-request.dto";
 import { AuthService } from "../auth/service/auth.service";
 import { unlink } from "fs/promises";
+import { UpdateUserAboutInfoDto } from "../dto/update-user-about-info.dto";
+import { FindByIdWithSubjectsResponseDto } from "../dto/find-by-id-with-subjects-response.dto";
 
 @Injectable()
 export class UserService {
@@ -22,6 +24,36 @@ export class UserService {
         private authService: AuthService
     ) {}
 
+    async findByIdWithSubjects(id: number): Promise<FindByIdWithSubjectsResponseDto> {
+        const user = await this.usersServiceDb.findByIdWithSubjects(id);
+
+        if(!user) {
+            throw new NotFoundException({ message: "User not found" });
+        }
+        return {
+            username: user.username,
+            description: user.description,
+            avatarFilename: user.avatarFilename, 
+            age: user.age,
+            subjects: user.subjects,
+            email: user.email,
+            isAvailableForPermanentSessions: user.isAvailableForPermanentSessions,
+            timezone: user.timezone,
+            status: user.status,
+            sex: user.sex
+        }
+    }
+    async updateUserAboutInfo(userId: number, data: UpdateUserAboutInfoDto) {
+        const userInDb = await this.usersServiceDb.findById(userId);
+
+        if(!userInDb) {
+            throw new NotFoundException({ message: "User not found" });
+        }
+        await this.usersServiceDb.updateById(userId, { age: data.age, description: data.description ? data.description : "", sex: data.sex });
+    }
+    async findById(id: number) {
+        return await this.usersServiceDb.findById(id);
+    }
     async updateUserLanguage(userId: number, language: string) {
         await this.usersServiceDb.updateById(userId, { language: language });
     }
@@ -139,7 +171,10 @@ export class UserService {
             isAvailableForPermanentSessions: typeof params.isAvailableForPermanentSessions === "boolean" ? params.isAvailableForPermanentSessions : userInDb.isAvailableForPermanentSessions,
             language: userInDb.language,
             status: userInDb.status,
-            avatarFilename: userInDb.avatarFilename
+            avatarFilename: userInDb.avatarFilename,
+            age: userInDb.age,
+            description: userInDb.description,
+            sex: userInDb.sex
         });
 
         return { token: newToken, isMailSent: isMailSent };
@@ -174,7 +209,10 @@ export class UserService {
             isAvailableForPermanentSessions: userInDb.isAvailableForPermanentSessions,
             language: userInDb.language,
             status: userInDb.status,
-            avatarFilename: userInDb.avatarFilename
+            avatarFilename: userInDb.avatarFilename,
+            age: userInDb.age,
+            description: userInDb.description,
+            sex: userInDb.sex
         });
 
         return newToken;
@@ -215,7 +253,10 @@ export class UserService {
             timezone: params.timezone,
             language: null,
             isAvailableForPermanentSessions: true,
-            avatarFilename: null
+            avatarFilename: null,
+            age: params.age,
+            description: params.description ? params.description : null,
+            sex: params.sex
         });
     }
 
@@ -303,7 +344,10 @@ export class UserService {
                 timezone: user.timezone,
                 language: user.language,
                 avatarFilename: filename,
-                isAvailableForPermanentSessions: user.isAvailableForPermanentSessions
+                isAvailableForPermanentSessions: user.isAvailableForPermanentSessions,
+                age: user.age,
+                description: user.description,
+                sex: user.sex
             }),
             avatarFilename: filename
         };

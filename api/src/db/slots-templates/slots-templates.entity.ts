@@ -25,7 +25,7 @@ export class SlotsTemplates {
     @Column({ type: "datetime" })
     lastSlotCreation!: Date;
 
-    @ManyToOne(() => User)
+    @ManyToOne(() => User, { onDelete: "CASCADE", onUpdate: "CASCADE" })
     user!: User;
 
     @ManyToOne(() => Subject, { onDelete: "CASCADE", onUpdate: "CASCADE" })

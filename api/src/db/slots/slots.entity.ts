@@ -24,7 +24,7 @@ export class Slots {
     @Column({ nullable: true })
     slotsTemplateId!: number | null;
 
-    @ManyToOne(() => User)
+    @ManyToOne(() => User, { onDelete: "CASCADE", onUpdate: "CASCADE" })
     @JoinColumn({ name: "userId" })
     user!: User;
 

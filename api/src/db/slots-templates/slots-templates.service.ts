@@ -89,14 +89,18 @@ export class SlotsTemplatesServiceDb {
                     const savedTemplate = await tx.save(templateSlot);
                 
                     const dateForTemplateSlot = getDateForSlot(templateSlot.weekday, nowDateTmp.getDay(), nowDateTmp);
+                    
+                    if(!dateForTemplateSlot || !userInDb) {
+                        continue;
+                    }
                     const countConflictSlotByDateRange = await this.slotsServiceDb.countConflictSlotByDateRange(
-                        dateForTemplateSlot + " " + templateSlot.startTime, 
-                        dateForTemplateSlot + " " + templateSlot.endTime, 
+                        getDateStringForSaveSlot(dateForTemplateSlot, templateSlot.startTime, userInDb.timezone), 
+                        getDateStringForSaveSlot(dateForTemplateSlot, templateSlot.endTime, userInDb.timezone),
                         userId,
                         subjectId,
                         tx
                     );
-                    
+
                     if(countConflictSlotByDateRange > 0 || !dateForTemplateSlot || !userInDb) {
                         continue;
                     }

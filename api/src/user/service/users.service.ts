@@ -6,13 +6,15 @@ import { ConfigService } from "@nestjs/config";
 import { MailerService } from "src/integrations/mailer/mailer.service";
 import type { Cache } from "cache-manager";
 import { CACHE_MANAGER } from "@nestjs/cache-manager";
-import { UserStatus } from "src/db/user/user.entity";
+import { UserSex, UserStatus } from "src/db/user/user.entity";
 import { GetUsersResponseDto } from "../dto/get-users-response.dto";
 import { CreateUserRequestDto } from "../dto/create-user-request.dto";
 import { AuthService } from "../auth/service/auth.service";
 import { unlink } from "fs/promises";
 import { UpdateUserAboutInfoDto } from "../dto/update-user-about-info.dto";
 import { FindByIdWithSubjectsResponseDto } from "../dto/find-by-id-with-subjects-response.dto";
+import { FindUsersRequestDto } from "../dto/find-users-request.dto";
+import { FindUsersResponseDto } from "../dto/find-users-response.dto";
 
 @Injectable()
 export class UserService {
@@ -227,7 +229,7 @@ export class UserService {
             page: params.page,
             searchUsername: params.searchUsername
         });
-        const count = await this.usersServiceDb.countAll();
+        const count = await this.usersServiceDb.count();
 
         return {
             data: result,
@@ -304,6 +306,9 @@ export class UserService {
         username: string;
         timezone: string;
         password?: string;
+        age: number;
+        description: string;
+        sex: UserSex;
     }) {
         const userWithTheSameEmailInDb = await this.usersServiceDb.findByEmailAndNotId(params.email, params.userId);
         const userWithTheSameUsernameInDb = await this.usersServiceDb.findByUsernameAndNotId(params.username, params.userId);
@@ -322,6 +327,9 @@ export class UserService {
                 email: params.email,
                 timezone: params.timezone,
                 username: params.username,
+                age: params.age,
+                description: params.description,
+                sex: params.sex
             }
         )
     }
@@ -352,5 +360,14 @@ export class UserService {
             avatarFilename: filename
         };
     }
-}
 
+    async findUsers(params: FindUsersRequestDto): Promise<FindUsersResponseDto> {
+        const data = await this.usersServiceDb.findUsers(params);
+        const count = await this.usersServiceDb.count(params);
+
+        return {
+            isLoadMoreAvailable: (params.page * params.limit) < count,
+            data: data
+        }
+    }
+}

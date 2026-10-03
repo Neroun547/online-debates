@@ -179,13 +179,12 @@ export class SlotsService {
             limit: params.limit
         });
         const data = slots.map(slot => {
-            const startTime = DateTime.fromJSDate(new Date(slot.startTime)).toFormat("yyyy-MM-dd HH:mm");
-            const endTime = DateTime.fromJSDate(new Date(slot.endTime)).toFormat("yyyy-MM-dd HH:mm");
+            const startAndEndTime = parseStartTimeAndEndTimeForCustomer(slot.startTime, slot.endTime, userInDb.timezone);
 
             return {
                 ...slot,
-                startTime: startTime,
-                endTime: endTime
+                startTime: startAndEndTime.startTime,
+                endTime: startAndEndTime.endTime
             }
         });
         return {

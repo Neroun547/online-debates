@@ -1,27 +1,35 @@
 <script setup lang="ts">
-import * as zod from 'zod'
+import * as zod from "zod";
 
 interface CreateUserFormData {
-  username: string
-  email: string
-  password: string
-  timezone: string
+  username: string;
+  email: string;
+  password: string;
+  timezone: string;
+  description: string;
+  age: number;
+  sex: "male" | "female";
 }
 
 interface TimezoneOption {
-  name: string
-  value: string
+  name: string;
+  value: string;
 }
 
 const emit = defineEmits<{
-  close: [data: CreateUserFormData | false]
-}>()
+  close: [data: CreateUserFormData | false];
+}>();
 
-const timezoneNames = Intl.supportedValuesOf('timeZone')
-const timezones: TimezoneOption[] = timezoneNames.map(timezone => ({
+const sexSelectItems = [
+  { value: "male", label: "Male" },
+  { value: "female", label: "Female" },
+];
+
+const timezoneNames = Intl.supportedValuesOf("timeZone");
+const timezones: TimezoneOption[] = timezoneNames.map((timezone) => ({
   name: timezone,
-  value: timezone
-}))
+  value: timezone,
+}));
 
 const formSchema = zod.object({
   username: zod.string().trim().min(6).max(50),
@@ -29,41 +37,42 @@ const formSchema = zod.object({
   password: zod.string().min(8).max(50),
   timezone: zod
     .string()
-    .refine(timezone => timezoneNames.includes(timezone), {
-      message: 'Select a valid timezone'
-    })
-})
+    .refine((timezone) => timezoneNames.includes(timezone), {
+      message: "Select a valid timezone",
+    }),
+  age: zod.number().min(18),
+  description: zod.string().max(5000).optional(),
+  sex: zod.string(),
+});
 
 const formState = reactive<CreateUserFormData>({
-  username: '',
-  email: '',
-  password: '',
-  timezone: ''
-})
+  username: "",
+  email: "",
+  password: "",
+  timezone: "",
+  age: 18,
+  description: "",
+  sex: "male",
+});
 
 function submitForm() {
-  emit('close', {
+  emit("close", {
     username: formState.username.trim(),
     email: formState.email.trim(),
     password: formState.password,
-    timezone: formState.timezone
-  })
+    timezone: formState.timezone,
+    age: formState.age,
+    description: formState.description,
+    sex: formState.sex,
+  });
 }
 </script>
 
 <template>
   <UModal title="Create user">
     <template #body>
-      <UForm
-        :schema="formSchema"
-        :state="formState"
-        @submit="submitForm"
-      >
-        <UFormField
-          label="Username"
-          name="username"
-          class="w-full"
-        >
+      <UForm :schema="formSchema" :state="formState" @submit="submitForm">
+        <UFormField label="Username" name="username" class="w-full">
           <UInput
             v-model="formState.username"
             name="username"
@@ -74,11 +83,7 @@ function submitForm() {
           />
         </UFormField>
 
-        <UFormField
-          label="Email"
-          name="email"
-          class="mt-5 w-full"
-        >
+        <UFormField label="Email" name="email" class="mt-5 w-full">
           <UInput
             v-model="formState.email"
             name="email"
@@ -89,11 +94,7 @@ function submitForm() {
           />
         </UFormField>
 
-        <UFormField
-          label="Password"
-          name="password"
-          class="mt-5 w-full"
-        >
+        <UFormField label="Password" name="password" class="mt-5 w-full">
           <UInput
             v-model="formState.password"
             name="password"
@@ -105,11 +106,7 @@ function submitForm() {
           />
         </UFormField>
 
-        <UFormField
-          label="Timezone"
-          name="timezone"
-          class="mt-5 w-full"
-        >
+        <UFormField label="Timezone" name="timezone" class="mt-5 w-full">
           <USelectMenu
             v-model="formState.timezone"
             :items="timezones"
@@ -125,6 +122,23 @@ function submitForm() {
           </USelectMenu>
         </UFormField>
 
+        <UFormField name="age" label="Age" class="mt-5 w-full">
+          <UInputNumber :min="18" v-model="formState.age" placeholder="Age" />
+        </UFormField>
+
+        <UFormField name="sex" label="Sex" class="mt-5 w-full">
+          <USelect :items="sexSelectItems" v-model="formState.sex" />
+        </UFormField>
+
+        <UFormField name="description" label="Description" class="mt-5 w-full">
+          <UTextarea
+            v-model="formState.description"
+            placeholder="Description"
+            class="w-full"
+            autoresize
+          />
+        </UFormField>
+
         <USeparator class="my-5" />
 
         <div class="flex justify-end">
@@ -135,11 +149,7 @@ function submitForm() {
             class="mr-3 cursor-pointer"
             @click="emit('close', false)"
           />
-          <UButton
-            type="submit"
-            label="Save"
-            class="cursor-pointer"
-          />
+          <UButton type="submit" label="Save" class="cursor-pointer" />
         </div>
       </UForm>
     </template>

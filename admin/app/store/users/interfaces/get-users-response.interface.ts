@@ -6,6 +6,9 @@ export interface UserItemInterface {
     email: string;
     status: UserStatus;
     timezone: string;
+    age: number;
+    description: string | null;
+    sex: "male" | "female";
 }
 
 export interface GetUsersResponseInterface {
@@ -13,4 +16,3 @@ export interface GetUsersResponseInterface {
     isLoadMorePossible: boolean;
     count: number;
 }
-

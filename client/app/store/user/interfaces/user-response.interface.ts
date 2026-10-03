@@ -10,5 +10,9 @@ export interface UserInterface {
     email: string;
     isConfirmed: boolean;
     status: UserStatus;
+    age: number;
+    sex: "male" | "female";
+    avatarFilename: string | null;
+    description: string | null;
 }
 

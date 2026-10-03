@@ -1,4 +1,9 @@
 {
+    "errors": {
+        "slots": {
+            "overlapsWithAnotherSlot": "Выбранный временной интервал конфликтует с существующим слотом"
+        }
+    },
     "noCategoriesFound": "Категорий не найдено",
     "noSubjectsFound": "Тем не найдено",
     "loading": "Загрузка",
@@ -51,7 +56,8 @@
         "mySessions": "Мои сессии",
         "settings": "Настройки",
         "support": "Поддержка",
-        "exit": "Выйти"
+        "exit": "Выйти",
+        "users": "Пользователи"
     },
     "settings": {
         "title": "Настройки",
@@ -93,7 +99,13 @@
             "updated": "Обновлено",
             "deleted": "Удалено",
             "deletedSuccessfully": "Аватар успешно удален"
-        }
+        },
+        "aboutMySelf": "О себе",
+        "age": "Возраст",
+        "describeYourself": "Опишите себя",
+        "save": "Сохранить",
+        "infoAboutMySelfUpdatedSuccessfully": "Информация обо мне обновлена успешно",
+        "sex": "Пол"
     },
     "categories": {
         "noSubjects": "Тем пока нет :( Вы можете стать первым",
@@ -102,6 +114,10 @@
         "createTopicDescription": "Вы также можете создать собственную тему для обсуждения в одной из доступных категорий на странице «Мои темы». Приятного общения!"
     },
     "subjects": {
+        "participants": "Участники",
+        "chooseParticipant": "Выберите собеседника для обсуждения этой темы и начните общение.",
+        "noParticipants": "Участников пока нет",
+        "noParticipantsDescription": "Здесь появятся пользователи, которым интересна эта тема.",
         "email": "Электронная почта",
         "username": "Имя пользователя",
         "status": "Статус",
@@ -125,7 +141,8 @@
             "selectTimeToContinue": "Выберите время, чтобы продолжить",
             "cancel": "Отмена",
             "bookSession": "Забронировать сессию"
-        }
+        },
+        "sex": "Пол"
     },
     "support": {
         "title": "Связаться с поддержкой",
@@ -153,7 +170,7 @@
         "dateRangeDescription": "Начальная дата не может быть позже конечной.",
         "couldNotLoadSessions": "Не удалось загрузить сессии",
         "tryAgain": "Попробовать снова",
-        "withUser": "С пользователем {name}",
+        "withUser": "С пользователем",
         "statusBooked": "Забронирована",
         "statusCompleted": "Завершена",
         "statusCancelled": "Отменена",
@@ -273,7 +290,12 @@
         "email": "Электронная почта",
         "username": "Имя пользователя",
         "password": "Пароль",
-        "timezone": "Часовой пояс"
+        "timezone": "Часовой пояс",
+        "yourAge": "Ваш возраст",
+        "age": "Возраст",
+        "aboutMySelf": "Про себя",
+        "writeAboutYourself": "Напишите что-то о себе",
+        "sex": "Пол"
     },
     "auth": {
         "title": "Вход",
@@ -341,5 +363,35 @@
             "uuid": "UUID",
             "regex": "формат"
         }
+    },
+    "userProfile": {
+        "age": "Возраст",
+        "subjectsTitle": "Темы на которые общается пользователь",
+        "timezone": "Часовой пояс",
+        "aboutUser": "О пользователе",
+        "sex": "Пол",
+        "female": "Женщина",
+        "male": "Мужчина"
+    },
+    "users": {
+        "title": "Пользователи",
+        "usernameOrEmail": "Имя пользователя или почта",
+        "ageFrom": "Возраст от",
+        "ageTo": "Возраст до",
+        "search": "Поиск",
+        "sex": "Пол",
+        "sexSelect": {
+            "male": "Мужчина",
+            "female": "Женщина",
+            "all": "Все"
+        },
+        "viewProfile": "Посмотреть профиль",
+        "loadMore": "Загрузить больше",
+        "usersNotFound": "Пользователей не найдено",
+        "itsYou": "Это вы"
+    },
+    "user": {
+        "male": "Мужчина",
+        "female": "Женщина"
     }
 }

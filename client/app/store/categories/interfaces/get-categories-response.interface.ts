@@ -1,3 +1,5 @@
+import type { SubjectItem } from "./get-subjects-response.interface";
+
 export interface CategoryItem {
     id: number;
     name: string;
@@ -5,6 +7,7 @@ export interface CategoryItem {
     translateNameRu?: string;
     translateNameEn?: string;
     priority: number;
+    subjects: SubjectItem[];
 }
 
 export interface GetCategoriesResponseInterface {

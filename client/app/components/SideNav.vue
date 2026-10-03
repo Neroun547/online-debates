@@ -5,6 +5,28 @@
     <div class="w-[150px] m-auto">
       <div class="block m-auto mt-5">
         <ULink
+          to="/home"
+          active-class="text-primary"
+          inactive-class="text-black"
+          class="flex items-center"
+        >
+          <UIcon name="lucide:list" class="block mr-2" />
+          <div class="text-left w-full">{{ $t("sideNav.categories") }}</div>
+        </ULink>
+      </div>
+      <div class="block m-auto mt-5">
+        <ULink
+          to="/users"
+          active-class="text-primary"
+          inactive-class="text-black"
+          class="flex items-center"
+        >
+          <UIcon name="lucide:circle-user-round" class="block mr-2" />
+          <div class="text-left w-full">{{ $t("sideNav.users") }}</div>
+        </ULink>
+      </div>
+      <div class="block m-auto mt-5">
+        <ULink
           to="/user/slots"
           active-class="text-primary"
           inactive-class="text-black"
@@ -23,17 +45,6 @@
         >
           <UIcon name="lucide:notebook" class="block mr-2" />
           <div class="text-left w-full">{{ $t("sideNav.mySubjects") }}</div>
-        </ULink>
-      </div>
-      <div class="block m-auto mt-5">
-        <ULink
-          to="/home"
-          active-class="text-primary"
-          inactive-class="text-black"
-          class="flex items-center"
-        >
-          <UIcon name="lucide:list" class="block mr-2" />
-          <div class="text-left w-full">{{ $t("sideNav.categories") }}</div>
         </ULink>
       </div>
       <div class="block m-auto mt-5">

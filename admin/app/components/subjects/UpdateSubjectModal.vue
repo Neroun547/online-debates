@@ -99,6 +99,8 @@ interface FormState {
   user: number | undefined;
 }
 
+type UserSelectItem = Pick<UserItemInterface, "id" | "username" | "email">;
+
 const props = defineProps<Props>();
 
 const formSchema = zod.object({
@@ -126,7 +128,7 @@ const usersPaginationPage = ref(1);
 const usersPaginationLimit = 20;
 
 const categories = ref<CategoryItem[]>([]);
-const users = ref<UserItemInterface[]>([]);
+const users = ref<UserSelectItem[]>([]);
 
 const isUsersLoading = ref(false);
 const isCategoriesLoading = ref(false);

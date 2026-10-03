@@ -51,6 +51,11 @@ export class SlotsServiceDb {
                     .where("slotsLock.userId = :userId AND slotsLock.subjectId = :subjectId", { userId: userId, subjectId: subjectId })
                     .getOneOrFail();
 
+                const userInDb = await tx.findOne(User, { where: { id: userId } });
+
+                if(!userInDb) {
+                    return;
+                }
                 const templates = await tx.find(SlotsTemplates, {
                     where: { userId: userId, subjectId: subjectId }
                 });
@@ -70,8 +75,8 @@ export class SlotsServiceDb {
 
                     while(slotDate.toMillis() < generationEndDate.toMillis()) {
                         const slotDateString = slotDate.toFormat("yyyy-MM-dd");
-                        const startTime = `${slotDateString} ${template.startTime}`;
-                        const endTime = `${slotDateString} ${template.endTime}`;
+                        const startTime = getDateStringForSaveSlot(slotDateString, template.startTime, userInDb.timezone);
+                        const endTime = getDateStringForSaveSlot(slotDateString, template.endTime, userInDb.timezone);
                         const countConflicts = await this.countConflictSlotByDateRange(
                             startTime,
                             endTime,
@@ -79,11 +84,10 @@ export class SlotsServiceDb {
                             subjectId,
                             tx
                         );
-
                         if(countConflicts <= 0) {
                             const model = SlotsMapper.toSave({
-                                startTime: DateTime.fromFormat(startTime, "yyyy-MM-dd HH:mm").toJSDate(),
-                                endTime: DateTime.fromFormat(endTime, "yyyy-MM-dd HH:mm").toJSDate(),
+                                startTime: startTime,
+                                endTime: endTime,
                                 userId: userId,
                                 subjectId: subjectId,
                                 slotsTemplateId: template.id
@@ -235,14 +239,17 @@ export class SlotsServiceDb {
             if(!userInDb) {
                 throw new NotFoundException({ message: "User not found" });
             }
-            const conflictsCount = await this.countConflictSlotByDateRange(data.startTime, data.endTime, data.userId, data.subjectId, tx);
+            const startTimeSlot = getDateStringForSaveSlot(DateTime.fromFormat(data.startTime, "yyyy-MM-dd HH:mm").toFormat("yyyy-MM-dd"), DateTime.fromFormat(data.startTime, "yyyy-MM-dd HH:mm").toFormat("HH:mm"), userInDb.timezone);
+            const endTimeSlot = getDateStringForSaveSlot(DateTime.fromFormat(data.endTime, "yyyy-MM-dd HH:mm").toFormat("yyyy-MM-dd"), DateTime.fromFormat(data.endTime, "yyyy-MM-dd HH:mm").toFormat("HH:mm"), userInDb.timezone);
+
+            const conflictsCount = await this.countConflictSlotByDateRange(startTimeSlot, endTimeSlot, data.userId, data.subjectId, tx);
 
             if(conflictsCount > 0) {
-                throw new ConflictException({ message: "The selected time period overlaps with another slot" });
+                throw new ConflictException({ message: "OVERLAPS_WITH_ANOTHER_SLOT" });
             }
             const model = SlotsMapper.toSave({
-                startTime: getDateStringForSaveSlot(DateTime.fromFormat(data.startTime, "yyyy-MM-dd HH:mm").toFormat("yyyy-MM-dd"), DateTime.fromFormat(data.startTime, "yyyy-MM-dd HH:mm").toFormat("HH:mm"), userInDb.timezone),
-                endTime: getDateStringForSaveSlot(DateTime.fromFormat(data.endTime, "yyyy-MM-dd HH:mm").toFormat("yyyy-MM-dd"), DateTime.fromFormat(data.endTime, "yyyy-MM-dd HH:mm").toFormat("HH:mm"), userInDb.timezone),
+                startTime: startTimeSlot,
+                endTime: endTimeSlot,
                 userId: data.userId,
                 subjectId: data.subjectId,
                 slotsTemplateId: data.slotsTemplateId

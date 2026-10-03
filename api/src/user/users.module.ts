@@ -7,10 +7,11 @@ import { UserModuleDb } from "src/db/user/user.module";
 import { MailerModule } from "src/integrations/mailer/mailer.module";
 import { UserStateWebsocketGateway } from "./user.gateway";
 import { AdminUsersController } from "./admin-user.controller";
+import { UserController } from "./user.controller";
 
 @Module({
     imports: [SignupModule, AuthModule, UserModuleDb, MailerModule],
     providers: [UserService, UserStateWebsocketGateway],
-    controllers: [UsersController, AdminUsersController]
+    controllers: [UsersController, AdminUsersController, UserController]
 })
 export class UserModule {}

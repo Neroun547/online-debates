@@ -1,7 +1,7 @@
 import { Injectable, NotFoundException } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
-import { User } from "./user.entity";
-import { EntityManager, Not, Repository, UpdateResult } from "typeorm";
+import { User, UserSex } from "./user.entity";
+import { Between, EntityManager, Like, Not, Repository, UpdateResult } from "typeorm";
 import { UserMapper } from "./user.mapper";
 import { UpdateUserInterface, UserDomainInterface, UserInterface } from "./interfaces/user.interfaces";
 import { Slots } from "../slots/slots.entity";
@@ -9,6 +9,7 @@ import { parseStartTimeAndEndTimeForCustomer } from "src/slots/utils/utils";
 import { SlotsMapper } from "../slots/slots.mapper";
 import { DateTime } from "luxon";
 import { Subject } from "../subjects/subject.entity";
+import { FindUsersRequestSexParamEnum } from "src/user/dto/find-users-request.dto";
 
 @Injectable()
 export class UserServiceDb {
@@ -16,6 +17,24 @@ export class UserServiceDb {
         @InjectRepository(User) private repository: Repository<User>,
         private em: EntityManager
     ) {}
+
+    async findUsers(params: {
+        usernameOrEmail?: string;
+        ageFrom?: number;
+        ageTo?: number;
+        sex?: FindUsersRequestSexParamEnum;
+        page: number;
+        limit: number;
+    }) {
+        const searchParams = this.buildSearchParams(params);
+        const data = await this.repository.find({ 
+            ...searchParams,
+            skip: ((params.page - 1) * params.limit), 
+            take: params.limit 
+        });
+
+        return data.map(item => UserMapper.toDomain(item));
+    }
 
     async findByIdWithSubjects(id: number): Promise<UserDomainInterface | null> {
         const [data, subjects] = await Promise.all([
@@ -53,7 +72,17 @@ export class UserServiceDb {
         }
         return UserMapper.toDomain(data);
     }
-    async countAll() {
+    async count(filters?: {
+        emailOrUsername?: string;
+        ageFrom?: number;
+        ageTo?: number;
+        sex?: FindUsersRequestSexParamEnum;
+    }) {
+        if(filters) {
+            const searchParams = this.buildSearchParams(filters);
+
+            return await this.repository.count({ ...searchParams })
+        }
         return await this.repository.count();
     }
     async findWithSearchByUsername(params: {
@@ -205,6 +234,47 @@ export class UserServiceDb {
         } else {
             await this.repository.update({ id: id }, data);
         }
+    }
+
+    private buildSearchParams(params: {
+        usernameOrEmail?: string;
+        ageFrom?: number;
+        ageTo?: number;
+        sex?: FindUsersRequestSexParamEnum;
+    }): { where: any } {
+        const searchParams: any = {
+            username: undefined,
+            email: undefined,
+            age: undefined,
+            sex: undefined
+        };
+
+        if(params.usernameOrEmail) {
+            searchParams.email = Like("%" + params.usernameOrEmail + "%"); 
+            searchParams.username = Like("%" + params.usernameOrEmail + "%");
+        }
+        if(typeof params.ageFrom === "number" && typeof params.ageTo === "number") {
+            searchParams.age = Between(params.ageFrom, params.ageTo);
+        }
+        if(params.sex !== FindUsersRequestSexParamEnum.ALL) {
+            searchParams.sex = params.sex;
+        }
+        if(searchParams.email && searchParams.username) {
+            return { where: [
+                    {
+                        age: searchParams.age,
+                        sex: searchParams.sex,
+                        email: searchParams.email
+                    },
+                    {
+                        age: searchParams.age,
+                        sex: searchParams.sex,
+                        username: searchParams.username
+                    }
+                    ]
+            }
+        }
+        return { where: searchParams };
     }
 
     updateUserAvatar(userId: number, filename: string | null): Promise<string | null> {

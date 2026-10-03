@@ -72,7 +72,6 @@ watch(localIsOnlineState, () => {
 });
 
 onMounted(() => {
-  console.log(userStore.isOnline);
   localIsOnlineState.value = userStore.isOnline;
 });
 </script>

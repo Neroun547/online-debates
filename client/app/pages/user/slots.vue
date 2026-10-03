@@ -51,7 +51,9 @@
                 @change="onEnableSlot(slot.weekday)"
               />
               <div class="ml-2">
-                <h2 class="max-md:text-sm">{{ weekDaysMap.get(slot.weekday) }}</h2>
+                <h2 class="max-md:text-sm">
+                  {{ weekDaysMap.get(slot.weekday) }}
+                </h2>
               </div>
             </div>
             <div v-if="slot.enabled">
@@ -65,14 +67,18 @@
                 />
               </div>
               <div v-for="time in slot.intervals">
-                <div class="mt-5 flex items-center max-md:text-xs max-md:flex-col max-md:items-start">
+                <div
+                  class="mt-5 flex items-center max-md:text-xs max-md:flex-col max-md:items-start"
+                >
                   <label>{{ $t("userSlots.from") }}</label>
                   <UInputTime
                     :hour-cycle="24"
                     v-model="time.timeFrom"
                     class="ml-2 max-md:text-xs max-md:mt-2"
                   />
-                  <label class="ml-10 max-md:ml-0 max-md:mt-5">{{ $t("userSlots.to") }}</label>
+                  <label class="ml-10 max-md:ml-0 max-md:mt-5">{{
+                    $t("userSlots.to")
+                  }}</label>
                   <UInputTime
                     :hour-cycle="24"
                     v-model="time.timeTo"
@@ -107,7 +113,9 @@
       </div>
       <div class="mt-10 border rounded border-gray-300 shadow p-5">
         <div>
-          <h2 class="text-2xl max-md:text-xl">{{ $t("userSlots.singleSlots") }}</h2>
+          <h2 class="text-2xl max-md:text-xl">
+            {{ $t("userSlots.singleSlots") }}
+          </h2>
         </div>
         <div class="w-min ml-auto">
           <UButton
@@ -119,13 +127,17 @@
           />
         </div>
         <div>
-          <div class="flex mt-5 max-md:justify-between max-[426px]:flex-col max-[426px]:mt-10">
+          <div
+            class="flex mt-5 max-md:justify-between max-[426px]:flex-col max-[426px]:mt-10"
+          >
             <div class="max-md:text-sm max-sm:text-xs max-[426px]:text-sm!">
-              <label for="" >{{ $t("userSlots.dateFrom") }}</label>
+              <label for="">{{ $t("userSlots.dateFrom") }}</label>
               <input type="date" class="ml-2" v-model="singleSlotsDateFrom" />
             </div>
 
-            <div class="ml-20 max-md:ml-0 max-sm:text-xs max-md:text-sm max-[426px]:text-sm! max-[426px]:mt-2">
+            <div
+              class="ml-20 max-md:ml-0 max-sm:text-xs max-md:text-sm max-[426px]:text-sm! max-[426px]:mt-2"
+            >
               <label for="">{{ $t("userSlots.dateTo") }}</label>
               <input type="date" class="ml-2" v-model="singleSlotsDateTo" />
             </div>
@@ -231,9 +243,9 @@ const singleSlotsTableColumns = computed<
     meta: {
       class: {
         td: "max-md:text-xs",
-        th: "max-md:text-xs"
-      }
-    }
+        th: "max-md:text-xs",
+      },
+    },
   },
   {
     accessorKey: "endTime",
@@ -241,9 +253,9 @@ const singleSlotsTableColumns = computed<
     meta: {
       class: {
         td: "max-md:text-xs",
-        th: "max-md:text-xs"
-      }
-    }
+        th: "max-md:text-xs",
+      },
+    },
   },
   {
     id: "actions",
@@ -727,7 +739,10 @@ async function saveSingleSlot(data: {
     if (slotsStore.isError) {
       toast.add({
         title: t("userSlots.error"),
-        description: slotsStore.errorMessage,
+        description:
+          slotsStore.errorMessage === "OVERLAPS_WITH_ANOTHER_SLOT"
+            ? t("errors.slots.overlapsWithAnotherSlot")
+            : slotsStore.errorMessage,
         progress: {
           color: "error",
         },

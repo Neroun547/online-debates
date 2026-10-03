@@ -5,6 +5,9 @@ interface Props {
   username: string
   email: string
   timezone: string
+  age: number
+  description: string | null
+  sex: "male" | "female"
 }
 
 interface UpdateUserFormData {
@@ -12,6 +15,9 @@ interface UpdateUserFormData {
   email: string
   password: string
   timezone: string
+  age: number
+  description: string
+  sex: "male" | "female"
 }
 
 interface TimezoneOption {
@@ -21,9 +27,14 @@ interface TimezoneOption {
 
 const props = defineProps<Props>()
 
-const emit = defineEmits<{
+const emit = defineEmits<{  
   close: [data: UpdateUserFormData | false]
 }>()
+
+const sexSelectItems = [
+  { value: "male", label: "Male" },
+  { value: "female", label: "Female" },
+]
 
 const timezoneNames = Intl.supportedValuesOf('timeZone')
 const timezones: TimezoneOption[] = timezoneNames.map(timezone => ({
@@ -44,14 +55,20 @@ const formSchema = zod.object({
     .string()
     .refine(timezone => timezoneNames.includes(timezone), {
       message: 'Select a valid timezone'
-    })
+    }),
+  age: zod.number().min(18),
+  description: zod.string().max(5000),
+  sex: zod.enum(["male", "female"])
 })
 
 const formState = reactive<UpdateUserFormData>({
   username: '',
   email: '',
   password: '',
-  timezone: ''
+  timezone: '',
+  age: 18,
+  description: '',
+  sex: 'male'
 })
 
 function submitForm() {
@@ -59,7 +76,10 @@ function submitForm() {
     username: formState.username.trim(),
     email: formState.email.trim(),
     password: formState.password,
-    timezone: formState.timezone
+    timezone: formState.timezone,
+    age: formState.age,
+    description: formState.description,
+    sex: formState.sex
   })
 }
 
@@ -70,6 +90,9 @@ watch(
     formState.email = props.email
     formState.password = ''
     formState.timezone = props.timezone
+    formState.age = props.age
+    formState.description = props.description ?? ''
+    formState.sex = props.sex
   },
   { immediate: true }
 )
@@ -147,6 +170,24 @@ watch(
               <span>No timezones found</span>
             </template>
           </USelectMenu>
+        </UFormField>
+
+        <UFormField name="age" label="Age" class="mt-5 w-full">
+          <UInputNumber :min="18" v-model="formState.age" placeholder="Age" />
+        </UFormField>
+
+        <UFormField name="sex" label="Sex" class="mt-5 w-full">
+          <USelect :items="sexSelectItems" v-model="formState.sex" />
+        </UFormField>
+
+        <UFormField name="description" label="Description" class="mt-5 w-full">
+          <UTextarea
+            v-model="formState.description"
+            placeholder="Description"
+            class="w-full"
+            :maxlength="5000"
+            autoresize
+          />
         </UFormField>
 
         <USeparator class="my-5" />

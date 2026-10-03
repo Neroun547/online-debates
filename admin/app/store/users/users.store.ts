@@ -32,13 +32,16 @@ export const useUsersStore = defineStore("users", {
             try {
                 this.clearError();
 
-                await useApiFetch("/admin/users/" + params.id, { 
+                await useApiFetch("/admin/users/" + params.id, {
                     method: "PUT", 
                     body: {
                         username: params.username,
                         email: params.email,
                         timezone: params.timezone,
-                        password: (params.password && params.password.length >= 8) ? params.password : undefined
+                        password: (params.password && params.password.length >= 8) ? params.password : undefined,
+                        age: params.age,
+                        description: params.description,
+                        sex: params.sex
                     } 
                 })
             } catch(error: any) {
@@ -73,4 +76,3 @@ export const useUsersStore = defineStore("users", {
         }
     }
 });
-

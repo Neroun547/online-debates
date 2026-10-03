@@ -3,5 +3,8 @@ export interface SignupRequestInterface {
     email: string;
     password: string;
     timezone: string;
+    age: number;
+    sex: string;
+    description?: string;
 }
 

@@ -1,4 +1,9 @@
 {
+    "errors": {
+        "slots": {
+            "overlapsWithAnotherSlot": "Вибраний проміжок часу конфліктує з існуючим слотом"
+        }
+    },
     "noCategoriesFound": "Категорій не знайдено",
     "noSubjectsFound": "Тем не знайдено",
     "loading": "Завантаження",
@@ -51,7 +56,8 @@
         "mySessions": "Мої сесії",
         "settings": "Налаштування",
         "support": "Підтримка",
-        "exit": "Вийти"
+        "exit": "Вийти",
+        "users": "Користувачі"
     },
     "settings": {
         "title": "Налаштування",
@@ -93,7 +99,13 @@
             "updated": "Оновлено",
             "deleted": "Видалено",
             "deletedSuccessfully": "Аватар видалено успішно"
-        }
+        },
+        "aboutMySelf": "Про себе",
+        "age": "Вік",
+        "describeYourself": "Опишіть себе",
+        "save": "Зберегти",
+        "infoAboutMySelfUpdatedSuccessfully": "Інформація про мене успішно оновлено",
+        "sex": "Стать"
     },
     "categories": {
         "noSubjects": "Тем поки немає :( Ви можете стати першим",
@@ -102,6 +114,10 @@
         "createTopicDescription": "Ви також можете створити власну тему для обговорення в одній із доступних категорій на сторінці «Мої теми». Приємного спілкування!"
     },
     "subjects": {
+        "participants": "Учасники",
+        "chooseParticipant": "Оберіть співрозмовника для обговорення цієї теми та почніть спілкування.",
+        "noParticipants": "Учасників поки немає",
+        "noParticipantsDescription": "Тут з’являться користувачі, яким цікава ця тема.",
         "email": "Електронна пошта",
         "username": "Ім’я користувача",
         "status": "Статус",
@@ -125,7 +141,8 @@
             "selectTimeToContinue": "Оберіть час, щоб продовжити",
             "cancel": "Скасувати",
             "bookSession": "Забронювати сесію"
-        }
+        },
+        "sex": "Стать"
     },
     "support": {
         "title": "Зв’язатися з підтримкою",
@@ -153,7 +170,7 @@
         "dateRangeDescription": "Початкова дата не може бути пізнішою за кінцеву.",
         "couldNotLoadSessions": "Не вдалося завантажити сесії",
         "tryAgain": "Спробувати ще раз",
-        "withUser": "З користувачем {name}",
+        "withUser": "З користувачем",
         "statusBooked": "Заброньована",
         "statusCompleted": "Завершена",
         "statusCancelled": "Скасована",
@@ -273,7 +290,12 @@
         "email": "Електронна пошта",
         "username": "Ім’я користувача",
         "password": "Пароль",
-        "timezone": "Часовий пояс"
+        "timezone": "Часовий пояс",
+        "yourAge": "Ваш вік",
+        "age": "Вік",
+        "aboutMySelf": "Про себе",
+        "writeAboutYourself": "Напишіть щось про себе",
+        "sex": "Стать"
     },
     "auth": {
         "title": "Вхід",
@@ -341,5 +363,35 @@
             "uuid": "UUID",
             "regex": "формат"
         }
+    },
+    "userProfile": {
+        "age": "Вік",
+        "subjectsTitle": "Теми на які спілкується користувач",
+        "timezone": "Часовий пояс",
+        "aboutUser": "Про користувача",
+        "sex": "Стать",
+        "female": "Жінка",
+        "male": "Чоловік"
+    },
+    "users": {
+        "title": "Користувачі",
+        "usernameOrEmail": "Ім'я користувача або пошта",
+        "ageFrom": "Вік від",
+        "ageTo": "Вік до",
+        "search": "Пошук",
+        "sex": "Стать",
+        "sexSelect": {
+            "male": "Чоловік",
+            "female": "Жінка",
+            "all": "Всі"
+        },
+        "viewProfile": "Подивитися профіль",
+        "loadMore": "Завантажити більше",
+        "usersNotFound": "Користувачів не знайдено",
+        "itsYou": "Це ви"
+    },
+    "user": {
+        "male": "Чоловік",
+        "female": "Жінка"
     }
 }

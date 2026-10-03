@@ -1,4 +1,9 @@
 {
+    "errors": {
+        "slots": {
+            "overlapsWithAnotherSlot": "The selected time period overlaps with another slot"
+        }
+    },
     "noCategoriesFound": "No categories found",
     "noSubjectsFound": "No subjects found",
     "loading": "Loading",
@@ -51,7 +56,8 @@
         "mySessions": "My sessions",
         "settings": "Settings",
         "support": "Support",
-        "exit": "Exit"
+        "exit": "Exit",
+        "users": "Users"
     },
     "settings": {
         "title": "Settings",
@@ -93,7 +99,13 @@
             "updated": "Updated",
             "deleted": "Deleted",
             "deletedSuccessfully": "Avatar deleted successfully"
-        }
+        },
+        "aboutMySelf": "About myself",
+        "age": "Age",
+        "describeYourself": "Describe yourself",
+        "save": "Save",
+        "infoAboutMySelfUpdatedSuccessfully": "Info about myself updated successfully",
+        "sex": "Sex"
     },
     "categories": {
         "noSubjects": "No subjects yet :( You can be the first",
@@ -102,6 +114,10 @@
         "createTopicDescription": "You can also create your own discussion topic in one of the available categories on the \"My Topics\" page. Enjoy!"
     },
     "subjects": {
+        "participants": "Participants",
+        "chooseParticipant": "Choose someone to discuss this topic with and start a conversation.",
+        "noParticipants": "No participants yet",
+        "noParticipantsDescription": "Users interested in this topic will appear here.",
         "email": "Email",
         "username": "Username",
         "status": "Status",
@@ -125,7 +141,8 @@
             "selectTimeToContinue": "Select a time to continue",
             "cancel": "Cancel",
             "bookSession": "Book session"
-        }
+        },
+        "sex": "Sex"
     },
     "support": {
         "title": "Contact support",
@@ -153,7 +170,7 @@
         "dateRangeDescription": "Date from cannot be later than date to.",
         "couldNotLoadSessions": "Could not load sessions",
         "tryAgain": "Try again",
-        "withUser": "With {name}",
+        "withUser": "With",
         "statusBooked": "Booked",
         "statusCompleted": "Completed",
         "statusCancelled": "Cancelled",
@@ -273,7 +290,12 @@
         "email": "Email",
         "username": "Username",
         "password": "Password",
-        "timezone": "Timezone"
+        "timezone": "Timezone",
+        "yourAge": "Your age",
+        "age": "Age",
+        "aboutMySelf": "About myself",
+        "writeAboutYourself": "Write about yourself",
+        "sex": "Sex"
     },
     "auth": {
         "title": "Log in",
@@ -341,5 +363,33 @@
             "uuid": "UUID",
             "regex": "format"
         }
+    },
+    "userProfile": {
+        "age": "Age",
+        "subjectsTitle": "Subjects on which the user communicates",
+        "timezone": "Timezone",
+        "aboutUser": "About user",
+        "sex": "Sex"
+    },
+    "users": {
+        "title": "Users",
+        "usernameOrEmail": "Username or email",
+        "ageFrom": "Age from",
+        "ageTo": "Age to",
+        "search": "Search",
+        "sex": "Sex",
+        "sexSelect": {
+            "male": "Male",
+            "female": "Female",
+            "all": "All"
+        },
+        "viewProfile": "View profile",
+        "loadMore": "Load more",
+        "usersNotFound": "Users not found",
+        "itsYou": "It's you"
+    },
+    "user": {
+        "male": "Male",
+        "female": "Female"
     }
 }

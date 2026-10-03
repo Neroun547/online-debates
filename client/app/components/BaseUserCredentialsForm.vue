@@ -19,9 +19,29 @@
         v-model="formState[value.name]"
         class="w-full"
       />
+      <UInputNumber
+        v-if="value.htmlTag === 'numberInput'"
+        :placeholder="value.placeholder"
+        :name="value.name"
+        v-model="formState[value.name]"
+        class="w-full"
+        :min="18"
+      />
+      <UTextarea
+        v-if="value.htmlTag === 'textarea'"
+        :placeholder="value.placeholder"
+        :name="value.name"
+        v-model="formState[value.name]"
+        class="w-full"
+        autoresize
+      />
       <TimezoneSelect
         v-if="value.htmlTag === 'select' && value.type === 'timezone'"
         v-model="formState[value.name]"
+      />
+      <SexSelect
+        v-if="value.htmlTag === 'select' && value.type === 'sex'"
+        v-model:selected-sex="formState[value.name]"
       />
     </UFormField>
 
@@ -60,20 +80,21 @@ import { z } from "zod";
 export interface PropsFieldItemInterface {
   name: string;
   placeholder: string;
-  type: "text" | "password" | "email" | "timezone";
-  htmlTag: "input" | "select";
+  type: "text" | "password" | "email" | "timezone" | "number" | "sex";
+  htmlTag: "input" | "select" | "textarea" | "numberInput";
   label: string;
 }
 
 interface Props {
   fields: Array<PropsFieldItemInterface>;
-  formSchema: z.ZodObject<{}, z.core.$strip>;
+  formSchema: z.AnyZodObject;
   submitButtonText: string;
   isError: boolean;
   errorMessage: string | undefined;
   isSuccess: boolean;
   successMessage: string | undefined;
   isFormLoading?: boolean;
+  defaultValues?: { [key: string]: number | string };
 }
 
 const props = defineProps<Props>();
@@ -95,7 +116,7 @@ watchEffect(() => {
       const field = props.fields[i];
 
       if (field) {
-        accumulator[field.name] = "";
+        accumulator[field.name] = props.defaultValues?.[field.name] ?? "";
       }
     }
     formState.value = accumulator;

@@ -83,6 +83,9 @@ const tableColumns: TableColumn<UserItemInterface>[] = [
     accessorKey: "timezone",
   },
   {
+    accessorKey: "sex"
+  },
+  {
     id: "actions",
   },
 ];
@@ -100,6 +103,9 @@ async function openUpdateUserModal(user: UserItemInterface) {
     username: user.username,
     email: user.email,
     timezone: user.timezone,
+    age: user.age,
+    description: user.description,
+    sex: user.sex,
   });
 
   if (result && typeof result === "object") {
@@ -112,6 +118,9 @@ async function openUpdateUserModal(user: UserItemInterface) {
           ? result.password
           : undefined,
       timezone: result.timezone,
+      age: result.age,
+      description: result.description,
+      sex: result.sex,
     });
 
     if (usersStore.isError) {
@@ -145,6 +154,8 @@ async function openCreateUserModal() {
       email: result.email,
       timezone: result.timezone,
       password: result.password,
+      age: result.age,
+      sex: result.sex,
     });
 
     if (usersStore.isError) {

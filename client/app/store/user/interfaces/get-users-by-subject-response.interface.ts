@@ -6,6 +6,7 @@ export interface GetUsersBySubjectResponseInterface {
     timezone: string;
     isAvailableForPermanentSessions: boolean;
     avatarFilename: string | null;
+    sex: "male" | "female";
 }
 
 

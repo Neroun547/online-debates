@@ -14,13 +14,96 @@
 
     <h2 class="text-4xl max-md:text-2xl">{{ $t("settings.title") }}</h2>
     <div class="mt-5">
-      <UploadAvatar/>
+      <UploadAvatar />
     </div>
+    <section
+      class="relative mt-10 overflow-hidden border border-gray-200 bg-white shadow-sm dark:border-gray-800 dark:bg-gray-900"
+    >
+      <div
+        class="relative flex items-center gap-4 border-b border-gray-100 px-6 py-5 dark:border-gray-800 max-sm:px-4"
+      >
+        <div
+          class="flex size-11 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary"
+        >
+          <UIcon name="lucide:user-round-pen" class="size-5" />
+        </div>
+        <div>
+          <h2 class="text-2xl font-semibold max-md:text-xl">
+            {{ $t("settings.aboutMySelf") }}
+          </h2>
+          <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">
+            {{ $t("settings.describeYourself") }}
+          </p>
+        </div>
+      </div>
+
+      <UForm
+        :schema="aboutMySelfFormSchema"
+        :state="aboutMySelfFormState"
+        @submit.prevent="saveInfoAboutMySelf"
+      >
+        <div class="flex flex-col p-5">
+          <div class="flex items-center">
+            <UFormField
+              name="age"
+              :label="$t('settings.age')"
+              class="w-[150px]"
+            >
+              <UInputNumber
+                v-model="aboutMySelfFormState.age"
+                :step="1"
+                name="age"
+                class="w-full"
+              />
+            </UFormField>
+
+            <UFormField
+              name="sex"
+              :label="$t('settings.sex')"
+              class="w-[150px] ml-5"
+            >
+              <SexSelect
+                v-model:selected-sex="aboutMySelfFormState.sex"
+                name="sex"
+              />
+            </UFormField>
+          </div>
+
+          <UFormField
+            name="description"
+            :label="$t('settings.describeYourself')"
+            class="min-w-0 w-full mt-5"
+          >
+            <UTextarea
+              v-model="aboutMySelfFormState.description"
+              name="description"
+              autoresize
+              class="w-full"
+              :rows="7"
+              :maxlength="5000"
+            />
+            <div class="mt-2 flex justify-end text-xs text-gray-400">
+              {{ aboutMySelfFormState.description.length }} / 5000
+            </div>
+          </UFormField>
+        </div>
+
+        <div class="ml-auto w-min mr-6 mb-6">
+          <UButton
+            :label="$t('settings.save')"
+            class="w-min cursor-pointer"
+            type="submit"
+          />
+        </div>
+      </UForm>
+    </section>
     <div class="flex flex-col shadow border border-default p-5 mt-10">
       <div class="flex justify-between max-md:flex-col">
         <div class="flex flex-col w-full mr-5">
           <div class="w-full">
-            <h2 class="text-2xl max-md:text-xl">{{ $t("settings.personalInfo") }}</h2>
+            <h2 class="text-2xl max-md:text-xl">
+              {{ $t("settings.personalInfo") }}
+            </h2>
             <UForm
               class="mt-5"
               @submit.prevent="updateUserPersonalInfo"
@@ -84,7 +167,9 @@
           </div>
         </div>
         <div class="flex flex-col w-full ml-5 max-md:ml-0 max-md:mt-10">
-          <h2 class="text-2xl max-sm:text-xl">{{ $t("settings.changePassword") }}</h2>
+          <h2 class="text-2xl max-sm:text-xl">
+            {{ $t("settings.changePassword") }}
+          </h2>
           <UForm
             class="mt-5"
             :schema="updatePasswordSchema"
@@ -152,6 +237,7 @@
     </div>
   </div>
 </template>
+
 <script setup lang="ts">
 import { useAppStore } from "~/store/app-store";
 import type { GetUserInfoResponseInterface } from "~/store/user/interfaces/get-user-data-response.interface";
@@ -162,6 +248,21 @@ import ConfirmYourNewEmailModal from "~/components/settings/ConfirmYourNewEmailM
 import UploadAvatar from "~/components/settings/UploadAvatar.vue";
 
 const { t } = useI18n();
+
+const aboutMySelfFormSchema = z.object({
+  age: z.number().int().min(1).max(130),
+  description: z.string().max(5000),
+});
+
+const aboutMySelfFormState = reactive<{
+  age: number;
+  description: string;
+  sex: "male" | "female";
+}>({
+  age: 18,
+  description: "",
+  sex: "male",
+});
 
 const updateEmailUserSchema = z.object({
   email: z.string().email(),
@@ -195,18 +296,14 @@ const appStore = useAppStore();
 
 const userStore = useUserStore();
 
-const oldUserData = ref<GetUserInfoResponseInterface>({
-  username: "",
-  email: "",
-  timezone: "",
-  isAvailableForPermanentSessions: true,
-});
-
 const user = ref<GetUserInfoResponseInterface>({
   username: "",
   email: "",
   timezone: "",
   isAvailableForPermanentSessions: true,
+  description: "",
+  age: 14,
+  sex: "male",
 });
 
 const isDeleteAccountModalShow = ref(false);
@@ -216,6 +313,28 @@ const isConfirmNewEmailModalShow = ref(false);
 
 function showDeleteAccountModal() {
   isDeleteAccountModalShow.value = true;
+}
+
+async function saveInfoAboutMySelf() {
+  await userStore.updateUserAboutInfo({
+    age: aboutMySelfFormState.age,
+    description: aboutMySelfFormState.description,
+    sex: aboutMySelfFormState.sex
+  });
+
+  if (userStore.isError) {
+    toast.add({
+      title: t("settings.error"),
+      description: userStore.errorMessage,
+      color: "error",
+    });
+  } else {
+    toast.add({
+      title: t("settings.success"),
+      description: t("settings.infoAboutMySelfUpdatedSuccessfully"),
+      color: "success",
+    });
+  }
 }
 
 async function updatePassword() {
@@ -254,8 +373,9 @@ async function getUser() {
     user.value.isAvailableForPermanentSessions =
       data.isAvailableForPermanentSessions;
 
-    oldUserData.value.username = data.username;
-    oldUserData.value.email = data.email;
+    aboutMySelfFormState.age = data.age;
+    aboutMySelfFormState.description = data.description ? data.description : "";
+    aboutMySelfFormState.sex = data.sex;
   }
 }
 
@@ -286,8 +406,6 @@ async function updateUserPersonalInfo() {
         color: "error",
       },
     });
-  } else {
-    oldUserData.value.email = user.value.email;
   }
 }
 

@@ -106,11 +106,14 @@
               </div>
 
               <p class="mt-1 text-sm text-muted">
-                {{
-                  $t("mySessions.withUser", {
-                    name: getCounterpartName(session),
-                  })
-                }}
+                {{ $t("mySessions.withUser") }}
+                <ULink
+                  :to="'/users/' + getCounterpartUser(session).id"
+                  class="truncate font-semibold text-blue-800 underline"
+                >
+                  {{ getCounterpartName(session) }}
+                </ULink>
+
                 <UBadge
                   v-if="
                     userStore.userId !== session.creatorId && session.creator
@@ -119,6 +122,7 @@
                   :color="
                     session.creator.status === 'offline' ? 'neutral' : 'success'
                   "
+                  class="ml-2"
                   >{{ getUserStatusLabel(session.creator.status) }}</UBadge
                 >
                 <UBadge
@@ -444,7 +448,7 @@ function isSentinelVisible(): boolean {
 }
 
 function getSessionRoleLabel(session: UserSessionInterface): string {
-  if(!session.slot) {
+  if (!session.slot) {
     return t("mySessions.permanentSession");
   }
   return session.creatorId === userStore.userId
@@ -463,6 +467,15 @@ function getCounterpartName(session: UserSessionInterface): string {
       id: counterpartId,
     })
   );
+}
+
+function getCounterpartUser(
+  session: UserSessionInterface,
+): SessionUserInterface {
+  const isCreator = session.creatorId === userStore.userId;
+  const counterpart = isCreator ? session.customer : session.creator;
+
+  return counterpart as SessionUserInterface;
 }
 
 function getSessionStatusLabel(status: SessionStatus): string {

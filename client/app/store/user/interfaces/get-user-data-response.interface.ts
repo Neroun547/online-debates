@@ -3,5 +3,8 @@ export interface GetUserInfoResponseInterface {
     email: string;
     timezone: string;
     isAvailableForPermanentSessions: boolean;
+    age: number;
+    sex: "male" | "female";
+    description?: string;
 }
 

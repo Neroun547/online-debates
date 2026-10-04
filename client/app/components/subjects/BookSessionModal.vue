@@ -295,11 +295,15 @@ watch(
   () => props.defaultSelectedDate,
   () => {
     if (props.defaultSelectedDate) {
-      selectedDate.value = new CalendarDate(
+      const parsedDate = new CalendarDate(
         props.defaultSelectedDate.year,
         props.defaultSelectedDate.month,
         props.defaultSelectedDate.day,
       );
+
+      if (parsedDate.compare(minDate) > 0) {
+        selectedDate.value = parsedDate;
+      }
     }
   },
 );

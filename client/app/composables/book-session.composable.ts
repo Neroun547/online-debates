@@ -49,10 +49,10 @@ export function useBookSession(params: UseBookSessionParams) {
 
     currentSubjectId.value = Number(subjectId ? subjectId : params.subjectId);
     currentUserId.value = user.id;
-    console.log(availableDatesForBookingCalendar.value, availableDatesForBookingCalendar.value.length)
+
     if(availableDatesForBookingCalendar.value.length) {
       const date = DateTime.fromFormat(availableDatesForBookingCalendar.value[0].date, "yyyy-MM-dd");
-      console.log(date.year, date.month, date.day);
+   
       defaultSelectedDate.value = {
         year: date.year,
         month: date.month,

@@ -31,6 +31,12 @@ export function parseStartTimeAndEndTimeForCustomer(startTime: Date, endTime: Da
     }
 }
 
+export function parseDateForCustomer(time: Date, timezone: string): string {
+    const parsed = DateTime.fromJSDate(time).toFormat("yyyy-MM-dd");
+
+    return DateTime.fromFormat(parsed, "yyyy-MM-dd", { zone: "UTC" }).setZone(timezone).toFormat("yyyy-MM-dd");
+}
+
 export function getDateStringForSaveSlot(dateForSlot: string, time: string, timezone: string) {
     return DateTime.fromFormat(dateForSlot + " " + time, "yyyy-MM-dd HH:mm", { zone: timezone }).toUTC().toFormat("yyyy-MM-dd HH:mm:ss");
 }

@@ -5,6 +5,9 @@
       :is-loading="isSlotsLoading"
       :is-booking-button-loading="isBookingButtonLoading"
       :available-slots="bookingSlots"
+      :available-dates="availableDatesForBookingCalendar"
+      :default-selected-date="defaultSelectedDate"
+      v-model:calendar-state="calendarState"
       @date-change="loadSlots"
       @book="bookSession"
     />
@@ -190,6 +193,11 @@ const categoriesStore = useCategoriesStore();
 const categoryId = computed(() => Number(route.params.id));
 const subjectId = computed(() => Number(route.params.subjectId));
 
+const calendarState = ref({
+  year: new Date().getFullYear(),
+  month: new Date().getMonth() + 1
+});
+
 const {
   bookingSlots,
   isBookingButtonLoading,
@@ -199,9 +207,12 @@ const {
   loadSlots,
   openBookSessionModal,
   startSessionNow,
+  availableDatesForBookingCalendar,
+  defaultSelectedDate
 } = useBookSession({
   categoryId: categoryId.value,
   subjectId: subjectId.value,
+  currentCalendarState: calendarState
 });
 
 const currentSubject = ref<GetSubjectByIdResponseInterface>();

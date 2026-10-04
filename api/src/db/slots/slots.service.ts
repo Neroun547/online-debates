@@ -263,4 +263,10 @@ export class SlotsServiceDb {
 
         await this.slotsRepository.insert(modelsArr);
     }
+
+    async getAvailableDatesForSlotsByUserIdAndSubjectId(userId: number, subjectId: number, dateFrom: string, dateTo: string): Promise<Array<{ startTime: Date }>> {
+        const data = await this.slotsRepository.query(`SELECT DISTINCT DATE(startTime) as startTime FROM slots LEFT JOIN sessions ON sessions.id=slots.id WHERE slots.userId=${userId} AND slots.subjectId = ${subjectId} AND slots.startTime >= "${dateFrom}" AND slots.endTime <= "${dateTo}" AND sessions.id IS NULL;`);
+
+        return data;
+    }
 }

@@ -12,10 +12,7 @@
             <span
               class="flex size-8 items-center justify-center rounded-full bg-primary-50 text-primary-600 dark:bg-primary-950 dark:text-primary-400"
             >
-              <UIcon
-                name="i-lucide-calendar-days"
-                class="size-4"
-              />
+              <UIcon name="i-lucide-calendar-days" class="size-4" />
             </span>
             <div>
               <p class="text-sm font-semibold text-gray-900 dark:text-white">
@@ -31,9 +28,12 @@
             class="flex justify-center rounded-xl border border-gray-200 bg-white p-2 dark:border-gray-800 dark:bg-gray-900"
           >
             <UCalendar
+              prevent-deselect
               v-model="selectedDate"
               :min-value="minDate"
               required
+              @update:placeholder="updateCalendarState"
+              :is-date-disabled="isDateDisabled"
             />
           </div>
         </section>
@@ -46,10 +46,7 @@
               <span
                 class="flex size-8 items-center justify-center rounded-full bg-primary-50 text-primary-600 dark:bg-primary-950 dark:text-primary-400"
               >
-                <UIcon
-                  name="i-lucide-clock-3"
-                  class="size-4"
-                />
+                <UIcon name="i-lucide-clock-3" class="size-4" />
               </span>
               <div>
                 <p class="text-sm font-semibold text-gray-900 dark:text-white">
@@ -110,10 +107,7 @@
               <span
                 class="mb-3 flex size-12 items-center justify-center rounded-full bg-gray-100 text-gray-400 dark:bg-gray-800 dark:text-gray-500"
               >
-                <UIcon
-                  name="i-lucide-calendar-x-2"
-                  class="size-6"
-                />
+                <UIcon name="i-lucide-calendar-x-2" class="size-6" />
               </span>
               <p class="text-sm font-medium text-gray-700 dark:text-gray-200">
                 {{ $t("subjects.bookingModal.noAvailableSlots") }}
@@ -129,10 +123,7 @@
           <div
             class="mt-3 flex items-center gap-2 text-xs text-gray-500 dark:text-gray-400"
           >
-            <UIcon
-              name="i-lucide-globe-2"
-              class="size-4 shrink-0"
-            />
+            <UIcon name="i-lucide-globe-2" class="size-4 shrink-0" />
             <span>
               {{
                 $t("subjects.bookingModal.timeZone", {
@@ -184,87 +175,132 @@
 </template>
 
 <script setup lang="ts">
-import { getLocalTimeZone, today } from '@internationalized/date'
-import { DateTime } from 'luxon'
-import type { GetSlotsForBookingResponseInterface } from '~/store/slots/interfaces/get-slots-for-booking-response.interface'
+import {
+  CalendarDate,
+  getLocalTimeZone,
+  today,
+  type DateValue,
+} from "@internationalized/date";
+import { DateTime } from "luxon";
+import type { GetSlotsForBookingResponseInterface } from "~/store/slots/interfaces/get-slots-for-booking-response.interface";
 
-const { t, locale } = useI18n()
+const { t, locale } = useI18n();
 
 interface Props {
-  availableSlots?: GetSlotsForBookingResponseInterface[]
-  isLoading?: boolean
-  timezone?: string
-  isBookingButtonLoading?: boolean
+  availableSlots?: GetSlotsForBookingResponseInterface[];
+  isLoading?: boolean;
+  timezone?: string;
+  isBookingButtonLoading?: boolean;
+  availableDates?: Array<{ date: string }>;
+  defaultSelectedDate?: {
+    year: number;
+    month: number;
+    day: number;
+  };
 }
 
 const props = withDefaults(defineProps<Props>(), {
   availableSlots: () => [],
   isLoading: false,
-  timezone: '',
-  isBookingButtonLoading: false
-})
+  timezone: "",
+  isBookingButtonLoading: false,
+});
 
-const emit = defineEmits<{
-  book: [payload: { date: string, slot: GetSlotsForBookingResponseInterface }]
-  dateChange: [date: string]
-}>()
+const calendarState = defineModel("calendarState");
 
-const isModalOpen = defineModel<boolean>('isModalOpen', {
-  default: false
-})
+const emit = defineEmits(["book", "dateChange"]);
 
-const minDate = today(getLocalTimeZone())
-const selectedDate = shallowRef(minDate)
-const selectedSlotId = ref<GetSlotsForBookingResponseInterface['id']>()
+const isModalOpen = defineModel<boolean>("isModalOpen", {
+  default: false,
+});
+
+const minDate = today(getLocalTimeZone());
+const selectedDate = shallowRef(minDate);
+const selectedSlotId = ref<GetSlotsForBookingResponseInterface["id"]>();
 
 const selectedSlot = computed(() => {
-  return props.availableSlots.find(slot => slot.id === selectedSlotId.value)
-})
+  return props.availableSlots.find((slot) => slot.id === selectedSlotId.value);
+});
 
 const displayedTimezone = computed(() => {
-  return props.timezone || t('subjects.bookingModal.yourLocalTime')
-})
+  return props.timezone || t("subjects.bookingModal.yourLocalTime");
+});
 
 const formattedSelectedDate = computed(() => {
   return new Intl.DateTimeFormat(locale.value, {
-    weekday: 'short',
-    month: 'long',
-    day: 'numeric'
-  }).format(selectedDate.value.toDate(getLocalTimeZone()))
-})
+    weekday: "short",
+    month: "long",
+    day: "numeric",
+  }).format(selectedDate.value.toDate(getLocalTimeZone()));
+});
+
+function isDateDisabled(date: DateValue) {
+  if (props.availableDates) {
+    const parsedDate =
+      date.year +
+      "-" +
+      date.month +
+      "-" +
+      (date.day < 10 ? "0" + date.day : date.day);
+
+    return (
+      props.availableDates.findIndex(
+        (availableDate: { date: string }) => availableDate.date === parsedDate,
+      ) === -1
+    );
+  }
+  return false;
+}
 
 function getSlotLabel(slot: GetSlotsForBookingResponseInterface): string {
-  return `${formatSlotTime(slot.startTime)} – ${formatSlotTime(slot.endTime)}`
+  return `${formatSlotTime(slot.startTime)} – ${formatSlotTime(slot.endTime)}`;
 }
 
 function formatSlotTime(value: string): string {
-  const dateTime = DateTime.fromSQL(value)
+  const dateTime = DateTime.fromSQL(value);
 
-  return dateTime.isValid ? dateTime.toFormat('HH:mm') : value
+  return dateTime.isValid ? dateTime.toFormat("HH:mm") : value;
+}
+
+function updateCalendarState(event: DateValue) {
+  calendarState.value = { month: event.month, year: event.year };
 }
 
 watch(selectedDate, (date) => {
-  selectedSlotId.value = undefined
-  emit('dateChange', date.toString())
-})
+  selectedSlotId.value = undefined;
+  emit("dateChange", date.toString());
+});
 
 watch(
   isModalOpen,
   (isOpen) => {
-    if (!isOpen) return
+    if (!isOpen) return;
 
-    selectedSlotId.value = undefined
-    emit('dateChange', selectedDate.value.toString())
+    selectedSlotId.value = undefined;
+    emit("dateChange", selectedDate.value.toString());
   },
-  { immediate: true }
-)
+  { immediate: true },
+);
 
 function bookSession() {
-  if (!selectedSlot.value) return
+  if (!selectedSlot.value) return;
 
-  emit('book', {
+  emit("book", {
     date: selectedDate.value.toString(),
-    slot: selectedSlot.value
-  })
+    slot: selectedSlot.value,
+  });
 }
+
+watch(
+  () => props.defaultSelectedDate,
+  () => {
+    if (props.defaultSelectedDate) {
+      selectedDate.value = new CalendarDate(
+        props.defaultSelectedDate.year,
+        props.defaultSelectedDate.month,
+        props.defaultSelectedDate.day,
+      );
+    }
+  },
+);
 </script>

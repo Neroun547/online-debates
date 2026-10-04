@@ -5,9 +5,10 @@ import type { SlotItem } from "~/pages/user/slots.vue";
 import { Time } from "@internationalized/date";
 import type { GetSlotsTemplatesResponseInterface } from "./interfaces/get-slots-templates-response.interface";
 import type { CreateSingleSlotRequestInterface } from "./interfaces/create-single-slot-request.interface";
-import type { GetSingleSlotsResponseDataItemInterface, GetSingleSlotsResponseInterface } from "./interfaces/get-single-slots-response.interface";
+import type { GetSingleSlotsResponseInterface } from "./interfaces/get-single-slots-response.interface";
 import type { GetSingleSlotsCountResponseInterface } from "./interfaces/get-single-slots-count-response.interface";
 import type { GetSlotsForBookingResponseInterface } from "./interfaces/get-slots-for-booking-response.interface";
+import type { GetAvailableDatesForSlotsItemRequestInterface } from "./interfaces/get-available-dates-for-slots-item-request.interface";
 
 function getHoursAndMinutesFromStr(time: string) {
     const arr = time.split(":");
@@ -119,7 +120,7 @@ export const useSlotsStore = defineStore("slotsStore", {
 
                 return await useApiFetch<GetSlotsForBookingResponseInterface[]>(`/booking/slots?dateFrom=${params.dateFrom}&dateTo=${params.dateTo}&userId=${params.userId}&subjectId=${params.subjectId}`);             
             } catch(error: any) {
-                this.setError(error);
+                this.setError(error.response._data.message);
             }
         },
         async bookSession(params: {
@@ -138,6 +139,15 @@ export const useSlotsStore = defineStore("slotsStore", {
                 });
             } catch(error: any) {
                 this.setError(error);
+            }
+        },
+        async getAvailableDatesForSlots(userId: number, subjectId: number, dateFrom: string, dateTo: string) {
+            try {
+                this.clearError();
+
+                return await useApiFetch<GetAvailableDatesForSlotsItemRequestInterface>(`/booking/slots/available-dates?userId=${userId}&subjectId=${subjectId}&dateFrom=${dateFrom}&dateTo=${dateTo}`);
+            } catch(error: any) {
+                this.setError(error.response._data.message);
             }
         },
         clearError() {

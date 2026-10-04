@@ -1,6 +1,6 @@
 import { BadRequestException, ConflictException, Injectable, InternalServerErrorException, NotFoundException } from "@nestjs/common";
 import { CreateSlotsTemplateDto } from "../dto/create-slots-template.dto";
-import { getSecondsFromTime, parseStartTimeAndEndTimeForCustomer } from "../utils/utils";
+import { getSecondsFromTime, parseDateForCustomer, parseStartTimeAndEndTimeForCustomer } from "../utils/utils";
 import { CategoryServiceDb } from "src/db/category/category.service";
 import { SubjectServiceDb } from "src/db/subjects/subject.service";
 import { SlotsTemplatesServiceDb } from "src/db/slots-templates/slots-templates.service";
@@ -20,6 +20,22 @@ export class SlotsService {
         private usersServiceDb: UserServiceDb
     ) {
 
+    }
+
+    async getSlotsAvailableDatesByUserIdAndSubjectId(subjectId: number, slotCreatorUserId: number, dateFrom: string, dateTo: string, userId: number) {
+        const userInDb = await this.usersServiceDb.findById(userId);
+
+        if(!userInDb) {
+            throw new NotFoundException({ message: "User not found" });
+        }
+        const data = await this.slotsServiceDb.getAvailableDatesForSlotsByUserIdAndSubjectId(
+            slotCreatorUserId, 
+            subjectId,
+            dateFrom,
+            dateTo
+        );
+
+        return data.map(item => ({ date: parseDateForCustomer(item.startTime, userInDb.timezone) }));
     }
 
     async getSlotsForBooking(params: {

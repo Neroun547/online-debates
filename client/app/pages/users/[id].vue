@@ -5,8 +5,11 @@
       :is-loading="isSlotsLoading"
       :is-booking-button-loading="isBookingButtonLoading"
       :available-slots="bookingSlots"
+      :default-selected-date="defaultSelectedDate"
       @date-change="(date: string) => loadSlots(date, activeSubjectId)"
       @book="bookSession"
+      v-model:calendar-state="currentCalendarState"
+      :available-dates="availableDatesForBookingCalendar"
     />
     <div class="flex items-center">
       <div>
@@ -115,6 +118,11 @@ const { t, locale } = useI18n();
 const userId = computed(() => Number(route.params.id));
 const activeSubjectId = ref();
 
+const currentCalendarState = ref({
+  year: new Date().getFullYear(),
+  month: new Date().getMonth() + 1,
+});
+
 const {
   bookingSlots,
   isBookingButtonLoading,
@@ -124,7 +132,11 @@ const {
   loadSlots,
   openBookSessionModal,
   startSessionNow,
-} = useBookSession({});
+  availableDatesForBookingCalendar,
+  defaultSelectedDate,
+} = useBookSession({
+  currentCalendarState: currentCalendarState,
+});
 
 const profile = reactive<UserProfile>({
   username: "",
@@ -187,16 +199,19 @@ function getCategoryNameTranslate(category: CategoryItem): string {
 function localOpenBookingModal(subjectId: number) {
   activeSubjectId.value = subjectId;
 
-  openBookSessionModal({
-    id: userId.value,
-    email: profile.email,
-    username: profile.username,
-    status: profile.status,
-    timezone: profile.timezone,
-    isAvailableForPermanentSessions: profile.isAvailableForPermanentSessions,
-    avatarFilename: profile.avatarFilename,
-    sex: profile.sex
-  });
+  openBookSessionModal(
+    {
+      id: userId.value,
+      email: profile.email,
+      username: profile.username,
+      status: profile.status,
+      timezone: profile.timezone,
+      isAvailableForPermanentSessions: profile.isAvailableForPermanentSessions,
+      avatarFilename: profile.avatarFilename,
+      sex: profile.sex,
+    },
+    subjectId,
+  );
 }
 
 onMounted(() => {

@@ -6,6 +6,7 @@ import { SessionsService } from "../sessions/service/sessions.service";
 import { SlotsService } from "./service/slots.service";
 import { User } from "src/user/auth/decorators/user.decorator";
 import type { UserDomainInterface } from "src/db/user/interfaces/user.interfaces";
+import { GetSlotsAvailableDatesRequestDto } from "./dto/get-slots-available-dates-request.dto";
 
 @UseGuards(AuthGuard)
 @Controller("booking/slots")
@@ -15,6 +16,11 @@ export class BookingSlotsController {
         private sessionsService: SessionsService
     ) {
 
+    }
+
+    @Get("available-dates")
+    async getAvailableDates(@Query() query: GetSlotsAvailableDatesRequestDto, @User() user: UserDomainInterface) {
+        return await this.slotsService.getSlotsAvailableDatesByUserIdAndSubjectId(query.subjectId, query.userId, query.dateFrom, query.dateTo, user.id);
     }
     
     @Get()

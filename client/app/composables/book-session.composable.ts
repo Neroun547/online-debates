@@ -7,6 +7,7 @@ import type { GetUsersBySubjectResponseInterface } from '~/store/user/interfaces
 interface UseBookSessionParams {
   categoryId?: number;
   subjectId?: number;
+  currentCalendarState: Ref<{ year: number; month: number }>;
 }
 
 export function useBookSession(params: UseBookSessionParams) {
@@ -16,15 +17,48 @@ export function useBookSession(params: UseBookSessionParams) {
   const sessionsStore = useSessionsStore()
   const slotsStore = useSlotsStore()
 
+  const availableDatesForBookingCalendar = ref();
+
   const isSlotsLoading = ref(false)
   const isBookingButtonLoading = ref(false)
   const isBookSessionModalOpen = ref(false)
   const activeBookingUser = ref<GetUsersBySubjectResponseInterface>()
   const bookingSlots = ref<GetSlotsForBookingResponseInterface[]>([])
 
-  function openBookSessionModal(user: GetUsersBySubjectResponseInterface) {
+  const currentSubjectId = ref();
+  const currentUserId = ref();
+  const defaultSelectedDate = ref();
+
+  async function openBookSessionModal(user: GetUsersBySubjectResponseInterface, subjectId?: number) {
+    if(!subjectId && !params.subjectId) {
+      return;
+    }
+    const { dateFrom, dateTo } = getDateFromAndDateToForGetBookingAvailableSlots(
+      params.currentCalendarState.value.year,
+      params.currentCalendarState.value.month,
+    );
+
+    availableDatesForBookingCalendar.value = await getAvailableDates(
+      dateFrom,
+      dateTo,
+      Number(subjectId ? subjectId : params.subjectId),
+      user.id,
+    );
     activeBookingUser.value = user
     isBookSessionModalOpen.value = true
+
+    currentSubjectId.value = Number(subjectId ? subjectId : params.subjectId);
+    currentUserId.value = user.id;
+    console.log(availableDatesForBookingCalendar.value, availableDatesForBookingCalendar.value.length)
+    if(availableDatesForBookingCalendar.value.length) {
+      const date = DateTime.fromFormat(availableDatesForBookingCalendar.value[0].date, "yyyy-MM-dd");
+      console.log(date.year, date.month, date.day);
+      defaultSelectedDate.value = {
+        year: date.year,
+        month: date.month,
+        day: date.day
+      }
+    }
   }
 
   async function loadSlots(date: string, subjectId?: number) {
@@ -116,6 +150,29 @@ export function useBookSession(params: UseBookSessionParams) {
     }
   }
 
+  async function getAvailableDates(dateFrom: string, dateTo: string, subjectId: number, userId?: number) {
+    if(userId) {
+      return await slotsStore.getAvailableDatesForSlots(userId, subjectId, dateFrom, dateTo)
+    } 
+    if(activeBookingUser.value) {
+      return await slotsStore.getAvailableDatesForSlots(activeBookingUser.value.id, subjectId, dateFrom, dateTo)
+    }
+  }
+
+  watch(params.currentCalendarState, async () => {
+    const { dateFrom, dateTo } = getDateFromAndDateToForGetBookingAvailableSlots(
+      params.currentCalendarState.value.year,
+      params.currentCalendarState.value.month,
+    );
+
+    availableDatesForBookingCalendar.value = await getAvailableDates(
+      dateFrom,
+      dateTo,
+      Number(currentSubjectId.value),
+      currentUserId.value
+    );
+  });
+
   return {
     bookingSlots,
     isBookingButtonLoading,
@@ -124,6 +181,8 @@ export function useBookSession(params: UseBookSessionParams) {
     bookSession,
     loadSlots,
     openBookSessionModal,
-    startSessionNow
+    startSessionNow,
+    availableDatesForBookingCalendar,
+    defaultSelectedDate: defaultSelectedDate
   }
 }

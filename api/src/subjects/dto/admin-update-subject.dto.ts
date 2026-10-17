@@ -4,7 +4,7 @@ export class AdminUpdateSubjectDto {
     @IsString()
     @Length(1, 500)
     name!: string;
-    
+
     @IsInt()
     categoryId!: number;
 
@@ -12,4 +12,3 @@ export class AdminUpdateSubjectDto {
     @IsInt()
     userId?: number;
 }
-

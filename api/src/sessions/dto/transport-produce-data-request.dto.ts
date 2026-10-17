@@ -7,13 +7,12 @@ export class TransportProduceDataRequestDto {
 
     @IsNotEmpty()
     sctpStreamParameters!: SctpStreamParameters;
-    
+
     @IsOptional()
     @IsString()
     label?: string | undefined;
-    
+
     @IsOptional()
     @IsString()
-    protocol?: string | undefined; 
+    protocol?: string | undefined;
 }
-

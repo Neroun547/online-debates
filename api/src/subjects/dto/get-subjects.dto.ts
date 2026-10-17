@@ -23,4 +23,3 @@ export class GetSubjectsDto {
     @IsOptional()
     userId?: number;
 }
-

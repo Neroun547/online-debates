@@ -1,4 +1,7 @@
-import type { SlotsTemplatesDomainInterface, SlotsTemplatesInterface } from "./interfaces/slots-templates.interface";
+import type {
+    SlotsTemplatesDomainInterface,
+    SlotsTemplatesInterface,
+} from "./interfaces/slots-templates.interface";
 import { SlotsTemplates } from "./slots-templates.entity";
 
 export class SlotsTemplatesMapper {
@@ -10,17 +13,16 @@ export class SlotsTemplatesMapper {
             endTime: params.endTime,
             userId: params.userId,
             subjectId: params.subjectId,
-            lastSlotCreation: params.lastSlotCreation
-        }
+            lastSlotCreation: params.lastSlotCreation,
+        };
     }
 
     static toSave(data: SlotsTemplatesInterface): SlotsTemplates {
         const model = new SlotsTemplates();
 
-        for(const key in data) {
+        for (const key in data) {
             model[key] = data[key];
         }
         return model;
     }
 }
-

@@ -4,7 +4,7 @@ import { UserSex, UserStatus } from "src/db/user/user.entity";
 export interface FindByIdWithSubjectsResponseDto {
     username: string;
     description: string | null;
-    avatarFilename: string | null; 
+    avatarFilename: string | null;
     age: number;
     email: string;
     isAvailableForPermanentSessions: boolean;
@@ -13,4 +13,3 @@ export interface FindByIdWithSubjectsResponseDto {
     sex: UserSex;
     subjects?: SubjectDomainInterface[];
 }
-

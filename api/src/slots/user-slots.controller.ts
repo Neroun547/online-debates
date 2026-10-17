@@ -13,23 +13,40 @@ export class UsersSlotsController {
     constructor(private slotsService: SlotsService) {}
 
     @Get("templates")
-    async getUserTemplates(@Query() query: GetUserTemplatesDto, @User() user: UserDomainInterface) {
-        return await this.slotsService.getTemplatesByUserIdAndSubjectId(user.id, query.subjectId);
+    async getUserTemplates(
+        @Query() query: GetUserTemplatesDto,
+        @User() user: UserDomainInterface,
+    ) {
+        return await this.slotsService.getTemplatesByUserIdAndSubjectId(
+            user.id,
+            query.subjectId,
+        );
     }
 
     @Get("single-slots")
-    async getSingleSlots(@Query() query: GetUserSingleSlotsDto, @User() user: UserDomainInterface) {
+    async getSingleSlots(
+        @Query() query: GetUserSingleSlotsDto,
+        @User() user: UserDomainInterface,
+    ) {
         return await this.slotsService.getSingleSlots({
             ...query,
             userId: user.id,
-            subjectId: query.subjectId
+            subjectId: query.subjectId,
         });
     }
 
     @Get("single-slots/count")
-    async getTotalSingleSlots(@Query() query: GetUserSingleSlotsCountDto, @User() user: UserDomainInterface) {
-        const count = await this.slotsService.getTotalSingleSlots(user.id, query.dateFrom, query.dateTo, query.subjectId);
+    async getTotalSingleSlots(
+        @Query() query: GetUserSingleSlotsCountDto,
+        @User() user: UserDomainInterface,
+    ) {
+        const count = await this.slotsService.getTotalSingleSlots(
+            user.id,
+            query.dateFrom,
+            query.dateTo,
+            query.subjectId,
+        );
 
-        return { count: count }
+        return { count: count };
     }
 }

@@ -4,4 +4,3 @@ export class SendPasswordRecoveryLink {
     @IsEmail()
     email!: string;
 }
-

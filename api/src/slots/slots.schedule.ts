@@ -10,38 +10,40 @@ const SCHEDULE_DELETE_SLOTS_AND_SESSIONS_AND_GENERATE_NEW_SLOTS_INTERVAL: number
 export class SlotsSchedule {
     constructor(
         private slotsServiceDb: SlotsServiceDb,
-        private sessionsServiceDb: SessionsServiceDb
-    ) {
-
-    }
+        private sessionsServiceDb: SessionsServiceDb,
+    ) {}
     /*
         Delete slots every 24 hours
     */
-    @Interval(SCHEDULE_DELETE_SLOTS_AND_SESSIONS_AND_GENERATE_NEW_SLOTS_INTERVAL)
+    @Interval(
+        SCHEDULE_DELETE_SLOTS_AND_SESSIONS_AND_GENERATE_NEW_SLOTS_INTERVAL,
+    )
     async slotsSchedule() {
         const now = new Date();
         // Delete old sessions and slots
-        const sixthMonthBefore = DateTime.fromJSDate(now).minus({ months: 6 }).toFormat("yyyy-MM-dd HH:mm:ss");
+        const sixthMonthBefore = DateTime.fromJSDate(now)
+            .minus({ months: 6 })
+            .toFormat("yyyy-MM-dd HH:mm:ss");
 
         await Promise.all([
             this.sessionsServiceDb.deleteSessionsBeforeDate(sixthMonthBefore),
-            this.slotsServiceDb.deleteSlotsBeforeDate(sixthMonthBefore)
+            this.slotsServiceDb.deleteSlotsBeforeDate(sixthMonthBefore),
         ]);
-
     }
     /*
         Generate slots for next 3 month every 24 hours
     */
-    @Interval(SCHEDULE_DELETE_SLOTS_AND_SESSIONS_AND_GENERATE_NEW_SLOTS_INTERVAL)
+    @Interval(
+        SCHEDULE_DELETE_SLOTS_AND_SESSIONS_AND_GENERATE_NEW_SLOTS_INTERVAL,
+    )
     generateSlots() {
         const now = new Date();
-        const threeMonthAfter = DateTime.fromJSDate(now).plus({ months: 3 }).toFormat("yyyy-MM-dd");
+        const threeMonthAfter = DateTime.fromJSDate(now)
+            .plus({ months: 3 })
+            .toFormat("yyyy-MM-dd");
         // Generate new slots
-        this.slotsServiceDb.generateNewSlots(threeMonthAfter)
-        .catch((error) => {
+        this.slotsServiceDb.generateNewSlots(threeMonthAfter).catch((error) => {
             console.log("Schedule generate slots error:", error);
         });
     }
-
 }
-

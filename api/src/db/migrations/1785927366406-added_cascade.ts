@@ -32,5 +32,4 @@ export class AddedCascade1785927366406 implements MigrationInterface {
             ON UPDATE NO ACTION
         `);
     }
-
 }

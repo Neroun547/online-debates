@@ -17,4 +17,3 @@ export class GetUsersRequestDto {
     @IsString()
     searchUsername!: string;
 }
-

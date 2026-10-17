@@ -26,6 +26,14 @@
             class="w-full"
           />
         </UFormField>
+        <UFormField class="w-full mt-5" label="Emoji" name="emoji">
+            <UInput
+              v-model="formState.emoji"
+              placeholder="Emoji"
+              name="emoji"
+              class="w-full"
+            />
+        </UFormField>
         <UFormField class="w-full mt-5" label="Priority" name="priority">
           <UInputNumber
             v-model="formState.priority"
@@ -88,6 +96,7 @@ interface Props {
   translateNameRu: string;
   translateNameEn: string;
   priority: number;
+  emoji?: string | null;
   subjects?: SubjectItem[];
 }
 
@@ -101,6 +110,7 @@ const formState = reactive({
   translateNameRu: "",
   translateNameEn: "",
   priority: 1,
+  emoji: ""
 });
 
 const formSchema = zod.object({
@@ -108,6 +118,7 @@ const formSchema = zod.object({
   translateNameRu: zod.string().min(1).max(500),
   translateNameEn: zod.string().min(1).max(500),
   priority: zod.number().min(1),
+  emoji: zod.string().max(255).optional()
 });
 
 const emit = defineEmits(["close"]);
@@ -121,6 +132,7 @@ function saveChanges(event: Event) {
     translateNameUk: formState.translateNameUk,
     translateNameRu: formState.translateNameRu,
     translateNameEn: formState.translateNameEn,
+    emoji: formState.emoji
   });
 }
 
@@ -146,6 +158,7 @@ watch(
     formState.translateNameRu = props.translateNameRu;
     formState.translateNameUk = props.translateNameUk;
     formState.priority = props.priority;
+    formState.emoji = props.emoji;
   },
   { immediate: true },
 );

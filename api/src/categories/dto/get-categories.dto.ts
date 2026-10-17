@@ -1,5 +1,5 @@
 import { IsInt, IsOptional, IsString, Max, Min } from "class-validator";
-import { Type } from "class-transformer"
+import { Type } from "class-transformer";
 
 export class GetCategoriesDto {
     @Type(() => Number)
@@ -17,4 +17,3 @@ export class GetCategoriesDto {
     @IsString()
     searchName?: string;
 }
-

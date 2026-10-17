@@ -14,4 +14,3 @@ export interface CategoriesTranslatesDomainInterface {
     categoryId: number;
     language: string;
 }
-

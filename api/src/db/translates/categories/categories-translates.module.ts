@@ -6,6 +6,6 @@ import { CategoriesTranslatesServiceDb } from "./categories-translates.service";
 @Module({
     imports: [TypeOrmModule.forFeature([CategoriesTranslates])],
     providers: [CategoriesTranslatesServiceDb],
-    exports: [CategoriesTranslatesServiceDb]
+    exports: [CategoriesTranslatesServiceDb],
 })
 export class CategoriesTranslatesModuleDb {}

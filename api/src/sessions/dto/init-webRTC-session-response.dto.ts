@@ -1,4 +1,9 @@
-import { DtlsParameters, IceCandidate, IceParameters, RtpCapabilities } from "mediasoup/types";
+import {
+    DtlsParameters,
+    IceCandidate,
+    IceParameters,
+    RtpCapabilities,
+} from "mediasoup/types";
 
 export interface InitWebRTCSessionResponseInterface {
     transportId: string;
@@ -7,4 +12,3 @@ export interface InitWebRTCSessionResponseInterface {
     dtlsParameters: DtlsParameters;
     routerRtpCapabilities: RtpCapabilities;
 }
-

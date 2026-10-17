@@ -5,7 +5,7 @@ export class UpdateUserPassword {
     @Length(8, 50)
     oldPassword!: string;
 
-    @IsString() 
+    @IsString()
     @Length(8, 50)
     newPassword!: string;
 
@@ -13,4 +13,3 @@ export class UpdateUserPassword {
     @Length(8, 50)
     confirmNewPassword!: string;
 }
-

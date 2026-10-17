@@ -10,7 +10,11 @@ import { AdminSubjectsController } from "./admin-subjects.controller";
 
 @Module({
     imports: [SubjectModuleDb, CategoryModuleDb, UserModuleDb, AdminModuleDb],
-    controllers: [SubjectsController, UsersSubjectsController, AdminSubjectsController],
-    providers: [SubjectsService]
+    controllers: [
+        SubjectsController,
+        UsersSubjectsController,
+        AdminSubjectsController,
+    ],
+    providers: [SubjectsService],
 })
 export class SubjectsModule {}

@@ -6,8 +6,6 @@ import { SlotsServiceDb } from "./slots.service";
 @Module({
     imports: [TypeOrmModule.forFeature([Slots])],
     providers: [SlotsServiceDb],
-    exports: [SlotsServiceDb]
+    exports: [SlotsServiceDb],
 })
-export class SlotsModuleDb {
-
-}
+export class SlotsModuleDb {}

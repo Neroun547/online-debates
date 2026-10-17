@@ -13,4 +13,3 @@ export class GetMessagesRequestDto {
     @Min(0)
     skip!: number;
 }
-

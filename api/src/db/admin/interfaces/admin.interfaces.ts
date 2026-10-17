@@ -20,4 +20,3 @@ export interface UpdateAdminInterface {
     email?: string;
     password?: string;
 }
-

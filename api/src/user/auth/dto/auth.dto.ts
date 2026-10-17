@@ -9,4 +9,3 @@ export class AuthDto {
     @Length(8, 50, { message: "Invalid password" })
     password!: string;
 }
-

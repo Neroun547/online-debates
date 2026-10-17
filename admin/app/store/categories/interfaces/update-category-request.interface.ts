@@ -3,5 +3,6 @@ export interface UpdateCategoryRequestDto {
     translateNameUk: string;
     translateNameEn: string;
     translateNameRu: string;
+    emoji?: string;
 }
 

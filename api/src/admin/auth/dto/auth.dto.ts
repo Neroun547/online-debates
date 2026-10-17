@@ -8,4 +8,3 @@ export class AuthDto {
     @Length(8, 50)
     password!: string;
 }
-

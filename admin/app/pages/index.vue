@@ -102,6 +102,7 @@ async function openCreateCategoryModal() {
       translateNameEn: result.translateNameEn,
       translateNameRu: result.translateNameRu,
       translateNameUk: result.translateNameUk,
+      emoji: result.emoji
     });
 
     if (categoriesStore.isError) {
@@ -154,6 +155,7 @@ async function openUpdateCategoryModal(category: CategoryItem) {
     translateNameUk: category.translateNameUk ?? "",
     priority: category.priority,
     subjects: category.subjects,
+    emoji: category.emoji
   });
   if (
     result &&
@@ -165,6 +167,7 @@ async function openUpdateCategoryModal(category: CategoryItem) {
       translateNameRu: result.translateNameRu,
       translateNameUk: result.translateNameUk,
       priority: result.priority,
+      emoji: result.emoji
     });
 
     if (!categoriesStore.isError) {

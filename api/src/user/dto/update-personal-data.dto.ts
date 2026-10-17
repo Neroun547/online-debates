@@ -1,4 +1,10 @@
-import { IsBoolean, IsEmail, IsOptional, IsString, Length } from "class-validator";
+import {
+    IsBoolean,
+    IsEmail,
+    IsOptional,
+    IsString,
+    Length,
+} from "class-validator";
 
 export class UpdateUserPersonalDataDto {
     @IsOptional()
@@ -19,5 +25,3 @@ export class UpdateUserPersonalDataDto {
     @IsBoolean()
     isAvailableForPermanentSessions?: boolean;
 }
-
-

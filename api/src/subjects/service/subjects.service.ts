@@ -17,102 +17,142 @@ export class SubjectsService {
         private subjectsServiceDb: SubjectServiceDb,
         private categoryServiceDb: CategoryServiceDb,
         private usersServiceDb: UserServiceDb,
-        private adminServiceDb: AdminServiceDb
+        private adminServiceDb: AdminServiceDb,
     ) {}
 
-    async getUsersBySubjectId(subjectId: number, page: number, limit: number, userId: number) {
+    async getUsersBySubjectId(
+        subjectId: number,
+        page: number,
+        limit: number,
+        userId: number,
+    ) {
         const subjectInDb = await this.subjectsServiceDb.findById(subjectId);
 
-        if(!subjectInDb) {
+        if (!subjectInDb) {
             throw new NotFoundException({ message: "Subject not found" });
         }
-        const data = await this.usersServiceDb.findInSubject(subjectId, page, limit);
+        const data = await this.usersServiceDb.findInSubject(
+            subjectId,
+            page,
+            limit,
+        );
 
-        return Promise.all(data.map(async (user: UserDomainInterface) => {
-            if(user.id === userId) {
+        return Promise.all(
+            data.map(async (user: UserDomainInterface) => {
+                if (user.id === userId) {
+                    return {
+                        ...user,
+                        isTheSameUser: true,
+                    };
+                }
                 return {
                     ...user,
-                    isTheSameUser: true
-                }
-            }
-            return {
-                ...user,
-                isAvailableForPermanentSessions: user.isAvailableForPermanentSessions
-            };
-        }));
+                    isAvailableForPermanentSessions:
+                        user.isAvailableForPermanentSessions,
+                };
+            }),
+        );
     }
-    async getSubjectWithUserAndCategoryById(id: number): Promise<GetSubjectByIdWithCategoryAndUserResponseDto> {
-        const subjectInDb = await this.subjectsServiceDb.findByIdWithCategoryAndUser(id);
+    async getSubjectWithUserAndCategoryById(
+        id: number,
+    ): Promise<GetSubjectByIdWithCategoryAndUserResponseDto> {
+        const subjectInDb =
+            await this.subjectsServiceDb.findByIdWithCategoryAndUser(id);
 
-        if(!subjectInDb) {
+        if (!subjectInDb) {
             throw new NotFoundException({ message: "Subject not found" });
         }
         return subjectInDb;
     }
     async getByCategoryIdWithCategoryAndUser(params: {
-        page: number; 
-        limit: number; 
+        page: number;
+        limit: number;
         categoryId?: number;
         userId?: number;
     }): Promise<GetByCategoryIdWithCategoryAndUserResponseDto> {
         const currentSkipElements = params.page * params.limit;
-        const countByCategory = await this.getCountByCategoryIdAndUserId(params.categoryId, params.userId);
-        const data = await this.subjectsServiceDb.findWithCategoryAndUserByCategoryIdAndUserId(params.page, params.limit, params.categoryId, params.userId);
+        const countByCategory = await this.getCountByCategoryIdAndUserId(
+            params.categoryId,
+            params.userId,
+        );
+        const data =
+            await this.subjectsServiceDb.findWithCategoryAndUserByCategoryIdAndUserId(
+                params.page,
+                params.limit,
+                params.categoryId,
+                params.userId,
+            );
 
         return {
             data: data,
-            isLoadMoreAvailable: countByCategory > currentSkipElements
-        }
+            isLoadMoreAvailable: countByCategory > currentSkipElements,
+        };
     }
-    async createSubject(name: string, categoryId: number, userId: number | null) {
+    async createSubject(
+        name: string,
+        categoryId: number,
+        userId: number | null,
+    ) {
         const categoryInDb = await this.categoryServiceDb.findById(categoryId);
 
-        if(!categoryInDb) {
+        if (!categoryInDb) {
             throw new NotFoundException({ message: "Category not found" });
         }
         await this.subjectsServiceDb.save({
             name: name,
             categoryId: categoryId,
-            userId: userId
+            userId: userId,
         });
     }
     async adminCreateSubject(name: string, categoryId: number) {
         const categoryInDb = await this.categoryServiceDb.findById(categoryId);
 
-        if(!categoryInDb) {
+        if (!categoryInDb) {
             throw new NotFoundException({ message: "Category not found" });
         }
         await this.subjectsServiceDb.saveWithoutLock({
             name: name,
             categoryId: categoryId,
-            userId: null
+            userId: null,
         });
     }
-    async updateSubjectByCategoryIdAndUserId(userId: number, categoryId: number, subjectId: number, data: UpdateSubjectDto) {
-        const countInDb = await this.subjectsServiceDb.countByUserIdAndId(subjectId, userId);
+    async updateSubjectByCategoryIdAndUserId(
+        userId: number,
+        categoryId: number,
+        subjectId: number,
+        data: UpdateSubjectDto,
+    ) {
+        const countInDb = await this.subjectsServiceDb.countByUserIdAndId(
+            subjectId,
+            userId,
+        );
 
-        if(countInDb <= 0) {
+        if (countInDb <= 0) {
             throw new NotFoundException({ message: "Subject not found" });
         }
-        const categoryCountInDb = await this.categoryServiceDb.countById(categoryId);
-        
-        if(categoryCountInDb <= 0) {
+        const categoryCountInDb =
+            await this.categoryServiceDb.countById(categoryId);
+
+        if (categoryCountInDb <= 0) {
             throw new NotFoundException({ message: "Category not found" });
         }
         await this.subjectsServiceDb.updateByCategoryIdUserIdAndId(
             subjectId,
-            userId, 
+            userId,
             {
                 name: data.name,
                 categoryId: categoryId,
-                userId: userId
-            }
+                userId: userId,
+            },
         );
     }
     async deleteSubjectById(id: number, userId: number) {
-        const countInDb = await this.subjectsServiceDb.countByUserIdAndId(id, userId);
+        const countInDb = await this.subjectsServiceDb.countByUserIdAndId(
+            id,
+            userId,
+        );
 
-        if(countInDb <= 0) {
+        if (countInDb <= 0) {
             throw new NotFoundException({ message: "Subject not found" });
         }
         await this.subjectsServiceDb.deleteByIdAndUserId(id, userId);
@@ -125,48 +165,59 @@ export class SubjectsService {
     }) {
         const adminInDb = await this.adminServiceDb.findById(params.adminId);
 
-        if(!adminInDb) {
+        if (!adminInDb) {
             throw new NotFoundException({ message: "Admin not found" });
         }
-        await this.subjectsServiceDb.deleteByCategoryIdAndId(params.subjectId, params.categoryId);
+        await this.subjectsServiceDb.deleteByCategoryIdAndId(
+            params.subjectId,
+            params.categoryId,
+        );
     }
 
     async getSubjects(params: {
-        page: number,
-        limit: number
+        page: number;
+        limit: number;
     }): Promise<GetSubjectsResponseDto> {
-        const subjects = await this.subjectsServiceDb.findWithUserAndCategory(params.page, params.limit);
+        const subjects = await this.subjectsServiceDb.findWithUserAndCategory(
+            params.page,
+            params.limit,
+        );
         const countAll = await this.subjectsServiceDb.countAll();
 
         return {
             data: subjects,
-            count: countAll
-        }
+            count: countAll,
+        };
     }
 
     async updateSubject(id: number, data: AdminUpdateSubjectDto) {
         const subjectInDb = await this.subjectsServiceDb.findById(id);
 
-        if(!subjectInDb) {
+        if (!subjectInDb) {
             throw new NotFoundException({ message: "Subject not found" });
         }
         await this.subjectsServiceDb.updateById(subjectInDb.id, {
             name: data.name,
             categoryId: data.categoryId,
-            userId: data.userId ? data.userId : null
+            userId: data.userId ? data.userId : null,
         });
     }
 
-    private async getCountByCategoryIdAndUserId(categoryId: number | undefined, userId: number | undefined): Promise<number> {
-        if(categoryId !== undefined && userId !== undefined) {
-            return await this.subjectsServiceDb.countByCategoryIdAndUserId(userId, categoryId);
-        } else if(categoryId !== undefined) {
+    private async getCountByCategoryIdAndUserId(
+        categoryId: number | undefined,
+        userId: number | undefined,
+    ): Promise<number> {
+        if (categoryId !== undefined && userId !== undefined) {
+            return await this.subjectsServiceDb.countByCategoryIdAndUserId(
+                userId,
+                categoryId,
+            );
+        } else if (categoryId !== undefined) {
             return await this.subjectsServiceDb.countByCategoryId(categoryId);
-        } else if(userId !== undefined) {
+        } else if (userId !== undefined) {
             return await this.subjectsServiceDb.countByUserId(userId);
         } else {
             return await this.subjectsServiceDb.countAll();
         }
     }
 }
-

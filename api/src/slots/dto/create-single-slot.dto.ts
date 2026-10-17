@@ -10,4 +10,3 @@ export class CreateSingleSlotDto {
     @IsDateString()
     endTime!: string;
 }
-

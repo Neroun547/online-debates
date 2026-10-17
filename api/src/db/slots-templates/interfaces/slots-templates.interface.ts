@@ -6,7 +6,6 @@ export interface SlotsTemplatesInterface {
     userId: number;
     subjectId: number;
     lastSlotCreation: Date;
-    
 }
 
 export interface SlotsTemplatesDomainInterface {

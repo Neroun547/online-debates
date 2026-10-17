@@ -1,4 +1,15 @@
-import { Body, Controller, Delete, Get, Param, ParseIntPipe, Post, Put, Query, UseGuards } from "@nestjs/common";
+import {
+    Body,
+    Controller,
+    Delete,
+    Get,
+    Param,
+    ParseIntPipe,
+    Post,
+    Put,
+    Query,
+    UseGuards,
+} from "@nestjs/common";
 import { CategoriesService } from "./service/categories.service";
 import { AdminAuthGuard } from "src/admin/auth/admin-auth.guard";
 import { SaveCategoryDto } from "./dto/save-category.dto";
@@ -26,15 +37,23 @@ export class AdminCategoriesController {
     }
 
     @Put(":id")
-    async updateCategory(@Param("id", new ParseIntPipe()) id: number, @Body() body: UpdateCategoryDto) {
+    async updateCategory(
+        @Param("id", new ParseIntPipe()) id: number,
+        @Body() body: UpdateCategoryDto,
+    ) {
         await this.categoriesService.updateById(id, body);
 
         return;
-    }    
+    }
 
     @Get()
-    async getCategories(@Query() query: GetCategoriesDto): Promise<GetCategoriesForAdminResponseDto> {
-        return await this.categoriesService.getWithPaginationForAdmin(query.page, query.limit, query.searchName);
+    async getCategories(
+        @Query() query: GetCategoriesDto,
+    ): Promise<GetCategoriesForAdminResponseDto> {
+        return await this.categoriesService.getWithPaginationForAdmin(
+            query.page,
+            query.limit,
+            query.searchName,
+        );
     }
 }
-

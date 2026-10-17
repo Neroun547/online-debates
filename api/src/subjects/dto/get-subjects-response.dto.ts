@@ -2,6 +2,5 @@ import { SubjectDomainInterface } from "src/db/subjects/interfaces/subject.inter
 
 export interface GetSubjectsResponseDto {
     data: SubjectDomainInterface[];
-    count: number; 
+    count: number;
 }
-

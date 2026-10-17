@@ -8,4 +8,3 @@ export interface BaseUploadAvatarFileInterface {
     path: string;
     size: number;
 }
-

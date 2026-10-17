@@ -180,12 +180,19 @@
             <ULink
               v-for="category in categories"
               :to="'/categories/' + category.id"
-              class="max-[1200px]:mt-5 max-[1200px]:max-w-[100%] shadow rounded-2xl max-w-[300px] w-full h-[50px] mr-5 text-black hover:shadow-xl flex justify-center items-center bg-gray-50"
+              class="max-[1200px]:mt-5 max-[1200px]:max-w-[100%] p-2 shadow max-w-[300px] w-full mr-5 text-black hover:shadow-xl flex justify-center items-center bg-gray-50"
               style="transition: 0.2s all"
             >
               <div>
-                <div>
-                  <h2>{{ category.name }}</h2>
+              	<div class="text-4xl text-center">{{ category.emoji }}</div>
+                <div class="mt-2">
+                  <h2 class="font-bold text-center">{{ category.name }}</h2>
+                </div>
+                <div class="mt-5">
+                	<ULink :to="'/categories/' + category.id" class="text-primary flex items-center hover:text-primary text-sm">
+                 		{{ $t("landing.categories.goToCategory") }} 
+                   	<UIcon class="ml-2" name="lucide:arrow-right" />
+                  </ULink>
                 </div>
               </div>
             </ULink>
@@ -199,7 +206,9 @@
 import Loader from "~/components/Loader.vue";
 import { useCategoriesStore } from "~/store/categories/categories.store";
 import type { CategoryItem } from "~/store/categories/interfaces/get-categories-response.interface";
+import { useAppStore } from "~/store/app-store.ts";
 
+const appStore = useAppStore();
 const categoriesStore = useCategoriesStore();
 
 const categories = ref<CategoryItem[]>([]);
@@ -216,7 +225,10 @@ async function getTheMostPopularCategories() {
 }
 
 onMounted(() => {
-  getTheMostPopularCategories();
+  getTheMostPopularCategories()
+  .then(() => {
+  	appStore.setIsLoading(false);
+  });
 });
 </script>
 <style scoped>

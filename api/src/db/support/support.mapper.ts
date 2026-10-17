@@ -1,4 +1,7 @@
-import { SupportDomainInterface, SupportInterface } from "./interfaces/support.interfaces";
+import {
+    SupportDomainInterface,
+    SupportInterface,
+} from "./interfaces/support.interfaces";
 import { Support } from "./support.entity";
 
 export class SupportMapper {
@@ -19,8 +22,7 @@ export class SupportMapper {
             email: model.email,
             subject: model.subject,
             message: model.message,
-            createdAt: model.createdAt
-        }
+            createdAt: model.createdAt,
+        };
     }
 }
-

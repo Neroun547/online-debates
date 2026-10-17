@@ -7,7 +7,10 @@ import { InjectRepository } from "@nestjs/typeorm";
 
 @Injectable()
 export class CategoriesTranslatesServiceDb {
-    constructor(@InjectRepository(CategoriesTranslates) private repository: Repository<CategoriesTranslates>) {}
+    constructor(
+        @InjectRepository(CategoriesTranslates)
+        private repository: Repository<CategoriesTranslates>,
+    ) {}
 
     async save(data: CategoriesTranslatesSaveInterface) {
         const model = CategoriesTranslatesMapper.toSave(data);
@@ -15,19 +18,25 @@ export class CategoriesTranslatesServiceDb {
         await this.repository.insert(model);
     }
     async saveMany(data: Array<CategoriesTranslatesSaveInterface>) {
-        for(const item of data) {
+        for (const item of data) {
             const model = CategoriesTranslatesMapper.toSave(item);
 
             await this.repository.save(model);
         }
     }
     async upsertMany(data: Array<CategoriesTranslatesSaveInterface>) {
-        for(const item of data) {
+        for (const item of data) {
             const model = CategoriesTranslatesMapper.toSave(item);
 
-            const translateInDb = await this.repository.findOne({ where: { categoryId: model.categoryId, property: model.property, language: model.language } });
+            const translateInDb = await this.repository.findOne({
+                where: {
+                    categoryId: model.categoryId,
+                    property: model.property,
+                    language: model.language,
+                },
+            });
 
-            if(translateInDb) {
+            if (translateInDb) {
                 await this.repository.update({ id: translateInDb.id }, model);
             } else {
                 await this.repository.save(model);
@@ -35,4 +44,3 @@ export class CategoriesTranslatesServiceDb {
         }
     }
 }
-

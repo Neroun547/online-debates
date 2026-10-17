@@ -2,20 +2,27 @@ import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Admin } from "./admin.entity";
 import { Repository } from "typeorm";
-import { AdminDomainInterface, AdminDomainInterfaceWithSecureParams, AdminInterface, UpdateAdminInterface } from "./interfaces/admin.interfaces";
+import {
+    AdminDomainInterface,
+    AdminDomainInterfaceWithSecureParams,
+    AdminInterface,
+    UpdateAdminInterface,
+} from "./interfaces/admin.interfaces";
 import { AdminMapper } from "./admin.mapper";
 
 @Injectable()
 export class AdminServiceDb {
-    constructor(@InjectRepository(Admin) private repository: Repository<Admin>) {}
-    
+    constructor(
+        @InjectRepository(Admin) private repository: Repository<Admin>,
+    ) {}
+
     async updateById(id: number, data: UpdateAdminInterface): Promise<void> {
         await this.repository.update({ id: id }, data);
     }
     async findById(id: number): Promise<AdminDomainInterface | null> {
         const data = await this.repository.findOne({ where: { id: id } });
 
-        if(!data) {
+        if (!data) {
             return null;
         }
         return AdminMapper.toDomain(data);
@@ -28,23 +35,27 @@ export class AdminServiceDb {
     async findByEmail(email: string): Promise<AdminDomainInterface | null> {
         const data = await this.repository.findOne({ where: { email: email } });
 
-        if(!data) {
+        if (!data) {
             return null;
         }
         return AdminMapper.toDomain(data);
     }
-    async findByEmailWithSecureParams(email: string): Promise<AdminDomainInterfaceWithSecureParams | null> {
+    async findByEmailWithSecureParams(
+        email: string,
+    ): Promise<AdminDomainInterfaceWithSecureParams | null> {
         const data = await this.repository.findOne({ where: { email: email } });
 
-        if(!data) {
+        if (!data) {
             return null;
         }
         return AdminMapper.toDomainWithSecureParams(data);
     }
-    async findByIdWithSecureParams(id: number): Promise<AdminDomainInterfaceWithSecureParams | null> {
+    async findByIdWithSecureParams(
+        id: number,
+    ): Promise<AdminDomainInterfaceWithSecureParams | null> {
         const data = await this.repository.findOne({ where: { id: id } });
 
-        if(!data) {
+        if (!data) {
             return null;
         }
         return AdminMapper.toDomainWithSecureParams(data);

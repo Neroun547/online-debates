@@ -3,7 +3,7 @@ import { IsInt, Max, Min } from "class-validator";
 
 export class GetSubjectUsersRequestDto {
     @Type(() => Number)
-    @IsInt() 
+    @IsInt()
     subjectId!: number;
 
     @Type(() => Number)
@@ -17,4 +17,3 @@ export class GetSubjectUsersRequestDto {
     @Max(20)
     limit!: number;
 }
-

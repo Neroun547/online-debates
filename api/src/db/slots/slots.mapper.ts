@@ -1,7 +1,10 @@
 import { SessionsMapper } from "../sessions/sessions.mapper";
 import { SubjectMapper } from "../subjects/subject.mapper";
 import { UserMapper } from "../user/user.mapper";
-import { SlotsInterface, type SlotDomainInterface } from "./interfaces/slots.interfaces";
+import {
+    SlotsInterface,
+    type SlotDomainInterface,
+} from "./interfaces/slots.interfaces";
 import { Slots } from "./slots.entity";
 
 export class SlotsMapper {
@@ -13,10 +16,14 @@ export class SlotsMapper {
             userId: model.userId,
             subjectId: model.subjectId,
             slotsTemplateId: model.slotsTemplateId,
-            session: model.session ? SessionsMapper.toDomain(model.session) : undefined,
+            session: model.session
+                ? SessionsMapper.toDomain(model.session)
+                : undefined,
             user: model.user ? UserMapper.toDomain(model.user) : undefined,
-            subject: model.subject ? SubjectMapper.toDomain(model.subject) : undefined,
-        }
+            subject: model.subject
+                ? SubjectMapper.toDomain(model.subject)
+                : undefined,
+        };
     }
     static toSave(data: SlotsInterface): Slots {
         const model = new Slots();
@@ -26,8 +33,7 @@ export class SlotsMapper {
         model.userId = data.userId;
         model.subjectId = data.subjectId;
         model.slotsTemplateId = data.slotsTemplateId;
-        
+
         return model;
     }
 }
-

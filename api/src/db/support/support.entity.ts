@@ -1,7 +1,7 @@
 import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
 
 @Entity({ name: "support" })
-export class Support {  
+export class Support {
     @PrimaryGeneratedColumn()
     id!: number;
 
@@ -10,7 +10,7 @@ export class Support {
 
     @Column({ type: "varchar", length: 300 })
     subject!: string;
-    
+
     @Column({ type: "text" })
     message!: string;
 

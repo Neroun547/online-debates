@@ -31,4 +31,3 @@ export interface SlotDomainInterface {
     user?: UserDomainInterface;
     subject?: SubjectDomainInterface;
 }
-

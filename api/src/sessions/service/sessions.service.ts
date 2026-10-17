@@ -1,4 +1,10 @@
-import { BadRequestException, Inject, Injectable, InternalServerErrorException, NotFoundException } from "@nestjs/common";
+import {
+    BadRequestException,
+    Inject,
+    Injectable,
+    InternalServerErrorException,
+    NotFoundException,
+} from "@nestjs/common";
 import { GetAllUserSessionsStatus } from "../dto/get-all-user-sessions-request.dto";
 import { DateTime } from "luxon";
 import { SessionsServiceDb } from "src/db/sessions/sessions.service";
@@ -8,7 +14,11 @@ import { SessionsDomainInterface } from "src/db/sessions/interfaces/sessions.int
 import { parseStartTimeAndEndTimeForCustomer } from "src/slots/utils/utils";
 import { MessagesServiceDb } from "src/db/messages/messages.service";
 import type { GetMessagesResponseDto } from "../dto/get-messages-response.dto";
-import { generateCacheKeyForUserOnlineStatus, parseMessageDateForRecipient, parseMessageDateToSave } from "../utils/utils";
+import {
+    generateCacheKeyForUserOnlineStatus,
+    parseMessageDateForRecipient,
+    parseMessageDateToSave,
+} from "../utils/utils";
 import { MessagesDomainInterface } from "src/db/messages/interfaces/messages.interfaces";
 import { MailerService } from "src/integrations/mailer/mailer.service";
 import { ConfigService } from "@nestjs/config";
@@ -23,102 +33,152 @@ export class SessionsService {
         private messagesServiceDb: MessagesServiceDb,
         private mailerService: MailerService,
         private configService: ConfigService,
-        @Inject(CACHE_MANAGER) private cacheService: Cache
-    ) {
-
-    }
+        @Inject(CACHE_MANAGER) private cacheService: Cache,
+    ) {}
 
     async getAllUserSessions(params: {
-            dateFrom: string;
-            dateTo: string;
-            page: number;
-            limit: number;
-            status: GetAllUserSessionsStatus;
-            userId: number;
+        dateFrom: string;
+        dateTo: string;
+        page: number;
+        limit: number;
+        status: GetAllUserSessionsStatus;
+        userId: number;
     }) {
         const userInDb = await this.usersServiceDb.findById(params.userId);
 
-        if(!userInDb) {
+        if (!userInDb) {
             throw new NotFoundException({ message: "User not found" });
         }
-        const data = await this.sessionsServiceDb.getSessionsByDateRangeAndUserId({
-            dateFrom: params.dateFrom,
-            dateTo: params.dateTo,
-            limit: params.limit,
-            page: params.page,
-            status: params.status,
-            userId: params.userId
-        });
+        const data =
+            await this.sessionsServiceDb.getSessionsByDateRangeAndUserId({
+                dateFrom: params.dateFrom,
+                dateTo: params.dateTo,
+                limit: params.limit,
+                page: params.page,
+                status: params.status,
+                userId: params.userId,
+            });
 
-        const result = await Promise.all(data.map(async item => {
-            if(item.slot && item.customer && item.creator) {
-                const parseTimes = parseStartTimeAndEndTimeForCustomer(item.slot.startTime, item.slot.endTime, userInDb.timezone);
-                const userOnlineStatusInCache = await this.cacheService.get(generateCacheKeyForUserOnlineStatus(item.id, item.customerId !== params.userId ? item.customerId : item.creatorId));
+        const result = await Promise.all(
+            data.map(async (item) => {
+                if (item.slot && item.customer && item.creator) {
+                    const parseTimes = parseStartTimeAndEndTimeForCustomer(
+                        item.slot.startTime,
+                        item.slot.endTime,
+                        userInDb.timezone,
+                    );
+                    const userOnlineStatusInCache = await this.cacheService.get(
+                        generateCacheKeyForUserOnlineStatus(
+                            item.id,
+                            item.customerId !== params.userId
+                                ? item.customerId
+                                : item.creatorId,
+                        ),
+                    );
 
-                return {
-                    ...item,
-                    isAnotherUserInSession: userOnlineStatusInCache ? true : false,  
-                    slot: {
-                        ...item.slot,
-                        startTime: parseTimes.startTime,
-                        endTime: parseTimes.endTime
-                    }
+                    return {
+                        ...item,
+                        isAnotherUserInSession: userOnlineStatusInCache
+                            ? true
+                            : false,
+                        slot: {
+                            ...item.slot,
+                            startTime: parseTimes.startTime,
+                            endTime: parseTimes.endTime,
+                        },
+                    };
+                } else if (item.customer && item.creator) {
+                    const userOnlineStatusInCache = await this.cacheService.get(
+                        generateCacheKeyForUserOnlineStatus(
+                            item.id,
+                            item.customerId !== params.userId
+                                ? item.customerId
+                                : item.creatorId,
+                        ),
+                    );
+
+                    return {
+                        ...item,
+                        isAnotherUserInSession: userOnlineStatusInCache
+                            ? true
+                            : false,
+                        isPermanent: true,
+                        createdAt: parseMessageDateForRecipient(
+                            item.createdAt,
+                            userInDb.timezone,
+                        ),
+                    };
                 }
-            } else if(item.customer && item.creator) {
-                const userOnlineStatusInCache = await this.cacheService.get(generateCacheKeyForUserOnlineStatus(item.id, item.customerId !== params.userId ? item.customerId : item.creatorId));
-                
-                return { 
-                    ...item,
-                    isAnotherUserInSession: userOnlineStatusInCache ? true : false,  
-                    isPermanent: true, 
-                    createdAt: parseMessageDateForRecipient(item.createdAt, userInDb.timezone)
-                }
-            }   
-        }));
+            }),
+        );
 
-        return result.filter(item => item !== undefined);
+        return result.filter((item) => item !== undefined);
     }
 
-    async bookSession(slotId: number, userId: number, currentUserDateTime: string) {
+    async bookSession(
+        slotId: number,
+        userId: number,
+        currentUserDateTime: string,
+    ) {
         const slotInDb = await this.slotsServiceDb.findByIdWithUser(slotId);
-    
-        if(!slotInDb || !slotInDb.user) {
+
+        if (!slotInDb || !slotInDb.user) {
             throw new NotFoundException({ message: "Slot not found" });
         }
         const userInDb = await this.usersServiceDb.findById(userId);
-    
-        if(!userInDb) {
+
+        if (!userInDb) {
             throw new NotFoundException({ message: "User not found" });
         }
         const currentUserDateTimeMillis = DateTime.fromFormat(
-            currentUserDateTime, 
-            "yyyy-MM-dd HH:mm", 
-            { zone: userInDb.timezone }
+            currentUserDateTime,
+            "yyyy-MM-dd HH:mm",
+            { zone: userInDb.timezone },
         ).toMillis();
-        const slotDateTimeMillis = DateTime.fromJSDate(slotInDb.startTime, { zone: slotInDb.user.timezone }).toMillis();
-    
-        if(currentUserDateTimeMillis > slotDateTimeMillis) {
-            throw new BadRequestException({ message: "User current date greater than slot start time" });
+        const slotDateTimeMillis = DateTime.fromJSDate(slotInDb.startTime, {
+            zone: slotInDb.user.timezone,
+        }).toMillis();
+
+        if (currentUserDateTimeMillis > slotDateTimeMillis) {
+            throw new BadRequestException({
+                message: "User current date greater than slot start time",
+            });
         }
         await this.sessionsServiceDb.saveSession({
             slotId: slotId,
             userId: userId,
             slotAuthorId: slotInDb.userId,
-            subjectId: null
-        });    
-
-        const bookingSessionMailerFrom = this.configService.getOrThrow("BOOKING_SESSION_MAILER_FROM");
-        const parsedDateTime = parseStartTimeAndEndTimeForCustomer(slotInDb.startTime, slotInDb.endTime, slotInDb.user.timezone);
-
-        this.mailerService.sendMailWithHtml({
-            from: bookingSessionMailerFrom,
-            to: slotInDb.user.email,
-            subject: this.mailerService.getSubjectForBookedSessionMail((slotInDb.user.language) as "ru" | "en" | "uk" ?? "en"),
-            html: this.mailerService.getTemplateForBookedSession(parsedDateTime.startTime, slotInDb.user.username, (slotInDb.user.language) as "ru" | "en" | "uk" ?? "en")
-        })
-        .catch(error => {
-            console.log(`Book session send mail error. Slot id: ${slotInDb.id}.`, error);
+            subjectId: null,
         });
+
+        const bookingSessionMailerFrom = this.configService.getOrThrow(
+            "BOOKING_SESSION_MAILER_FROM",
+        );
+        const parsedDateTime = parseStartTimeAndEndTimeForCustomer(
+            slotInDb.startTime,
+            slotInDb.endTime,
+            slotInDb.user.timezone,
+        );
+
+        this.mailerService
+            .sendMailWithHtml({
+                from: bookingSessionMailerFrom,
+                to: slotInDb.user.email,
+                subject: this.mailerService.getSubjectForBookedSessionMail(
+                    (slotInDb.user.language as "ru" | "en" | "uk") ?? "en",
+                ),
+                html: this.mailerService.getTemplateForBookedSession(
+                    parsedDateTime.startTime,
+                    slotInDb.user.username,
+                    (slotInDb.user.language as "ru" | "en" | "uk") ?? "en",
+                ),
+            })
+            .catch((error) => {
+                console.log(
+                    `Book session send mail error. Slot id: ${slotInDb.id}.`,
+                    error,
+                );
+            });
     }
 
     async bookSessionNow(params: {
@@ -127,40 +187,54 @@ export class SessionsService {
         categoryId: number;
         subjectId: number;
     }): Promise<number> {
-        const permanentSessionInDb = await this.sessionsServiceDb.findPermanentSession({
-            customerId: params.customerId,
-            creatorId: params.creatorId,
-            subjectId: params.subjectId 
-        });
+        const permanentSessionInDb =
+            await this.sessionsServiceDb.findPermanentSession({
+                customerId: params.customerId,
+                creatorId: params.creatorId,
+                subjectId: params.subjectId,
+            });
 
-        if(permanentSessionInDb) {
+        if (permanentSessionInDb) {
             return permanentSessionInDb.id;
         }
-        const creatorInDb = await this.usersServiceDb.findById(params.creatorId);
+        const creatorInDb = await this.usersServiceDb.findById(
+            params.creatorId,
+        );
 
-        if(!creatorInDb) {
+        if (!creatorInDb) {
             throw new NotFoundException({ message: "Creator not found" });
         }
-        const savedSessionId = await this.sessionsServiceDb.savePermanentSession({
-            customerId: params.customerId,
-            creatorId: params.creatorId,
-            categoryId: params.categoryId,
-            subjectId: params.subjectId
-        });
-        if(!savedSessionId) {
-            throw new InternalServerErrorException({ message: "Save session failed" });
+        const savedSessionId =
+            await this.sessionsServiceDb.savePermanentSession({
+                customerId: params.customerId,
+                creatorId: params.creatorId,
+                categoryId: params.categoryId,
+                subjectId: params.subjectId,
+            });
+        if (!savedSessionId) {
+            throw new InternalServerErrorException({
+                message: "Save session failed",
+            });
         }
-        const bookingSessionMailerFrom = this.configService.getOrThrow("BOOKING_SESSION_MAILER_FROM");
+        const bookingSessionMailerFrom = this.configService.getOrThrow(
+            "BOOKING_SESSION_MAILER_FROM",
+        );
 
-        this.mailerService.sendMailWithHtml({
-            from: bookingSessionMailerFrom,
-            to: creatorInDb.email,
-            subject: this.mailerService.getSubjectForBookedSessionMail((creatorInDb.language) as "ru" | "en" | "uk" ?? "en"),
-            html: this.mailerService.getTemplateForBookedPermanentSession(creatorInDb.username, (creatorInDb.language) as "ru" | "en" | "uk" ?? "en")
-        })
-        .catch(error => {
-            console.log("Book permanent session send mail error", error);
-        });
+        this.mailerService
+            .sendMailWithHtml({
+                from: bookingSessionMailerFrom,
+                to: creatorInDb.email,
+                subject: this.mailerService.getSubjectForBookedSessionMail(
+                    (creatorInDb.language as "ru" | "en" | "uk") ?? "en",
+                ),
+                html: this.mailerService.getTemplateForBookedPermanentSession(
+                    creatorInDb.username,
+                    (creatorInDb.language as "ru" | "en" | "uk") ?? "en",
+                ),
+            })
+            .catch((error) => {
+                console.log("Book permanent session send mail error", error);
+            });
         return savedSessionId;
     }
 
@@ -171,15 +245,15 @@ export class SessionsService {
         date: string;
     }): Promise<MessagesDomainInterface> {
         const userInDb = await this.usersServiceDb.findById(params.senderId);
-   
-        if(!userInDb) {
+
+        if (!userInDb) {
             throw new NotFoundException({ message: "User not found" });
         }
         return await this.messagesServiceDb.saveAndReturn({
             content: params.content,
             createdAt: parseMessageDateToSave(params.date, userInDb.timezone),
-            senderId: params.senderId, 
-            sessionId: params.sessionId
+            senderId: params.senderId,
+            sessionId: params.sessionId,
         });
     }
 
@@ -189,29 +263,50 @@ export class SessionsService {
         sessionId: number;
         userId: number;
     }): Promise<GetMessagesResponseDto> {
-        const sessionInDb = await this.sessionsServiceDb.findByIdAndUserIdWithSenderAndRecipient(params.sessionId, params.userId);
+        const sessionInDb =
+            await this.sessionsServiceDb.findByIdAndUserIdWithSenderAndRecipient(
+                params.sessionId,
+                params.userId,
+            );
 
-        if(!sessionInDb) {
+        if (!sessionInDb) {
             throw new NotFoundException({ message: "User session not found" });
         }
-        const messages = await this.messagesServiceDb.findBySessionId(params.sessionId, params.skip, params.limit);
+        const messages = await this.messagesServiceDb.findBySessionId(
+            params.sessionId,
+            params.skip,
+            params.limit,
+        );
 
-        const currentUser = params.userId === sessionInDb.creatorId ? sessionInDb.creator : sessionInDb.customer; 
-        const secondUser = params.userId !== sessionInDb.creatorId ? sessionInDb.creator : sessionInDb.customer;
+        const currentUser =
+            params.userId === sessionInDb.creatorId
+                ? sessionInDb.creator
+                : sessionInDb.customer;
+        const secondUser =
+            params.userId !== sessionInDb.creatorId
+                ? sessionInDb.creator
+                : sessionInDb.customer;
 
-        if(!currentUser || !secondUser) {
+        if (!currentUser || !secondUser) {
             throw new NotFoundException({ message: "Users not found" });
         }
-        const countAllSessionMessages = await this.messagesServiceDb.countBySessionId(params.sessionId);
+        const countAllSessionMessages =
+            await this.messagesServiceDb.countBySessionId(params.sessionId);
 
         return {
-            messages: messages.map(item => ({
-                id: item.id,
-                content: item.content,
-                createdAt: parseMessageDateForRecipient(item.createdAt, currentUser.timezone),
-                isSender: item.senderId === params.userId
-            })).sort((a, b) => a.id - b.id),
-            isLoadMoreAvailable: countAllSessionMessages > (params.skip + params.limit)
-        }
+            messages: messages
+                .map((item) => ({
+                    id: item.id,
+                    content: item.content,
+                    createdAt: parseMessageDateForRecipient(
+                        item.createdAt,
+                        currentUser.timezone,
+                    ),
+                    isSender: item.senderId === params.userId,
+                }))
+                .sort((a, b) => a.id - b.id),
+            isLoadMoreAvailable:
+                countAllSessionMessages > params.skip + params.limit,
+        };
     }
 }

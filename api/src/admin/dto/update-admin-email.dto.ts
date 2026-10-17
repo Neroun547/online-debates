@@ -4,4 +4,3 @@ export class UpdateAdminEmailDto {
     @IsEmail()
     email!: string;
 }
-

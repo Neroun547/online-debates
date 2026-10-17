@@ -1,9 +1,15 @@
-import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
+import {
+    Column,
+    Entity,
+    JoinColumn,
+    ManyToOne,
+    PrimaryGeneratedColumn,
+} from "typeorm";
 import { Sessions } from "../sessions/sessions.entity";
 import { User } from "../user/user.entity";
 
 @Entity({
-    name: "messages"
+    name: "messages",
 })
 export class Messages {
     @PrimaryGeneratedColumn()
@@ -29,5 +35,3 @@ export class Messages {
     @ManyToOne(() => User, { onDelete: "CASCADE", onUpdate: "CASCADE" })
     user!: User;
 }
-
-

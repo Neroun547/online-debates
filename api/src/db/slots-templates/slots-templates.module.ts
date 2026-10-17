@@ -7,8 +7,6 @@ import { SlotsModuleDb } from "../slots/slots.module";
 @Module({
     imports: [TypeOrmModule.forFeature([SlotsTemplates]), SlotsModuleDb],
     providers: [SlotsTemplatesServiceDb],
-    exports: [SlotsTemplatesServiceDb]
+    exports: [SlotsTemplatesServiceDb],
 })
-export class SlotsTemplatesModuleDb {
-
-}
+export class SlotsTemplatesModuleDb {}

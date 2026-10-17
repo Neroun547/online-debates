@@ -3,4 +3,5 @@ export interface CreateCategoryRequestInterface {
     translateNameUk: string;
     translateNameEn: string;
     translateNameRu: string;
+    emoji?: string;
 }

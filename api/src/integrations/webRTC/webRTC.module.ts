@@ -3,6 +3,6 @@ import { WebRTCService } from "./webRTC.service";
 
 @Module({
     providers: [WebRTCService],
-    exports: [WebRTCService]
+    exports: [WebRTCService],
 })
 export class WebRTCModule {}

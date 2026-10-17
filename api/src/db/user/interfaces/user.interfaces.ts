@@ -13,7 +13,7 @@ export interface UserInterface {
     language: string | null;
     avatarFilename: string | null;
     isAvailableForPermanentSessions: boolean;
-    age: number; 
+    age: number;
     sex: UserSex;
     description: string | null;
 }
@@ -29,13 +29,13 @@ export interface UserWithSecureParams {
     language: string | null;
     avatarFilename: string | null;
     isAvailableForPermanentSessions: boolean;
-    age: number; 
+    age: number;
     description: string | null;
     sex: UserSex;
     subjects?: SubjectDomainInterface[];
 }
 
-// Interface for update 
+// Interface for update
 export interface UpdateUserInterface {
     id?: number;
     username?: string;
@@ -60,11 +60,10 @@ export interface UserDomainInterface {
     status: UserStatus;
     timezone: string;
     language: string | null;
-    avatarFilename: string | null; 
+    avatarFilename: string | null;
     isAvailableForPermanentSessions: boolean;
     age: number;
     description: string | null;
     sex: UserSex;
     subjects?: SubjectDomainInterface[];
 }
-

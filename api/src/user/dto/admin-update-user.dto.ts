@@ -1,4 +1,12 @@
-import { IsEmail, IsEnum, IsInt, IsOptional, IsString, Length, Min } from "class-validator";
+import {
+    IsEmail,
+    IsEnum,
+    IsInt,
+    IsOptional,
+    IsString,
+    Length,
+    Min,
+} from "class-validator";
 import { UserSex } from "src/db/user/user.entity";
 
 export class AdminUpdateUserDto {

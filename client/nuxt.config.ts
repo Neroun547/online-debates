@@ -18,6 +18,9 @@ export default defineNuxtConfig({
       server: false,
     },
   ], 'nuxt-zod-i18n', '@nuxtjs/i18n'],
+  ui: {
+  	colorMode: false
+  },
   i18n: {
     locales: [
       { code: 'en', name: 'English', file: 'en.json'},
@@ -26,9 +29,6 @@ export default defineNuxtConfig({
     ],
     defaultLocale: 'en',
     strategy: "no_prefix"
-  },
-  colorMode: {
-    preference: 'light',
   },
   devServer: {
     port: Number(process.env.DEV_PORT),

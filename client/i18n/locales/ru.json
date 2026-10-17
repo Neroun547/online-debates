@@ -39,7 +39,10 @@
         "enjoyDiscussion": "Наслаждайтесь общением",
         "createOwnTopicDescription": "Вы также можете создать собственную тему для обсуждения в одной из существующих категорий или выбрать готовую тему и добавить удобные временные слоты.",
         "popularCategoriesToday": "Самые популярные категории сегодня",
-        "viewAllCategories": "Посмотреть все категории"
+        "viewAllCategories": "Посмотреть все категории",
+        "categories": {
+        	"goToCategory": "Перейти к категории"
+        }
     },
     "footer": {
         "brand": "Wanna talk",

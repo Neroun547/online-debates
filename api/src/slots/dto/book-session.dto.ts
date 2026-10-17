@@ -7,4 +7,3 @@ export class BookSessionDto {
     @IsDateString()
     currentUserDateTime!: string;
 }
-

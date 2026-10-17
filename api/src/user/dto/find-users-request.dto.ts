@@ -1,10 +1,17 @@
 import { Type } from "class-transformer";
-import { IsEnum, IsInt, IsOptional, IsString, Length, Max } from "class-validator";
+import {
+    IsEnum,
+    IsInt,
+    IsOptional,
+    IsString,
+    Length,
+    Max,
+} from "class-validator";
 
 export enum FindUsersRequestSexParamEnum {
-    MALE="male",
-    FEMALE="female",
-    ALL="all"
+    MALE = "male",
+    FEMALE = "female",
+    ALL = "all",
 }
 
 export class FindUsersRequestDto {
@@ -21,7 +28,7 @@ export class FindUsersRequestDto {
     @Type(() => Number)
     @IsOptional()
     @IsInt()
-    ageTo?: number; 
+    ageTo?: number;
 
     @IsEnum(FindUsersRequestSexParamEnum)
     sex!: FindUsersRequestSexParamEnum;
@@ -35,4 +42,3 @@ export class FindUsersRequestDto {
     @Max(20)
     limit!: number;
 }
-

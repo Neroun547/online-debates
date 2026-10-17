@@ -1,9 +1,20 @@
 import { Injectable, NotFoundException } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { User, UserSex } from "./user.entity";
-import { Between, EntityManager, Like, Not, Repository, UpdateResult } from "typeorm";
+import {
+    Between,
+    EntityManager,
+    Like,
+    Not,
+    Repository,
+    UpdateResult,
+} from "typeorm";
 import { UserMapper } from "./user.mapper";
-import { UpdateUserInterface, UserDomainInterface, UserInterface } from "./interfaces/user.interfaces";
+import {
+    UpdateUserInterface,
+    UserDomainInterface,
+    UserInterface,
+} from "./interfaces/user.interfaces";
 import { Slots } from "../slots/slots.entity";
 import { parseStartTimeAndEndTimeForCustomer } from "src/slots/utils/utils";
 import { SlotsMapper } from "../slots/slots.mapper";
@@ -15,7 +26,7 @@ import { FindUsersRequestSexParamEnum } from "src/user/dto/find-users-request.dt
 export class UserServiceDb {
     constructor(
         @InjectRepository(User) private repository: Repository<User>,
-        private em: EntityManager
+        private em: EntityManager,
     ) {}
 
     async findUsers(params: {
@@ -27,23 +38,25 @@ export class UserServiceDb {
         limit: number;
     }) {
         const searchParams = this.buildSearchParams(params);
-        const data = await this.repository.find({ 
+        const data = await this.repository.find({
             ...searchParams,
-            skip: ((params.page - 1) * params.limit), 
-            take: params.limit 
+            skip: (params.page - 1) * params.limit,
+            take: params.limit,
         });
 
-        return data.map(item => UserMapper.toDomain(item));
+        return data.map((item) => UserMapper.toDomain(item));
     }
 
-    async findByIdWithSubjects(id: number): Promise<UserDomainInterface | null> {
+    async findByIdWithSubjects(
+        id: number,
+    ): Promise<UserDomainInterface | null> {
         const [data, subjects] = await Promise.all([
             this.repository.findOne({ where: { id } }),
             this.em
                 .createQueryBuilder(Subject, "subject")
                 .leftJoinAndSelect("subject.category", "category")
                 .leftJoinAndSelect("category.translates", "categoryTranslate")
-                .where(queryBuilder => {
+                .where((queryBuilder) => {
                     const userSlots = queryBuilder
                         .subQuery()
                         .select("1")
@@ -55,9 +68,9 @@ export class UserServiceDb {
                     return `EXISTS ${userSlots}`;
                 })
                 .setParameter("id", id)
-                .getMany()
+                .getMany(),
         ]);
-        if(!data) {
+        if (!data) {
             return null;
         }
         data.subjects = subjects;
@@ -67,7 +80,7 @@ export class UserServiceDb {
     async findByEmail(email: string): Promise<UserDomainInterface | null> {
         const data = await this.repository.findOne({ where: { email: email } });
 
-        if(!data) {
+        if (!data) {
             return null;
         }
         return UserMapper.toDomain(data);
@@ -78,10 +91,10 @@ export class UserServiceDb {
         ageTo?: number;
         sex?: FindUsersRequestSexParamEnum;
     }) {
-        if(filters) {
+        if (filters) {
             const searchParams = this.buildSearchParams(filters);
 
-            return await this.repository.count({ ...searchParams })
+            return await this.repository.count({ ...searchParams });
         }
         return await this.repository.count();
     }
@@ -90,28 +103,37 @@ export class UserServiceDb {
         limit: number;
         searchUsername?: string;
     }) {
-        if(params.searchUsername) {
+        if (params.searchUsername) {
             const data = await this.repository
                 .createQueryBuilder("user")
                 .limit(params.limit)
                 .offset((params.page - 1) * params.limit)
-                .where("user.username LIKE :searchUsername", { searchUsername: "%" + params.searchUsername + "%" })
+                .where("user.username LIKE :searchUsername", {
+                    searchUsername: "%" + params.searchUsername + "%",
+                })
                 .getMany();
 
-            return data.map(item => UserMapper.toDomain(item));
+            return data.map((item) => UserMapper.toDomain(item));
         } else {
-            const data = await this.repository.find({ take: params.limit, skip: (params.page - 1) * params.limit });
+            const data = await this.repository.find({
+                take: params.limit,
+                skip: (params.page - 1) * params.limit,
+            });
 
-            return data.map(item => UserMapper.toDomain(item));
+            return data.map((item) => UserMapper.toDomain(item));
         }
     }
     async existsById(id: number): Promise<boolean> {
         return await this.repository.exists({ where: { id: id } });
     }
-    async findInSubject(subjectId: number, page: number, limit: number): Promise<UserDomainInterface[]> {
+    async findInSubject(
+        subjectId: number,
+        page: number,
+        limit: number,
+    ): Promise<UserDomainInterface[]> {
         const resultArr = await this.repository
             .createQueryBuilder("user")
-            .where(queryBuilder => {
+            .where((queryBuilder) => {
                 const slotsInSubject = queryBuilder
                     .subQuery()
                     .select("1")
@@ -128,20 +150,30 @@ export class UserServiceDb {
             .skip((page - 1) * limit)
             .getMany();
 
-        return resultArr.map(user => UserMapper.toDomain(user));
+        return resultArr.map((user) => UserMapper.toDomain(user));
     }
-    async findByUsernameAndNotId(username: string, userId: number): Promise<UserDomainInterface | null> {
-        const data = await this.repository.findOne({ where: { username: username, id: Not(userId) } });
+    async findByUsernameAndNotId(
+        username: string,
+        userId: number,
+    ): Promise<UserDomainInterface | null> {
+        const data = await this.repository.findOne({
+            where: { username: username, id: Not(userId) },
+        });
 
-        if(!data) {
+        if (!data) {
             return null;
         }
         return UserMapper.toDomain(data);
     }
-    async findByEmailAndNotId(email: string, userId: number): Promise<UserDomainInterface | null> {
-        const data = await this.repository.findOne({ where: { email: email, id: Not(userId) } });
+    async findByEmailAndNotId(
+        email: string,
+        userId: number,
+    ): Promise<UserDomainInterface | null> {
+        const data = await this.repository.findOne({
+            where: { email: email, id: Not(userId) },
+        });
 
-        if(!data) {
+        if (!data) {
             return null;
         }
         return UserMapper.toDomain(data);
@@ -160,18 +192,27 @@ export class UserServiceDb {
         return UserMapper.toDomain(savedUser);
     }
     // Why in JavaScript or TypeScript don't have method overloading ? :(
-    async findByEmailOrUsernameTwoSeparateParams(email: string, username: string): Promise<UserDomainInterface | null> {
-        const data = await this.repository.findOne({ where: [ { email: email }, { username: username } ] });
+    async findByEmailOrUsernameTwoSeparateParams(
+        email: string,
+        username: string,
+    ): Promise<UserDomainInterface | null> {
+        const data = await this.repository.findOne({
+            where: [{ email: email }, { username: username }],
+        });
 
-        if(!data) {
+        if (!data) {
             return null;
         }
         return UserMapper.toDomain(data);
     }
-    async findByEmailOrUsernameWithSecureParams(emailOrUsername: string): Promise<UserInterface | null> {
-        const data = await this.repository.findOne({ where: [{ email: emailOrUsername }, { username: emailOrUsername }] });
+    async findByEmailOrUsernameWithSecureParams(
+        emailOrUsername: string,
+    ): Promise<UserInterface | null> {
+        const data = await this.repository.findOne({
+            where: [{ email: emailOrUsername }, { username: emailOrUsername }],
+        });
 
-        if(!data) {
+        if (!data) {
             return null;
         }
         return UserMapper.toDomainWithSecureParams(data);
@@ -179,7 +220,7 @@ export class UserServiceDb {
     async findById(id: number): Promise<UserDomainInterface | null> {
         const data = await this.repository.findOne({ where: { id: id } });
 
-        if(!data) {
+        if (!data) {
             return null;
         }
         return UserMapper.toDomain(data);
@@ -188,14 +229,14 @@ export class UserServiceDb {
     async findByIdWithSecureParams(id: number): Promise<UserInterface | null> {
         const data = await this.repository.findOne({ where: { id: id } });
 
-        if(!data) {
+        if (!data) {
             return null;
         }
         return UserMapper.toDomainWithSecureParams(data);
     }
 
     async updateById(id: number, data: UpdateUserInterface) {
-        if(data.timezone) {
+        if (data.timezone) {
             return this.em.transaction("READ COMMITTED", async (tx) => {
                 const allUserSlots = await tx
                     .createQueryBuilder(Slots, "slot")
@@ -203,29 +244,43 @@ export class UserServiceDb {
                     .setLock("pessimistic_write")
                     .getMany();
 
-                const userInDb = await tx.findOneOrFail(User, { where: { id: id } });
+                const userInDb = await tx.findOneOrFail(User, {
+                    where: { id: id },
+                });
                 const updatePromises: Array<Promise<UpdateResult>> = [];
 
-                for(const slot of allUserSlots) {
+                for (const slot of allUserSlots) {
                     const domainSlot = SlotsMapper.toDomain(slot);
                     const newTimes = parseStartTimeAndEndTimeForCustomer(
-                        domainSlot.startTime, 
-                        domainSlot.endTime, 
-                        userInDb.timezone
+                        domainSlot.startTime,
+                        domainSlot.endTime,
+                        userInDb.timezone,
                     );
 
-                    const parsedNewStartTime = DateTime.fromFormat(newTimes.startTime, "yyyy-MM-dd HH:mm", { zone: data.timezone }).toUTC().toFormat("yyyy-MM-dd HH:mm:ss");
-                    const parsedNewEndTime = DateTime.fromFormat(newTimes.endTime, "yyyy-MM-dd HH:mm", { zone: data.timezone }).toUTC().toFormat("yyyy-MM-dd HH:mm:ss");
-  
+                    const parsedNewStartTime = DateTime.fromFormat(
+                        newTimes.startTime,
+                        "yyyy-MM-dd HH:mm",
+                        { zone: data.timezone },
+                    )
+                        .toUTC()
+                        .toFormat("yyyy-MM-dd HH:mm:ss");
+                    const parsedNewEndTime = DateTime.fromFormat(
+                        newTimes.endTime,
+                        "yyyy-MM-dd HH:mm",
+                        { zone: data.timezone },
+                    )
+                        .toUTC()
+                        .toFormat("yyyy-MM-dd HH:mm:ss");
+
                     updatePromises.push(
                         tx.update(
-                            Slots, 
+                            Slots,
                             { id: slot.id },
-                            { 
-                              startTime: parsedNewStartTime, 
-                              endTime: parsedNewEndTime 
-                            }
-                        )
+                            {
+                                startTime: parsedNewStartTime,
+                                endTime: parsedNewEndTime,
+                            },
+                        ),
                     );
                 }
                 await Promise.all(updatePromises);
@@ -246,38 +301,45 @@ export class UserServiceDb {
             username: undefined,
             email: undefined,
             age: undefined,
-            sex: undefined
+            sex: undefined,
         };
 
-        if(params.usernameOrEmail) {
-            searchParams.email = Like("%" + params.usernameOrEmail + "%"); 
+        if (params.usernameOrEmail) {
+            searchParams.email = Like("%" + params.usernameOrEmail + "%");
             searchParams.username = Like("%" + params.usernameOrEmail + "%");
         }
-        if(typeof params.ageFrom === "number" && typeof params.ageTo === "number") {
+        if (
+            typeof params.ageFrom === "number" &&
+            typeof params.ageTo === "number"
+        ) {
             searchParams.age = Between(params.ageFrom, params.ageTo);
         }
-        if(params.sex !== FindUsersRequestSexParamEnum.ALL) {
+        if (params.sex !== FindUsersRequestSexParamEnum.ALL) {
             searchParams.sex = params.sex;
         }
-        if(searchParams.email && searchParams.username) {
-            return { where: [
+        if (searchParams.email && searchParams.username) {
+            return {
+                where: [
                     {
                         age: searchParams.age,
                         sex: searchParams.sex,
-                        email: searchParams.email
+                        email: searchParams.email,
                     },
                     {
                         age: searchParams.age,
                         sex: searchParams.sex,
-                        username: searchParams.username
-                    }
-                    ]
-            }
+                        username: searchParams.username,
+                    },
+                ],
+            };
         }
         return { where: searchParams };
     }
 
-    updateUserAvatar(userId: number, filename: string | null): Promise<string | null> {
+    updateUserAvatar(
+        userId: number,
+        filename: string | null,
+    ): Promise<string | null> {
         return this.em.transaction("READ COMMITTED", async (tx) => {
             const userInDb = await tx
                 .createQueryBuilder(User, "user")
@@ -285,7 +347,7 @@ export class UserServiceDb {
                 .where("user.id = :id", { id: userId })
                 .getOne();
 
-            if(!userInDb) {
+            if (!userInDb) {
                 throw new NotFoundException({ message: "User not found" });
             }
             await tx.update(User, { id: userId }, { avatarFilename: filename });

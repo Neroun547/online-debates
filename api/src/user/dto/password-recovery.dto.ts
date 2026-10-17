@@ -4,4 +4,3 @@ export class PasswordRecoveryDto {
     @IsString()
     password!: string;
 }
-

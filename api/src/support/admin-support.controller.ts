@@ -7,16 +7,15 @@ import { GetSupportItemsResponseInterface } from "./dto/get-support-items-respon
 @UseGuards(AdminAuthGuard)
 @Controller("/admin/support")
 export class AdminSupportController {
-    constructor(private supportService: SupportService) {
-
-    }
+    constructor(private supportService: SupportService) {}
 
     @Get()
-    async getSupportMessages(@Query() query: AdminGetSupportMessagesDto): Promise<GetSupportItemsResponseInterface> {
+    async getSupportMessages(
+        @Query() query: AdminGetSupportMessagesDto,
+    ): Promise<GetSupportItemsResponseInterface> {
         return await this.supportService.getSupportItems({
             page: query.page,
-            limit: query.limit
+            limit: query.limit,
         });
     }
 }
-

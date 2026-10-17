@@ -12,4 +12,3 @@ export class CreateSupportMessageDto {
     @Length(1, 5000)
     message!: string;
 }
-

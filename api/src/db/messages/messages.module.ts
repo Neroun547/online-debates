@@ -6,6 +6,6 @@ import { MessagesServiceDb } from "./messages.service";
 @Module({
     imports: [TypeOrmModule.forFeature([Messages])],
     providers: [MessagesServiceDb],
-    exports: [MessagesServiceDb]
+    exports: [MessagesServiceDb],
 })
 export class MessagesModuleDb {}

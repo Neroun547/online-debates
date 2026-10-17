@@ -13,4 +13,3 @@ export class AdminGetSupportMessagesDto {
     @Min(1)
     limit!: number;
 }
-

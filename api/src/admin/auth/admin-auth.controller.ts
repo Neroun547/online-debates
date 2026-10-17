@@ -5,9 +5,7 @@ import { AdminAuthGuard } from "./admin-auth.guard";
 
 @Controller("/admin/auth")
 export class AdminAuthController {
-    constructor(private adminAuthService: AdminAuthService) {
-
-    }
+    constructor(private adminAuthService: AdminAuthService) {}
 
     @Post()
     async auth(@Body() body: AuthDto) {
@@ -20,4 +18,3 @@ export class AdminAuthController {
         return;
     }
 }
-

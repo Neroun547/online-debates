@@ -7,7 +7,7 @@ export interface SessionsInterface {
     slotId: number | null;
     status: SessionsStatus;
     creatorId: number;
-    customerId: number; 
+    customerId: number;
     createdAt: Date | string;
     subjectId: number | null;
 }
@@ -21,7 +21,6 @@ export interface SessionsDomainInterface {
     createdAt: Date | string;
     subjectId: number | null;
     creator?: UserDomainInterface;
-    customer?: UserDomainInterface; 
+    customer?: UserDomainInterface;
     slot?: SlotDomainInterface;
 }
-

@@ -1,4 +1,15 @@
-import { Body, Controller, Delete, Get, Param, ParseIntPipe, Post, Put, Query, UseGuards } from "@nestjs/common";
+import {
+    Body,
+    Controller,
+    Delete,
+    Get,
+    Param,
+    ParseIntPipe,
+    Post,
+    Put,
+    Query,
+    UseGuards,
+} from "@nestjs/common";
 import { AdminAuthGuard } from "src/admin/auth/admin-auth.guard";
 import { Admin } from "src/admin/auth/decorators/admin.decorator";
 import type { AdminDomainInterface } from "src/db/admin/interfaces/admin.interfaces";
@@ -12,16 +23,17 @@ import { AdminUpdateSubjectDto } from "./dto/admin-update-subject.dto";
 @UseGuards(AdminAuthGuard)
 @Controller("/admin/subjects")
 export class AdminSubjectsController {
-    constructor(private subjectsService: SubjectsService) {
+    constructor(private subjectsService: SubjectsService) {}
 
-    }
-    
     @Delete()
-    async deleteSubject(@Query() query: DeleteSubjectDto, @Admin() admin: AdminDomainInterface) {
+    async deleteSubject(
+        @Query() query: DeleteSubjectDto,
+        @Admin() admin: AdminDomainInterface,
+    ) {
         await this.subjectsService.deleteSubjectFromAdmin({
             subjectId: query.subjectId,
             categoryId: query.categoryId,
-            adminId: admin.id
+            adminId: admin.id,
         });
 
         return;
@@ -29,23 +41,34 @@ export class AdminSubjectsController {
 
     @Post()
     async createSubject(@Body() body: CreateSubjectDto) {
-        await this.subjectsService.adminCreateSubject(body.name, body.categoryId);
+        await this.subjectsService.adminCreateSubject(
+            body.name,
+            body.categoryId,
+        );
 
         return;
     }
 
     @Get()
-    async getSubjects(@Query() query: GetSubjectsRequestDto): Promise<GetSubjectsResponseDto> {
-        const result = await this.subjectsService.getSubjects({ page: query.page, limit: query.limit });
-        
+    async getSubjects(
+        @Query() query: GetSubjectsRequestDto,
+    ): Promise<GetSubjectsResponseDto> {
+        const result = await this.subjectsService.getSubjects({
+            page: query.page,
+            limit: query.limit,
+        });
+
         return {
             data: result.data,
-            count: result.count
-        }
+            count: result.count,
+        };
     }
 
     @Put(":id")
-    async updateSubjectById(@Param("id", new ParseIntPipe()) id: number, @Body() body: AdminUpdateSubjectDto) {
+    async updateSubjectById(
+        @Param("id", new ParseIntPipe()) id: number,
+        @Body() body: AdminUpdateSubjectDto,
+    ) {
         await this.subjectsService.updateSubject(id, body);
 
         return;

@@ -4,13 +4,9 @@ import { AdminAuthController } from "./admin-auth.controller";
 import { AdminModuleDb } from "src/db/admin/admin.module";
 
 @Module({
-    imports: [
-        AdminModuleDb,
-    ],
+    imports: [AdminModuleDb],
     providers: [AdminAuthService],
     controllers: [AdminAuthController],
-    exports: [AdminAuthService]
+    exports: [AdminAuthService],
 })
-export class AdminAuthModule {
-
-}
+export class AdminAuthModule {}

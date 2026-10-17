@@ -5,21 +5,21 @@ import { SlotsLock } from "../slots-lock/slots-lock.entity";
 import { Messages } from "../messages/messages.entity";
 
 export enum UserStatus {
-    ONLINE="online",
-    BUSY="busy",
-    OFFLINE="offline"
+    ONLINE = "online",
+    BUSY = "busy",
+    OFFLINE = "offline",
 }
 
 export enum UserSex {
-    MALE="male",
-    FEMALE="female"
+    MALE = "male",
+    FEMALE = "female",
 }
 
 @Entity({ name: "users" })
 export class User {
     @PrimaryGeneratedColumn()
     id?: number;
-    
+
     @Column({ type: "varchar", unique: true })
     username!: string;
 
@@ -28,14 +28,14 @@ export class User {
 
     @Column({ type: "varchar" })
     password!: string;
-    
+
     @Column({ type: "bool" })
     isConfirmed!: boolean;
 
     @Column({
-        type: 'enum',
+        type: "enum",
         enum: UserStatus,
-        default: UserStatus.OFFLINE
+        default: UserStatus.OFFLINE,
     })
     status!: UserStatus;
 
@@ -67,9 +67,8 @@ export class User {
     slots?: Slots[];
 
     @OneToMany(() => SlotsLock, (slotsLock: SlotsLock) => slotsLock.user)
-    slotsLock?: SlotsLock[]; 
+    slotsLock?: SlotsLock[];
 
     @OneToMany(() => Messages, (messages: Messages) => messages.user)
     messages?: Messages[];
 }
-

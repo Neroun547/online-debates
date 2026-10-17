@@ -1,4 +1,11 @@
-import { Controller, Get, Param, ParseIntPipe, Query, UseGuards } from "@nestjs/common";
+import {
+    Controller,
+    Get,
+    Param,
+    ParseIntPipe,
+    Query,
+    UseGuards,
+} from "@nestjs/common";
 import { AuthGuard } from "src/user/auth/auth.guard";
 import { CategoriesService } from "./service/categories.service";
 import { GetCategoriesDto } from "./dto/get-categories.dto";
@@ -7,14 +14,17 @@ import { CategoryDomainInterface } from "src/db/category/interfaces/category.int
 
 @Controller("categories")
 export class CategoriesController {
-    constructor(private categoriesService: CategoriesService) {
-
-    }
+    constructor(private categoriesService: CategoriesService) {}
 
     @UseGuards(AuthGuard)
     @Get()
-    async getCategories(@Query() query: GetCategoriesDto): Promise<GetCategoriesResponseDto> {
-        return await this.categoriesService.getWithPagination(query.page, query.limit);
+    async getCategories(
+        @Query() query: GetCategoriesDto,
+    ): Promise<GetCategoriesResponseDto> {
+        return await this.categoriesService.getWithPagination(
+            query.page,
+            query.limit,
+        );
     }
 
     @Get("popular")
@@ -28,4 +38,3 @@ export class CategoriesController {
         return await this.categoriesService.getCategoryById(id);
     }
 }
-

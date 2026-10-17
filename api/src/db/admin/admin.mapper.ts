@@ -1,20 +1,26 @@
 import { Admin } from "./admin.entity";
-import { AdminDomainInterface, AdminDomainInterfaceWithSecureParams, AdminInterface } from "./interfaces/admin.interfaces";
+import {
+    AdminDomainInterface,
+    AdminDomainInterfaceWithSecureParams,
+    AdminInterface,
+} from "./interfaces/admin.interfaces";
 
 export class AdminMapper {
     static toDomain(data: Admin): AdminDomainInterface {
         return {
             id: data.id,
-            email: data.email
-        }; 
+            email: data.email,
+        };
     }
 
-    static toDomainWithSecureParams(data: Admin): AdminDomainInterfaceWithSecureParams {
+    static toDomainWithSecureParams(
+        data: Admin,
+    ): AdminDomainInterfaceWithSecureParams {
         return {
             id: data.id,
             email: data.email,
-            password: data.password
-        }
+            password: data.password,
+        };
     }
 
     static toSave(data: AdminInterface): Admin {
@@ -26,4 +32,3 @@ export class AdminMapper {
         return model;
     }
 }
-

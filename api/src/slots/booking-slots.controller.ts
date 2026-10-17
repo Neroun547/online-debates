@@ -13,30 +13,47 @@ import { GetSlotsAvailableDatesRequestDto } from "./dto/get-slots-available-date
 export class BookingSlotsController {
     constructor(
         private slotsService: SlotsService,
-        private sessionsService: SessionsService
-    ) {
-
-    }
+        private sessionsService: SessionsService,
+    ) {}
 
     @Get("available-dates")
-    async getAvailableDates(@Query() query: GetSlotsAvailableDatesRequestDto, @User() user: UserDomainInterface) {
-        return await this.slotsService.getSlotsAvailableDatesByUserIdAndSubjectId(query.subjectId, query.userId, query.dateFrom, query.dateTo, user.id);
+    async getAvailableDates(
+        @Query() query: GetSlotsAvailableDatesRequestDto,
+        @User() user: UserDomainInterface,
+    ) {
+        return await this.slotsService.getSlotsAvailableDatesByUserIdAndSubjectId(
+            query.subjectId,
+            query.userId,
+            query.dateFrom,
+            query.dateTo,
+            user.id,
+        );
     }
-    
+
     @Get()
-    async getSlotsForBooking(@Query() query: GetSlotsForBookingRequestDto, @User() user: UserDomainInterface) {
+    async getSlotsForBooking(
+        @Query() query: GetSlotsForBookingRequestDto,
+        @User() user: UserDomainInterface,
+    ) {
         return await this.slotsService.getSlotsForBooking({
             subjectId: query.subjectId,
             authorId: query.userId,
             dateFrom: query.dateFrom,
             dateTo: query.dateTo,
-            customerId: user.id
+            customerId: user.id,
         });
     }
 
     @Post("session")
-    async bookSession(@Body() body: BookSessionDto, @User() user: UserDomainInterface) {
-        await this.sessionsService.bookSession(body.slotId, user.id, body.currentUserDateTime);
+    async bookSession(
+        @Body() body: BookSessionDto,
+        @User() user: UserDomainInterface,
+    ) {
+        await this.sessionsService.bookSession(
+            body.slotId,
+            user.id,
+            body.currentUserDateTime,
+        );
 
         return;
     }

@@ -3,7 +3,7 @@ import type { DtlsParameters } from "mediasoup/types";
 import { WebRTCTransporterDirection } from "./init-webRTC-session-request.dto";
 
 export class TransportConnectRequestDto {
-    @IsString()    
+    @IsString()
     transportId!: string;
 
     @IsNotEmpty()
@@ -12,4 +12,3 @@ export class TransportConnectRequestDto {
     @IsEnum(WebRTCTransporterDirection)
     direction!: WebRTCTransporterDirection;
 }
-

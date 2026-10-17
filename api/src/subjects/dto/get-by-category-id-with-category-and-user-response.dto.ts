@@ -4,4 +4,3 @@ export interface GetByCategoryIdWithCategoryAndUserResponseDto {
     data: Array<SubjectDomainInterface>;
     isLoadMoreAvailable: boolean;
 }
-

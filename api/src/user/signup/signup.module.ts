@@ -7,6 +7,6 @@ import { MailerModule } from "src/integrations/mailer/mailer.module";
 @Module({
     imports: [UserModuleDb, MailerModule],
     controllers: [SignupController],
-    providers: [SignupService]
+    providers: [SignupService],
 })
 export class SignupModule {}

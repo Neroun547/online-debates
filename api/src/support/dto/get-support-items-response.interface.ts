@@ -4,4 +4,3 @@ export interface GetSupportItemsResponseInterface {
     count: number;
     data: SupportDomainInterface[];
 }
-

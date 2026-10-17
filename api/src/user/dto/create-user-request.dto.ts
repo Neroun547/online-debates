@@ -1,14 +1,21 @@
-import { IsEmail, IsEnum, IsInt, IsOptional, IsString, Length } from "class-validator";
+import {
+    IsEmail,
+    IsEnum,
+    IsInt,
+    IsOptional,
+    IsString,
+    Length,
+} from "class-validator";
 import { UserSex } from "src/db/user/user.entity";
 
 export class CreateUserRequestDto {
     @IsString()
     @Length(6, 50)
     username!: string;
-    
+
     @IsEmail()
     email!: string;
-    
+
     @IsString()
     @Length(1, 50)
     timezone!: string;
@@ -28,4 +35,3 @@ export class CreateUserRequestDto {
     @IsEnum(UserSex)
     sex!: UserSex;
 }
-

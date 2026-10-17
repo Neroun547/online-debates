@@ -7,14 +7,16 @@ import { UserModuleDb } from "src/db/user/user.module";
 @Module({
     imports: [
         JwtModule.register({
-            //@ts-ignore
-            signOptions: { expiresIn: String(process.env.USER_AUTH_JWT_EXPIRES_IN) },
-            global: true
+            signOptions: {
+              //@ts-ignore
+                expiresIn: String(process.env.USER_AUTH_JWT_EXPIRES_IN),
+            },
+            global: true,
         }),
-        UserModuleDb
+        UserModuleDb,
     ],
     controllers: [AuthController],
     providers: [AuthService],
-    exports: [AuthService]
+    exports: [AuthService],
 })
 export class AuthModule {}

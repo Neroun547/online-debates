@@ -5,4 +5,3 @@ export class UpdateUserOnlineStatusDto {
     @IsEnum(UserStatus)
     status!: UserStatus;
 }
-

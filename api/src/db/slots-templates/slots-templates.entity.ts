@@ -31,4 +31,3 @@ export class SlotsTemplates {
     @ManyToOne(() => Subject, { onDelete: "CASCADE", onUpdate: "CASCADE" })
     subject!: Subject;
 }
-

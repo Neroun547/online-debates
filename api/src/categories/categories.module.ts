@@ -8,6 +8,6 @@ import { CategoriesTranslatesModuleDb } from "src/db/translates/categories/categ
 @Module({
     imports: [CategoryModuleDb, CategoriesTranslatesModuleDb],
     controllers: [CategoriesController, AdminCategoriesController],
-    providers: [CategoriesService]
+    providers: [CategoriesService],
 })
 export class CategoriesModule {}

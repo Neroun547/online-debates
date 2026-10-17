@@ -14,19 +14,20 @@ export class AuthController {
     async auth(@Body() body: AuthDto): Promise<AuthResponseDto> {
         const result = await this.authService.auth(body);
 
-        return { 
-            token: result.token, 
-            userId: result.userId, 
-            isOnline: result.isOnline, 
+        return {
+            token: result.token,
+            userId: result.userId,
+            isOnline: result.isOnline,
             language: result.language,
-            avatarFilename: result.avatarFilename
+            avatarFilename: result.avatarFilename,
         };
     }
 
     @UseGuards(AuthGuard)
     @Post("refresh-token")
-    async refreshAuthToken(@User() user: UserDomainInterface): Promise<AuthResponseDto> {
+    async refreshAuthToken(
+        @User() user: UserDomainInterface,
+    ): Promise<AuthResponseDto> {
         return await this.authService.refreshAuthToken(user.id);
     }
 }
-

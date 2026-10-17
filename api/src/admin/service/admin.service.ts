@@ -1,4 +1,9 @@
-import { BadRequestException, ForbiddenException, Injectable, NotFoundException } from "@nestjs/common";
+import {
+    BadRequestException,
+    ForbiddenException,
+    Injectable,
+    NotFoundException,
+} from "@nestjs/common";
 import { AdminServiceDb } from "src/db/admin/admin.service";
 import { AdminAuthService } from "../auth/service/admin-auth.service";
 import { createHmac } from "crypto";
@@ -9,21 +14,25 @@ export class AdminService {
     constructor(
         private adminServiceDb: AdminServiceDb,
         private adminAuthService: AdminAuthService,
-        private configService: ConfigService
-    ) {
-
-    }
+        private configService: ConfigService,
+    ) {}
 
     async updateAdminEmail(adminId: number, newEmail: string) {
         const adminInDb = await this.adminServiceDb.findById(adminId);
 
-        if(!adminInDb) {
+        if (!adminInDb) {
             throw new NotFoundException({ message: "Admin not found" });
         }
-        const adminInDbWithTheSameEmail = await this.adminServiceDb.findByEmail(newEmail);
+        const adminInDbWithTheSameEmail =
+            await this.adminServiceDb.findByEmail(newEmail);
 
-        if(adminInDbWithTheSameEmail && adminInDb.id !== adminInDbWithTheSameEmail.id) {
-            throw new BadRequestException({ message: "Admin with the same email already exists in db" });
+        if (
+            adminInDbWithTheSameEmail &&
+            adminInDb.id !== adminInDbWithTheSameEmail.id
+        ) {
+            throw new BadRequestException({
+                message: "Admin with the same email already exists in db",
+            });
         }
         await this.adminServiceDb.updateById(adminId, { email: newEmail });
     }
@@ -32,22 +41,34 @@ export class AdminService {
         oldPassword: string;
         newPassword: string;
     }) {
-        const adminInDb = await this.adminServiceDb.findByIdWithSecureParams(params.adminId);
+        const adminInDb = await this.adminServiceDb.findByIdWithSecureParams(
+            params.adminId,
+        );
 
-        if(!adminInDb) {
+        if (!adminInDb) {
             throw new NotFoundException({ message: "Admin not found" });
         }
-        const isOldPasswordValid = this.adminAuthService.validatePassword(params.oldPassword, adminInDb.password);
+        const isOldPasswordValid = this.adminAuthService.validatePassword(
+            params.oldPassword,
+            adminInDb.password,
+        );
 
-        if(!isOldPasswordValid) {
+        if (!isOldPasswordValid) {
             throw new ForbiddenException({ message: "Old password not valid" });
         }
-        const hashAlg = this.configService.getOrThrow("ADMIN_AUTH_HASH_ALGORITHM");
-        const hashKey = this.configService.getOrThrow("ADMIN_AUTH_PASSWORD_SECRET");
+        const hashAlg = this.configService.getOrThrow(
+            "ADMIN_AUTH_HASH_ALGORITHM",
+        );
+        const hashKey = this.configService.getOrThrow(
+            "ADMIN_AUTH_PASSWORD_SECRET",
+        );
 
-        const newPasswordHash = createHmac(hashAlg, hashKey).update(params.newPassword).digest("hex");
+        const newPasswordHash = createHmac(hashAlg, hashKey)
+            .update(params.newPassword)
+            .digest("hex");
 
-        await this.adminServiceDb.updateById(params.adminId, { password: newPasswordHash });
-    }   
+        await this.adminServiceDb.updateById(params.adminId, {
+            password: newPasswordHash,
+        });
+    }
 }
-

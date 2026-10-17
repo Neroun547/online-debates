@@ -13,10 +13,15 @@ export class Category {
     @Column({ type: "int" })
     priority!: number;
 
+    @Column({ type: "varchar", nullable: true })
+    emoji: string | null;
+
     @OneToMany(() => Subject, (subject: Subject) => subject.category)
     subjects?: Subject[];
 
-    @OneToMany(() => CategoriesTranslates, (translate: CategoriesTranslates) => translate.category)
+    @OneToMany(
+        () => CategoriesTranslates,
+        (translate: CategoriesTranslates) => translate.category,
+    )
     translates!: CategoriesTranslates[];
 }
-

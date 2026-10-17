@@ -2,6 +2,5 @@ import { CategoryDomainInterface } from "src/db/category/interfaces/category.int
 
 export interface GetCategoriesResponseDto {
     data: Array<CategoryDomainInterface>;
-    isLoadMoreAvailable: boolean; 
+    isLoadMoreAvailable: boolean;
 }
-

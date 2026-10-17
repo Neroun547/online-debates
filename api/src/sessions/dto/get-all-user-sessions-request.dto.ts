@@ -2,9 +2,9 @@ import { Type } from "class-transformer";
 import { IsDateString, IsEnum, IsInt, Max, Min } from "class-validator";
 
 export enum GetAllUserSessionsStatus {
-    ALL="all",
-    BOOKED_WITH_ME="booked_with_me",
-    MY_BOOKING="my_booking"
+    ALL = "all",
+    BOOKED_WITH_ME = "booked_with_me",
+    MY_BOOKING = "my_booking",
 }
 
 export class GetAllUserSessionsRequestDto {
@@ -28,4 +28,3 @@ export class GetAllUserSessionsRequestDto {
     @IsEnum(GetAllUserSessionsStatus)
     status!: GetAllUserSessionsStatus;
 }
-

@@ -1,4 +1,9 @@
-import { BadRequestException, ConflictException, Injectable, NotFoundException } from "@nestjs/common";
+import {
+    BadRequestException,
+    ConflictException,
+    Injectable,
+    NotFoundException,
+} from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Sessions, SessionsStatus } from "./sessions.entity";
 import { EntityManager, IsNull, Repository } from "typeorm";
@@ -14,116 +19,148 @@ import { DateTime } from "luxon";
 @Injectable()
 export class SessionsServiceDb {
     constructor(
-        @InjectRepository(Sessions) private sessionsRepository: Repository<Sessions>,
-        private em: EntityManager
+        @InjectRepository(Sessions)
+        private sessionsRepository: Repository<Sessions>,
+        private em: EntityManager,
     ) {}
 
-    async findByIdWithCreatorAndCustomer(id: number): Promise<SessionsDomainInterface | null> {
-        const data = await this.sessionsRepository.findOne({ where: { id: id }, relations: { creator: true, customer: true } });
+    async findByIdWithCreatorAndCustomer(
+        id: number,
+    ): Promise<SessionsDomainInterface | null> {
+        const data = await this.sessionsRepository.findOne({
+            where: { id: id },
+            relations: { creator: true, customer: true },
+        });
 
-        if(!data) {
+        if (!data) {
             return null;
         }
         return SessionsMapper.toDomain(data);
     }
     async updateSessionsExpiredStatus() {
         const now = new Date();
-        const date10MinPrev = DateTime.fromJSDate(now).minus({ minutes: 10 }).toFormat("yyyy-MM-dd HH:mm:ss");
+        const date10MinPrev = DateTime.fromJSDate(now)
+            .minus({ minutes: 10 })
+            .toFormat("yyyy-MM-dd HH:mm:ss");
 
-        await this.sessionsRepository.query(`UPDATE sessions AS session INNER JOIN slots AS slot ON slot.id = session.slotId SET session.status = '${SessionsStatus.COMPLETED}' WHERE slot.endTime < '${date10MinPrev}' AND session.status = '${SessionsStatus.BOOKED}'`);
+        await this.sessionsRepository.query(
+            `UPDATE sessions AS session INNER JOIN slots AS slot ON slot.id = session.slotId SET session.status = '${SessionsStatus.COMPLETED}' WHERE slot.endTime < '${date10MinPrev}' AND session.status = '${SessionsStatus.BOOKED}'`,
+        );
     }
-    async findPermanentSession(params: { customerId: number; creatorId: number; subjectId: number; }): Promise<SessionsDomainInterface | null> {
-        const data = await this.sessionsRepository.findOne({ where: [
-                { 
-                    creatorId: params.creatorId,  
-                    customerId: params.customerId, 
-                    subjectId: params.subjectId, 
+    async findPermanentSession(params: {
+        customerId: number;
+        creatorId: number;
+        subjectId: number;
+    }): Promise<SessionsDomainInterface | null> {
+        const data = await this.sessionsRepository.findOne({
+            where: [
+                {
+                    creatorId: params.creatorId,
+                    customerId: params.customerId,
+                    subjectId: params.subjectId,
                     slotId: IsNull(),
-                    status: SessionsStatus.BOOKED
+                    status: SessionsStatus.BOOKED,
                 },
                 {
                     creatorId: params.customerId,
                     customerId: params.creatorId,
                     subjectId: params.subjectId,
                     slotId: IsNull(),
-                    status: SessionsStatus.BOOKED
-                }
-            ] 
+                    status: SessionsStatus.BOOKED,
+                },
+            ],
         });
 
-        if(!data) {
+        if (!data) {
             return null;
         }
         return SessionsMapper.toDomain(data);
     }
-    async getBookedNowSessions(userId: number): Promise<SessionsDomainInterface[]> {
-        const data = await this.sessionsRepository.find({ where: [ { creatorId: userId }, { customerId: userId } ], relations: { customer: true, creator: true } });
+    async getBookedNowSessions(
+        userId: number,
+    ): Promise<SessionsDomainInterface[]> {
+        const data = await this.sessionsRepository.find({
+            where: [{ creatorId: userId }, { customerId: userId }],
+            relations: { customer: true, creator: true },
+        });
 
-        return data.map(item => SessionsMapper.toDomain(item));
+        return data.map((item) => SessionsMapper.toDomain(item));
     }
-    async savePermanentSession(
-        params: {
-            customerId: number;
-            creatorId: number; 
-            categoryId: number;
-            subjectId: number;
-        }
-    ): Promise<number | undefined> {
+    async savePermanentSession(params: {
+        customerId: number;
+        creatorId: number;
+        categoryId: number;
+        subjectId: number;
+    }): Promise<number | undefined> {
         let savedId: number | undefined;
 
         await this.em.transaction("READ COMMITTED", async (tx) => {
-            const creatorInDb = await tx.findOne(User, { where: { id: params.creatorId } });
-
-            if(!creatorInDb) {
-                throw new NotFoundException({ message: "User not found" });
-            }
-            if(!creatorInDb.isAvailableForPermanentSessions) {
-                throw new BadRequestException({ message: "User not available" });
-            }
-            const customerInDb = await tx.findOne(User, { where: { id: params.customerId } });
-
-            if(!customerInDb) {
-                throw new NotFoundException({ message: "User not found" });
-            }
-            const categoryInDb = await tx.findOne(Category, { where: { id: params.categoryId } });
-
-            if(!categoryInDb) {
-                throw new NotFoundException({ message: "Category not found" });
-            }
-            const subjectInDb = await tx.findOne(Subject, { where: { id: params.subjectId } });
-
-            if(!subjectInDb) {
-                throw new NotFoundException({ message: "Subject not found" });
-            }
-            const permanentSessionInDb = await tx.findOne(Sessions, { 
-                where: [
-                    { 
-                        slotId: IsNull(), 
-                        creatorId: params.creatorId, 
-                        customerId: params.customerId, 
-                        subjectId: params.subjectId, 
-                        status: SessionsStatus.BOOKED 
-                    },
-                    {
-                        slotId: IsNull(), 
-                        creatorId: params.customerId, 
-                        customerId: params.creatorId, 
-                        subjectId: params.subjectId, 
-                        status: SessionsStatus.BOOKED 
-                    }
-                ] 
+            const creatorInDb = await tx.findOne(User, {
+                where: { id: params.creatorId },
             });
 
-            if(permanentSessionInDb) {
-                throw new ConflictException({ message: "Permanent session already booked" });
+            if (!creatorInDb) {
+                throw new NotFoundException({ message: "User not found" });
+            }
+            if (!creatorInDb.isAvailableForPermanentSessions) {
+                throw new BadRequestException({
+                    message: "User not available",
+                });
+            }
+            const customerInDb = await tx.findOne(User, {
+                where: { id: params.customerId },
+            });
+
+            if (!customerInDb) {
+                throw new NotFoundException({ message: "User not found" });
+            }
+            const categoryInDb = await tx.findOne(Category, {
+                where: { id: params.categoryId },
+            });
+
+            if (!categoryInDb) {
+                throw new NotFoundException({ message: "Category not found" });
+            }
+            const subjectInDb = await tx.findOne(Subject, {
+                where: { id: params.subjectId },
+            });
+
+            if (!subjectInDb) {
+                throw new NotFoundException({ message: "Subject not found" });
+            }
+            const permanentSessionInDb = await tx.findOne(Sessions, {
+                where: [
+                    {
+                        slotId: IsNull(),
+                        creatorId: params.creatorId,
+                        customerId: params.customerId,
+                        subjectId: params.subjectId,
+                        status: SessionsStatus.BOOKED,
+                    },
+                    {
+                        slotId: IsNull(),
+                        creatorId: params.customerId,
+                        customerId: params.creatorId,
+                        subjectId: params.subjectId,
+                        status: SessionsStatus.BOOKED,
+                    },
+                ],
+            });
+
+            if (permanentSessionInDb) {
+                throw new ConflictException({
+                    message: "Permanent session already booked",
+                });
             }
             const sessionModel = SessionsMapper.toSave({
                 slotId: null,
                 status: SessionsStatus.BOOKED,
                 creatorId: params.creatorId,
                 customerId: params.customerId,
-                createdAt: DateTime.fromJSDate(new Date()).toUTC().toFormat("yyyy-MM-dd HH:mm:ss"),
-                subjectId: params.subjectId
+                createdAt: DateTime.fromJSDate(new Date())
+                    .toUTC()
+                    .toFormat("yyyy-MM-dd HH:mm:ss"),
+                subjectId: params.subjectId,
             });
             const saved = await tx.save(sessionModel);
 
@@ -134,35 +171,47 @@ export class SessionsServiceDb {
     async existsById(id: number): Promise<boolean> {
         return await this.sessionsRepository.exists({ where: { id: id } });
     }
-    async isUserParticipant(sessionId: number, userId: number): Promise<boolean> {
+    async isUserParticipant(
+        sessionId: number,
+        userId: number,
+    ): Promise<boolean> {
         return await this.sessionsRepository.exists({
             where: [
                 { id: sessionId, creatorId: userId },
-                { id: sessionId, customerId: userId }
-            ]
+                { id: sessionId, customerId: userId },
+            ],
         });
     }
 
-    async findByIdAndUserIdWithSenderAndRecipient(id: number, userId: number): Promise<null | SessionsDomainInterface> {
-        const data = await this.sessionsRepository.findOne({ where: [{ id: id, creatorId: userId }, { id: id, customerId: userId }], relations: { creator: true, customer: true } });
+    async findByIdAndUserIdWithSenderAndRecipient(
+        id: number,
+        userId: number,
+    ): Promise<null | SessionsDomainInterface> {
+        const data = await this.sessionsRepository.findOne({
+            where: [
+                { id: id, creatorId: userId },
+                { id: id, customerId: userId },
+            ],
+            relations: { creator: true, customer: true },
+        });
 
-        if(!data) {
+        if (!data) {
             return null;
         }
         return SessionsMapper.toDomain(data);
     }
 
     async getSessionsByDateRangeAndUserId(params: {
-        dateFrom: string; 
+        dateFrom: string;
         dateTo: string;
         userId: number;
-        page: number; 
-        limit: number; 
+        page: number;
+        limit: number;
         status: GetAllUserSessionsStatus;
     }) {
         let data: Array<Sessions> = [];
-        
-        if(params.status === GetAllUserSessionsStatus.ALL) {
+
+        if (params.status === GetAllUserSessionsStatus.ALL) {
             data = await this.sessionsRepository
                 .createQueryBuilder("session")
                 .leftJoinAndSelect("session.slot", "slot")
@@ -170,19 +219,21 @@ export class SessionsServiceDb {
                 .leftJoinAndSelect("session.creator", "creator")
                 .leftJoinAndSelect("slot.subject", "subject")
                 .leftJoinAndSelect("subject.category", "category")
-                .where("(session.creatorId = :creatorId OR session.customerId = :customerId) AND (slot.startTime >= :startTime AND slot.endTime <= :endTime) OR (session.slotId IS NULL AND session.creatorId = :creatorId OR session.customerId = :customerId)", 
-                { 
-                    creatorId: params.userId, 
-                    customerId: params.userId, 
-                    startTime: params.dateFrom,
-                    endTime: params.dateTo
-                })
+                .where(
+                    "(session.creatorId = :creatorId OR session.customerId = :customerId) AND (slot.startTime >= :startTime AND slot.endTime <= :endTime) OR (session.slotId IS NULL AND session.creatorId = :creatorId OR session.customerId = :customerId)",
+                    {
+                        creatorId: params.userId,
+                        customerId: params.userId,
+                        startTime: params.dateFrom,
+                        endTime: params.dateTo,
+                    },
+                )
                 .orderBy("slot.startTime", "DESC")
                 .offset((params.page - 1) * params.limit)
                 .limit(params.limit)
                 .getMany();
         }
-        if(params.status === GetAllUserSessionsStatus.BOOKED_WITH_ME) {
+        if (params.status === GetAllUserSessionsStatus.BOOKED_WITH_ME) {
             data = await this.sessionsRepository
                 .createQueryBuilder("session")
                 .leftJoinAndSelect("session.slot", "slot")
@@ -190,18 +241,20 @@ export class SessionsServiceDb {
                 .leftJoinAndSelect("session.creator", "creator")
                 .leftJoinAndSelect("slot.subject", "subject")
                 .leftJoinAndSelect("subject.category", "category")
-                .where("(session.creatorId = :creatorId) AND (slot.startTime >= :startTime AND slot.endTime <= :endTime) OR (session.slotId IS NULL AND session.creatorId = :creatorId)", 
-                { 
-                    creatorId: params.userId, 
-                    startTime: params.dateFrom,
-                    endTime: params.dateTo
-                })
+                .where(
+                    "(session.creatorId = :creatorId) AND (slot.startTime >= :startTime AND slot.endTime <= :endTime) OR (session.slotId IS NULL AND session.creatorId = :creatorId)",
+                    {
+                        creatorId: params.userId,
+                        startTime: params.dateFrom,
+                        endTime: params.dateTo,
+                    },
+                )
                 .orderBy("slot.startTime", "DESC")
                 .offset((params.page - 1) * params.limit)
                 .limit(params.limit)
                 .getMany();
         }
-        if(params.status === GetAllUserSessionsStatus.MY_BOOKING) {
+        if (params.status === GetAllUserSessionsStatus.MY_BOOKING) {
             data = await this.sessionsRepository
                 .createQueryBuilder("session")
                 .leftJoinAndSelect("session.slot", "slot")
@@ -209,33 +262,37 @@ export class SessionsServiceDb {
                 .leftJoinAndSelect("session.creator", "creator")
                 .leftJoinAndSelect("slot.subject", "subject")
                 .leftJoinAndSelect("subject.category", "category")
-                .where("(session.customerId = :customerId) AND (slot.startTime >= :startTime AND slot.endTime <= :endTime) OR (session.slotId IS NULL AND session.customerId = :customerId)", 
-                { 
-                    customerId: params.userId, 
-                    startTime: params.dateFrom,
-                    endTime: params.dateTo
-                })
+                .where(
+                    "(session.customerId = :customerId) AND (slot.startTime >= :startTime AND slot.endTime <= :endTime) OR (session.slotId IS NULL AND session.customerId = :customerId)",
+                    {
+                        customerId: params.userId,
+                        startTime: params.dateFrom,
+                        endTime: params.dateTo,
+                    },
+                )
                 .orderBy("slot.startTime", "DESC")
                 .offset((params.page - 1) * params.limit)
                 .limit(params.limit)
                 .getMany();
         }
-        return data.map(session => SessionsMapper.toDomain(session));
+        return data.map((session) => SessionsMapper.toDomain(session));
     }
     async deleteSessionsBeforeDate(sixthMonthBefore: string) {
         await this.sessionsRepository
             .createQueryBuilder()
             .delete()
             .from(Sessions)
-            .where(`
+            .where(
+                `
                 "slotId" IN (
                     SELECT id
                     FROM slots
                     WHERE "startTime" <= :date
                 )
-            `)
-            .setParameter('date', sixthMonthBefore)
-            .execute()
+            `,
+            )
+            .setParameter("date", sixthMonthBefore)
+            .execute();
     }
     saveSession(params: {
         slotId: number;
@@ -250,7 +307,7 @@ export class SessionsServiceDb {
                 .where("slot.id = :slotId", { slotId: params.slotId })
                 .getOne();
 
-            if(!slotInDb) {
+            if (!slotInDb) {
                 throw new NotFoundException({ message: "Slot not found" });
             }
             const alreadyExistsSessionInDb = await tx
@@ -259,16 +316,20 @@ export class SessionsServiceDb {
                 .where("session.slotId = :slotId", { slotId: params.slotId })
                 .getOne();
 
-            if(alreadyExistsSessionInDb) {
-                throw new ConflictException({ message: "Session already exists" });
+            if (alreadyExistsSessionInDb) {
+                throw new ConflictException({
+                    message: "Session already exists",
+                });
             }
             const sessionModel = SessionsMapper.toSave({
                 slotId: params.slotId,
                 status: SessionsStatus.BOOKED,
                 creatorId: params.slotAuthorId,
                 customerId: params.userId,
-                createdAt: DateTime.fromJSDate(new Date()).toUTC().toFormat("yyyy-MM-dd HH:mm:ss"),
-                subjectId: params.subjectId
+                createdAt: DateTime.fromJSDate(new Date())
+                    .toUTC()
+                    .toFormat("yyyy-MM-dd HH:mm:ss"),
+                subjectId: params.subjectId,
             });
             await tx.save(sessionModel);
         });

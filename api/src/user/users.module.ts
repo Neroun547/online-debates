@@ -12,6 +12,6 @@ import { UserController } from "./user.controller";
 @Module({
     imports: [SignupModule, AuthModule, UserModuleDb, MailerModule],
     providers: [UserService, UserStateWebsocketGateway],
-    controllers: [UsersController, AdminUsersController, UserController]
+    controllers: [UsersController, AdminUsersController, UserController],
 })
 export class UserModule {}

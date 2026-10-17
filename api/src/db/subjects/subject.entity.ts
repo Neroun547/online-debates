@@ -1,4 +1,11 @@
-import { Column, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
+import {
+    Column,
+    Entity,
+    JoinColumn,
+    ManyToOne,
+    OneToMany,
+    PrimaryGeneratedColumn,
+} from "typeorm";
 import { User } from "../user/user.entity";
 import { Category } from "../category/category.entity";
 import { SlotsLock } from "../slots-lock/slots-lock.entity";
@@ -14,15 +21,22 @@ export class Subject {
 
     @Column()
     categoryId!: number;
-    
+
     @Column({ nullable: true })
     userId!: number | null;
 
-    @ManyToOne(() => User, { nullable: true, onDelete: "SET NULL", onUpdate: "CASCADE" })
+    @ManyToOne(() => User, {
+        nullable: true,
+        onDelete: "SET NULL",
+        onUpdate: "CASCADE",
+    })
     @JoinColumn({ name: "userId" })
     user!: User;
 
-    @ManyToOne(() => Category, (category) => category.subjects, { onDelete: "CASCADE", onUpdate: "CASCADE" })
+    @ManyToOne(() => Category, (category) => category.subjects, {
+        onDelete: "CASCADE",
+        onUpdate: "CASCADE",
+    })
     @JoinColumn({ name: "categoryId" })
     category!: Category;
 
@@ -32,4 +46,3 @@ export class Subject {
     @OneToMany(() => Sessions, (sessions) => sessions.subject)
     sessions!: Sessions[];
 }
-

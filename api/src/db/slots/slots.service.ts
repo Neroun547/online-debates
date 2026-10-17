@@ -1,13 +1,24 @@
-import { ConflictException, Injectable, NotFoundException } from "@nestjs/common";
+import {
+    ConflictException,
+    Injectable,
+    NotFoundException,
+} from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Slots } from "./slots.entity";
 import { EntityManager, IsNull, Repository } from "typeorm";
-import { CreateSingleSlotInterface, SlotDomainInterface, SlotsInterface } from "./interfaces/slots.interfaces";
+import {
+    CreateSingleSlotInterface,
+    SlotDomainInterface,
+    SlotsInterface,
+} from "./interfaces/slots.interfaces";
 import { SlotsMapper } from "./slots.mapper";
 import { SessionsStatus } from "../sessions/sessions.entity";
 import { SlotsTemplates } from "../slots-templates/slots-templates.entity";
 import { DateTime } from "luxon";
-import { getDateForSlot, getDateStringForSaveSlot } from "src/slots/utils/utils";
+import {
+    getDateForSlot,
+    getDateStringForSaveSlot,
+} from "src/slots/utils/utils";
 import { SlotsLock } from "../slots-lock/slots-lock.entity";
 import { SlotsLockMapper } from "../slots-lock/slots-lock.mapper";
 import { User } from "../user/user.entity";
@@ -16,13 +27,14 @@ import { User } from "../user/user.entity";
 export class SlotsServiceDb {
     constructor(
         @InjectRepository(Slots) private slotsRepository: Repository<Slots>,
-        private em: EntityManager
-    ) {
-
-    }
+        private em: EntityManager,
+    ) {}
     async generateNewSlots(dateTo: string): Promise<void> {
         const currentDate = DateTime.now().startOf("day");
-        const generationEndDate = DateTime.fromFormat(dateTo, "yyyy-MM-dd").startOf("day");
+        const generationEndDate = DateTime.fromFormat(
+            dateTo,
+            "yyyy-MM-dd",
+        ).startOf("day");
         const templateOwners = await this.em
             .createQueryBuilder(SlotsTemplates, "template")
             .select("template.userId", "userId")
@@ -32,7 +44,7 @@ export class SlotsServiceDb {
             .addOrderBy("template.subjectId", "ASC")
             .getRawMany<{ userId: number; subjectId: number }>();
 
-        for(const templateOwner of templateOwners) {
+        for (const templateOwner of templateOwners) {
             const userId = Number(templateOwner.userId);
             const subjectId = Number(templateOwner.subjectId);
 
@@ -48,49 +60,66 @@ export class SlotsServiceDb {
                 await tx
                     .createQueryBuilder(SlotsLock, "slotsLock")
                     .setLock("pessimistic_write")
-                    .where("slotsLock.userId = :userId AND slotsLock.subjectId = :subjectId", { userId: userId, subjectId: subjectId })
+                    .where(
+                        "slotsLock.userId = :userId AND slotsLock.subjectId = :subjectId",
+                        { userId: userId, subjectId: subjectId },
+                    )
                     .getOneOrFail();
 
-                const userInDb = await tx.findOne(User, { where: { id: userId } });
+                const userInDb = await tx.findOne(User, {
+                    where: { id: userId },
+                });
 
-                if(!userInDb) {
+                if (!userInDb) {
                     return;
                 }
                 const templates = await tx.find(SlotsTemplates, {
-                    where: { userId: userId, subjectId: subjectId }
+                    where: { userId: userId, subjectId: subjectId },
                 });
 
-                for(const template of templates) {
+                for (const template of templates) {
                     const firstSlotDate = getDateForSlot(
                         template.weekday,
                         currentDate.weekday,
-                        currentDate.toJSDate()
+                        currentDate.toJSDate(),
                     );
 
-                    if(!firstSlotDate) {
+                    if (!firstSlotDate) {
                         continue;
                     }
-                    let slotDate = DateTime.fromFormat(firstSlotDate, "yyyy-MM-dd");
+                    let slotDate = DateTime.fromFormat(
+                        firstSlotDate,
+                        "yyyy-MM-dd",
+                    );
                     let isSlotCreated = false;
 
-                    while(slotDate.toMillis() < generationEndDate.toMillis()) {
+                    while (slotDate.toMillis() < generationEndDate.toMillis()) {
                         const slotDateString = slotDate.toFormat("yyyy-MM-dd");
-                        const startTime = getDateStringForSaveSlot(slotDateString, template.startTime, userInDb.timezone);
-                        const endTime = getDateStringForSaveSlot(slotDateString, template.endTime, userInDb.timezone);
-                        const countConflicts = await this.countConflictSlotByDateRange(
-                            startTime,
-                            endTime,
-                            userId,
-                            subjectId,
-                            tx
+                        const startTime = getDateStringForSaveSlot(
+                            slotDateString,
+                            template.startTime,
+                            userInDb.timezone,
                         );
-                        if(countConflicts <= 0) {
+                        const endTime = getDateStringForSaveSlot(
+                            slotDateString,
+                            template.endTime,
+                            userInDb.timezone,
+                        );
+                        const countConflicts =
+                            await this.countConflictSlotByDateRange(
+                                startTime,
+                                endTime,
+                                userId,
+                                subjectId,
+                                tx,
+                            );
+                        if (countConflicts <= 0) {
                             const model = SlotsMapper.toSave({
                                 startTime: startTime,
                                 endTime: endTime,
                                 userId: userId,
                                 subjectId: subjectId,
-                                slotsTemplateId: template.id
+                                slotsTemplateId: template.id,
                             });
 
                             await tx.save(model);
@@ -99,8 +128,12 @@ export class SlotsServiceDb {
                         slotDate = slotDate.plus({ weeks: 1 });
                     }
 
-                    if(isSlotCreated) {
-                        await tx.update(SlotsTemplates, { id: template.id }, { lastSlotCreation: new Date() });
+                    if (isSlotCreated) {
+                        await tx.update(
+                            SlotsTemplates,
+                            { id: template.id },
+                            { lastSlotCreation: new Date() },
+                        );
                     }
                 }
             });
@@ -114,10 +147,15 @@ export class SlotsServiceDb {
             .delete()
             .execute();
     }
-    async findByIdWithUser(slotId: number): Promise<SlotDomainInterface | null> {
-        const data = await this.slotsRepository.findOne({ where: { id: slotId }, relations: { user: true } });
+    async findByIdWithUser(
+        slotId: number,
+    ): Promise<SlotDomainInterface | null> {
+        const data = await this.slotsRepository.findOne({
+            where: { id: slotId },
+            relations: { user: true },
+        });
 
-        if(!data) {
+        if (!data) {
             return null;
         }
         return SlotsMapper.toDomain(data);
@@ -132,18 +170,31 @@ export class SlotsServiceDb {
             .createQueryBuilder("s")
             .leftJoinAndSelect("s.session", "session")
             .where("s.userId = :userId", { userId: params.userId })
-            .andWhere("s.subjectId = :subjectId", { subjectId: params.subjectId })
-            .andWhere("s.startTime >= :startTime", { startTime: params.dateFrom })
+            .andWhere("s.subjectId = :subjectId", {
+                subjectId: params.subjectId,
+            })
+            .andWhere("s.startTime >= :startTime", {
+                startTime: params.dateFrom,
+            })
             .andWhere("s.endTime <= :endTime", { endTime: params.dateTo })
-            .andWhere("(session.id IS NULL OR session.status = :sessionStatus)", { sessionStatus: SessionsStatus.CANCELLED })
+            .andWhere(
+                "(session.id IS NULL OR session.status = :sessionStatus)",
+                { sessionStatus: SessionsStatus.CANCELLED },
+            )
             .getMany();
 
-        return data.map(slot => SlotsMapper.toDomain(slot));
+        return data.map((slot) => SlotsMapper.toDomain(slot));
     }
-    async deleteSlotByUserIdAndId(userId: number, slotId: number): Promise<void> {
+    async deleteSlotByUserIdAndId(
+        userId: number,
+        slotId: number,
+    ): Promise<void> {
         await this.slotsRepository.delete({ userId: userId, id: slotId });
     }
-    async findSingleSlotByUserIdAndSlotIdWithSession(userId: number, slotId: number): Promise<SlotDomainInterface | null> {
+    async findSingleSlotByUserIdAndSlotIdWithSession(
+        userId: number,
+        slotId: number,
+    ): Promise<SlotDomainInterface | null> {
         const data = await this.slotsRepository
             .createQueryBuilder("s")
             .leftJoinAndSelect("s.session", "session")
@@ -152,7 +203,7 @@ export class SlotsServiceDb {
             .andWhere("s.slotsTemplateId IS NULL")
             .getOne();
 
-        if(!data) {
+        if (!data) {
             return null;
         }
         return SlotsMapper.toDomain(data);
@@ -167,57 +218,130 @@ export class SlotsServiceDb {
     }): Promise<SlotDomainInterface[]> {
         const data = await this.slotsRepository
             .createQueryBuilder("s")
-            .where({ userId: params.userId, subjectId: params.subjectId, slotsTemplateId: IsNull() })
-            .andWhere("s.startTime >= :startTime AND s.endTime <= :endTime", { startTime: params.dateFrom, endTime: params.dateTo })
+            .where({
+                userId: params.userId,
+                subjectId: params.subjectId,
+                slotsTemplateId: IsNull(),
+            })
+            .andWhere("s.startTime >= :startTime AND s.endTime <= :endTime", {
+                startTime: params.dateFrom,
+                endTime: params.dateTo,
+            })
             .offset((params.page - 1) * params.limit)
             .limit(params.limit)
             .getMany();
 
-        return data.map(item => SlotsMapper.toDomain(item));
+        return data.map((item) => SlotsMapper.toDomain(item));
     }
     async getTotalSingleSlots(params: {
         userId: number;
         dateFrom: string;
         dateTo: string;
         subjectId: number;
-    }): Promise<number> { 
+    }): Promise<number> {
         return await this.slotsRepository
             .createQueryBuilder("s")
-            .where({ userId: params.userId, subjectId: params.subjectId, slotsTemplateId: IsNull() })
-            .andWhere("s.startTime >= :startTime AND s.endTime <= :endTime", { startTime: params.dateFrom, endTime: params.dateTo })
+            .where({
+                userId: params.userId,
+                subjectId: params.subjectId,
+                slotsTemplateId: IsNull(),
+            })
+            .andWhere("s.startTime >= :startTime AND s.endTime <= :endTime", {
+                startTime: params.dateFrom,
+                endTime: params.dateTo,
+            })
             .getCount();
     }
-    async countConflictSlotByDateRange(startTime: string, endTime: string, userId: number, subjectId: number, tx?: EntityManager): Promise<number> {
-        if(!tx) {
+    async countConflictSlotByDateRange(
+        startTime: string,
+        endTime: string,
+        userId: number,
+        subjectId: number,
+        tx?: EntityManager,
+    ): Promise<number> {
+        if (!tx) {
             const data = await this.slotsRepository
                 .createQueryBuilder("s")
                 .select("*")
-                .where("s.userId = :userId AND s.subjectId = :subjectId", { userId: userId, subjectId: subjectId })
-                .andWhere("s.startTime >= :startTime AND s.endTime <= :endTime", { startTime: startTime, endTime: endTime })
-                .orWhere("s.userId = :userId AND s.subjectId = :subjectId AND s.startTime <= :startTime AND s.endTime >= :endTime", { startTime: startTime, endTime: endTime, userId: userId, subjectId: subjectId })
-                .orWhere("s.userId = :userId AND s.subjectId = :subjectId AND s.startTime <= :endTime AND s.endTime >= :endTime", { endTime: endTime, userId: userId, subjectId: subjectId })
-                .orWhere("s.userId = :userId AND s.subjectId = :subjectId AND s.startTime <= :startTime AND s.endTime <= :endTime AND s.endTime >= :startTime", { startTime: startTime, endTime: endTime, userId: userId, subjectId: subjectId })
+                .where("s.userId = :userId AND s.subjectId = :subjectId", {
+                    userId: userId,
+                    subjectId: subjectId,
+                })
+                .andWhere(
+                    "s.startTime >= :startTime AND s.endTime <= :endTime",
+                    { startTime: startTime, endTime: endTime },
+                )
+                .orWhere(
+                    "s.userId = :userId AND s.subjectId = :subjectId AND s.startTime <= :startTime AND s.endTime >= :endTime",
+                    {
+                        startTime: startTime,
+                        endTime: endTime,
+                        userId: userId,
+                        subjectId: subjectId,
+                    },
+                )
+                .orWhere(
+                    "s.userId = :userId AND s.subjectId = :subjectId AND s.startTime <= :endTime AND s.endTime >= :endTime",
+                    { endTime: endTime, userId: userId, subjectId: subjectId },
+                )
+                .orWhere(
+                    "s.userId = :userId AND s.subjectId = :subjectId AND s.startTime <= :startTime AND s.endTime <= :endTime AND s.endTime >= :startTime",
+                    {
+                        startTime: startTime,
+                        endTime: endTime,
+                        userId: userId,
+                        subjectId: subjectId,
+                    },
+                )
                 .getCount();
 
             return data;
         }
-        return await tx.getRepository(Slots)
+        return await tx
+            .getRepository(Slots)
             .createQueryBuilder("s")
             .select("*")
-            .where("s.userId = :userId AND s.subjectId = :subjectId", { userId: userId, subjectId: subjectId })
-            .andWhere("s.startTime >= :startTime AND s.endTime <= :endTime", { startTime: startTime, endTime: endTime })
-            .orWhere("s.userId = :userId AND s.subjectId = :subjectId AND s.startTime <= :startTime AND s.endTime >= :endTime", { startTime: startTime, endTime: endTime, userId: userId, subjectId: subjectId })
-            .orWhere("s.userId = :userId AND s.subjectId = :subjectId AND s.startTime <= :endTime AND s.endTime >= :endTime", { endTime: endTime, userId: userId, subjectId: subjectId })
-            .orWhere("s.userId = :userId AND s.subjectId = :subjectId AND s.startTime <= :startTime AND s.endTime <= :endTime AND s.endTime >= :startTime", { startTime: startTime, endTime: endTime, userId: userId, subjectId: subjectId })
+            .where("s.userId = :userId AND s.subjectId = :subjectId", {
+                userId: userId,
+                subjectId: subjectId,
+            })
+            .andWhere("s.startTime >= :startTime AND s.endTime <= :endTime", {
+                startTime: startTime,
+                endTime: endTime,
+            })
+            .orWhere(
+                "s.userId = :userId AND s.subjectId = :subjectId AND s.startTime <= :startTime AND s.endTime >= :endTime",
+                {
+                    startTime: startTime,
+                    endTime: endTime,
+                    userId: userId,
+                    subjectId: subjectId,
+                },
+            )
+            .orWhere(
+                "s.userId = :userId AND s.subjectId = :subjectId AND s.startTime <= :endTime AND s.endTime >= :endTime",
+                { endTime: endTime, userId: userId, subjectId: subjectId },
+            )
+            .orWhere(
+                "s.userId = :userId AND s.subjectId = :subjectId AND s.startTime <= :startTime AND s.endTime <= :endTime AND s.endTime >= :startTime",
+                {
+                    startTime: startTime,
+                    endTime: endTime,
+                    userId: userId,
+                    subjectId: subjectId,
+                },
+            )
             .getCount();
     }
     async saveSingleSlot(data: CreateSingleSlotInterface) {
-        const slotsLockInDb = await this.em.findOne(SlotsLock, { where: { userId: data.userId, subjectId: data.subjectId } });
+        const slotsLockInDb = await this.em.findOne(SlotsLock, {
+            where: { userId: data.userId, subjectId: data.subjectId },
+        });
 
-        if(!slotsLockInDb) {
+        if (!slotsLockInDb) {
             const slotsLockModel = SlotsLockMapper.toSave({
                 userId: data.userId,
-                subjectId: data.subjectId
+                subjectId: data.subjectId,
             });
             await this.em
                 .createQueryBuilder()
@@ -231,41 +355,79 @@ export class SlotsServiceDb {
             await tx
                 .createQueryBuilder(SlotsLock, "slotsLock")
                 .setLock("pessimistic_write")
-                .where("slotsLock.userId = :userId AND slotsLock.subjectId = :subjectId", { userId: data.userId, subjectId: data.subjectId })
+                .where(
+                    "slotsLock.userId = :userId AND slotsLock.subjectId = :subjectId",
+                    { userId: data.userId, subjectId: data.subjectId },
+                )
                 .getOneOrFail();
-            
-            const userInDb = await tx.findOne(User, { where: { id: data.userId } });
 
-            if(!userInDb) {
+            const userInDb = await tx.findOne(User, {
+                where: { id: data.userId },
+            });
+
+            if (!userInDb) {
                 throw new NotFoundException({ message: "User not found" });
             }
-            const startTimeSlot = getDateStringForSaveSlot(DateTime.fromFormat(data.startTime, "yyyy-MM-dd HH:mm").toFormat("yyyy-MM-dd"), DateTime.fromFormat(data.startTime, "yyyy-MM-dd HH:mm").toFormat("HH:mm"), userInDb.timezone);
-            const endTimeSlot = getDateStringForSaveSlot(DateTime.fromFormat(data.endTime, "yyyy-MM-dd HH:mm").toFormat("yyyy-MM-dd"), DateTime.fromFormat(data.endTime, "yyyy-MM-dd HH:mm").toFormat("HH:mm"), userInDb.timezone);
+            const startTimeSlot = getDateStringForSaveSlot(
+                DateTime.fromFormat(
+                    data.startTime,
+                    "yyyy-MM-dd HH:mm",
+                ).toFormat("yyyy-MM-dd"),
+                DateTime.fromFormat(
+                    data.startTime,
+                    "yyyy-MM-dd HH:mm",
+                ).toFormat("HH:mm"),
+                userInDb.timezone,
+            );
+            const endTimeSlot = getDateStringForSaveSlot(
+                DateTime.fromFormat(data.endTime, "yyyy-MM-dd HH:mm").toFormat(
+                    "yyyy-MM-dd",
+                ),
+                DateTime.fromFormat(data.endTime, "yyyy-MM-dd HH:mm").toFormat(
+                    "HH:mm",
+                ),
+                userInDb.timezone,
+            );
 
-            const conflictsCount = await this.countConflictSlotByDateRange(startTimeSlot, endTimeSlot, data.userId, data.subjectId, tx);
+            const conflictsCount = await this.countConflictSlotByDateRange(
+                startTimeSlot,
+                endTimeSlot,
+                data.userId,
+                data.subjectId,
+                tx,
+            );
 
-            if(conflictsCount > 0) {
-                throw new ConflictException({ message: "OVERLAPS_WITH_ANOTHER_SLOT" });
+            if (conflictsCount > 0) {
+                throw new ConflictException({
+                    message: "OVERLAPS_WITH_ANOTHER_SLOT",
+                });
             }
             const model = SlotsMapper.toSave({
                 startTime: startTimeSlot,
                 endTime: endTimeSlot,
                 userId: data.userId,
                 subjectId: data.subjectId,
-                slotsTemplateId: data.slotsTemplateId
+                slotsTemplateId: data.slotsTemplateId,
             });
             await tx.save(model);
         });
     }
 
     async saveMany(data: SlotsInterface[]) {
-        const modelsArr = data.map(item => SlotsMapper.toSave(item));
+        const modelsArr = data.map((item) => SlotsMapper.toSave(item));
 
         await this.slotsRepository.insert(modelsArr);
     }
 
-    async getAvailableDatesForSlotsByUserIdAndSubjectId(userId: number, subjectId: number, dateFrom: string, dateTo: string): Promise<Array<{ startTime: Date }>> {
-        const data = await this.slotsRepository.query(`SELECT DISTINCT DATE(startTime) as startTime FROM slots LEFT JOIN sessions ON sessions.id=slots.id WHERE slots.userId=${userId} AND slots.subjectId = ${subjectId} AND slots.startTime >= "${dateFrom}" AND slots.endTime <= "${dateTo}" AND sessions.id IS NULL;`);
+    async getAvailableDatesForSlotsByUserIdAndSubjectId(
+        userId: number,
+        subjectId: number,
+        dateFrom: string,
+        dateTo: string,
+    ): Promise<Array<{ startTime: Date }>> {
+        const data = await this.slotsRepository.query(
+            `SELECT DISTINCT DATE(startTime) as startTime FROM slots LEFT JOIN sessions ON sessions.id=slots.id WHERE slots.userId=${userId} AND slots.subjectId = ${subjectId} AND slots.startTime >= "${dateFrom}" AND slots.endTime <= "${dateTo}" AND sessions.id IS NULL;`,
+        );
 
         return data;
     }

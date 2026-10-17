@@ -7,8 +7,6 @@ import { AdminModuleDb } from "src/db/admin/admin.module";
 @Module({
     imports: [AdminAuthModule, AdminModuleDb],
     controllers: [AdminController],
-    providers: [AdminService]
+    providers: [AdminService],
 })
-export class AdminModule {
-
-}
+export class AdminModule {}

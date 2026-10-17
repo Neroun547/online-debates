@@ -8,6 +8,7 @@ export interface SubjectItem {
 export interface CategoryItem {
     id: number;
     name: string;
+    emoji?: string | null;
     translateNameRu?: string;
     translateNameUk?: string;
     translateNameEn?: string;

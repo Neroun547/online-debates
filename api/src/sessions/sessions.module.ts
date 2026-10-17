@@ -14,9 +14,21 @@ import { SessionsSchedule } from "./sessions.schedule";
 import { MailerModule } from "src/integrations/mailer/mailer.module";
 
 @Module({
-    imports: [SlotsModuleDb, UserModuleDb, SessionsModuleDb, WebRTCModule, MessagesModuleDb, MailerModule],
+    imports: [
+        SlotsModuleDb,
+        UserModuleDb,
+        SessionsModuleDb,
+        WebRTCModule,
+        MessagesModuleDb,
+        MailerModule,
+    ],
     providers: [SessionsService, SessionsGateway, SessionsSchedule],
-    controllers: [UserSessionsController, WebRTCController, UserSessionsChatController, SessionsController],
-    exports: [SessionsService]
+    controllers: [
+        UserSessionsController,
+        WebRTCController,
+        UserSessionsChatController,
+        SessionsController,
+    ],
+    exports: [SessionsService],
 })
 export class SessionsModule {}

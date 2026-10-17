@@ -6,6 +6,6 @@ import { AdminServiceDb } from "./admin.service";
 @Module({
     imports: [TypeOrmModule.forFeature([Admin])],
     providers: [AdminServiceDb],
-    exports: [AdminServiceDb]
+    exports: [AdminServiceDb],
 })
 export class AdminModuleDb {}

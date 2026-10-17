@@ -5,4 +5,3 @@ export interface GetUsersResponseDto {
     isLoadMorePossible: boolean;
     count: number;
 }
-

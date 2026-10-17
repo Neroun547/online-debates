@@ -12,16 +12,19 @@ export class SessionsController {
     constructor(private sessionsService: SessionsService) {}
 
     @Post("book-now")
-    async bookSessionNow(@Body() body: BookSessionNowDto, @User() user: UserDomainInterface): Promise<BookSessionNowResponseDto> {
+    async bookSessionNow(
+        @Body() body: BookSessionNowDto,
+        @User() user: UserDomainInterface,
+    ): Promise<BookSessionNowResponseDto> {
         const sessionId = await this.sessionsService.bookSessionNow({
             creatorId: body.userId,
             customerId: user.id,
             categoryId: body.categoryId,
-            subjectId: body.subjectId
+            subjectId: body.subjectId,
         });
 
         return {
-            sessionId: sessionId
+            sessionId: sessionId,
         };
     }
 }

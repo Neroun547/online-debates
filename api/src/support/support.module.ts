@@ -7,6 +7,6 @@ import { AdminSupportController } from "./admin-support.controller";
 @Module({
     imports: [SupportModuleDb],
     controllers: [SupportController, AdminSupportController],
-    providers: [SupportService]
+    providers: [SupportService],
 })
 export class SupportModule {}

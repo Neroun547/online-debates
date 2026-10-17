@@ -11,21 +11,21 @@ import type { UserDomainInterface } from "src/db/user/interfaces/user.interfaces
 export class UserSessionsController {
     constructor(
         private sessionsService: SessionsService,
-        private webRTCService: WebRTCService
-    ) {
-        
-    }
-    
+        private webRTCService: WebRTCService,
+    ) {}
+
     @Get()
-    async getAllUserSessions(@Query() query: GetAllUserSessionsRequestDto, @User() user: UserDomainInterface) {
+    async getAllUserSessions(
+        @Query() query: GetAllUserSessionsRequestDto,
+        @User() user: UserDomainInterface,
+    ) {
         return await this.sessionsService.getAllUserSessions({
             dateFrom: query.dateFrom,
             dateTo: query.dateTo,
             page: query.page,
             limit: query.limit,
             status: query.status,
-            userId: user.id
+            userId: user.id,
         });
     }
 }
-

@@ -39,7 +39,10 @@
         "enjoyDiscussion": "Enjoy the discussion",
         "createOwnTopicDescription": "You can also create your own topic for discussion in the list of existing categories or select an existing topic and create slots in it.",
         "popularCategoriesToday": "Today's most popular categories",
-        "viewAllCategories": "View all categories"
+        "viewAllCategories": "View all categories",
+        "categories": {
+        	"goToCategory": "Go to category"
+        }
     },
     "footer": {
         "brand": "Wanna talk",

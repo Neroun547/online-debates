@@ -6,6 +6,6 @@ import { SupportServiceDb } from "./support.service";
 @Module({
     imports: [TypeOrmModule.forFeature([Support])],
     providers: [SupportServiceDb],
-    exports: [SupportServiceDb]
+    exports: [SupportServiceDb],
 })
 export class SupportModuleDb {}

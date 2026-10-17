@@ -1,8 +1,14 @@
 import { Category } from "../../category/category.entity";
-import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
+import {
+    Column,
+    Entity,
+    JoinColumn,
+    ManyToOne,
+    PrimaryGeneratedColumn,
+} from "typeorm";
 
 export enum CategoriesTranslatesPropertyNames {
-    name="name"
+    name = "name",
 }
 
 @Entity()

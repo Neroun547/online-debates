@@ -1,6 +1,16 @@
-import { BadRequestException, ConflictException, Injectable, InternalServerErrorException, NotFoundException } from "@nestjs/common";
+import {
+    BadRequestException,
+    ConflictException,
+    Injectable,
+    InternalServerErrorException,
+    NotFoundException,
+} from "@nestjs/common";
 import { CreateSlotsTemplateDto } from "../dto/create-slots-template.dto";
-import { getSecondsFromTime, parseDateForCustomer, parseStartTimeAndEndTimeForCustomer } from "../utils/utils";
+import {
+    getSecondsFromTime,
+    parseDateForCustomer,
+    parseStartTimeAndEndTimeForCustomer,
+} from "../utils/utils";
 import { CategoryServiceDb } from "src/db/category/category.service";
 import { SubjectServiceDb } from "src/db/subjects/subject.service";
 import { SlotsTemplatesServiceDb } from "src/db/slots-templates/slots-templates.service";
@@ -17,25 +27,32 @@ export class SlotsService {
         private subjectServiceDb: SubjectServiceDb,
         private slotsTemplatesServiceDb: SlotsTemplatesServiceDb,
         private slotsServiceDb: SlotsServiceDb,
-        private usersServiceDb: UserServiceDb
+        private usersServiceDb: UserServiceDb,
+    ) {}
+
+    async getSlotsAvailableDatesByUserIdAndSubjectId(
+        subjectId: number,
+        slotCreatorUserId: number,
+        dateFrom: string,
+        dateTo: string,
+        userId: number,
     ) {
-
-    }
-
-    async getSlotsAvailableDatesByUserIdAndSubjectId(subjectId: number, slotCreatorUserId: number, dateFrom: string, dateTo: string, userId: number) {
         const userInDb = await this.usersServiceDb.findById(userId);
 
-        if(!userInDb) {
+        if (!userInDb) {
             throw new NotFoundException({ message: "User not found" });
         }
-        const data = await this.slotsServiceDb.getAvailableDatesForSlotsByUserIdAndSubjectId(
-            slotCreatorUserId, 
-            subjectId,
-            dateFrom,
-            dateTo
-        );
+        const data =
+            await this.slotsServiceDb.getAvailableDatesForSlotsByUserIdAndSubjectId(
+                slotCreatorUserId,
+                subjectId,
+                dateFrom,
+                dateTo,
+            );
 
-        return data.map(item => ({ date: parseDateForCustomer(item.startTime, userInDb.timezone) }));
+        return data.map((item) => ({
+            date: parseDateForCustomer(item.startTime, userInDb.timezone),
+        }));
     }
 
     async getSlotsForBooking(params: {
@@ -45,120 +62,155 @@ export class SlotsService {
         authorId: number;
         customerId: number;
     }) {
-        if(params.authorId === params.customerId) {
-            throw new BadRequestException({ message: "Customer id and author id cannot be the same" });    
+        if (params.authorId === params.customerId) {
+            throw new BadRequestException({
+                message: "Customer id and author id cannot be the same",
+            });
         }
-        const customerInDb = await this.usersServiceDb.findById(params.customerId);
+        const customerInDb = await this.usersServiceDb.findById(
+            params.customerId,
+        );
 
-        if(!customerInDb) {
+        if (!customerInDb) {
             throw new NotFoundException({ message: "User not found" });
         }
         const authorInDb = await this.usersServiceDb.findById(params.authorId);
-   
-        if(!authorInDb) {
+
+        if (!authorInDb) {
             throw new NotFoundException({ message: "User not found" });
         }
         const data = await this.slotsServiceDb.findForBooking({
             dateFrom: params.dateFrom,
             dateTo: params.dateTo,
             userId: params.authorId,
-            subjectId: params.subjectId
+            subjectId: params.subjectId,
         });
-        return data.map(item => {
-            const parsedDate = parseStartTimeAndEndTimeForCustomer(item.startTime, item.endTime, customerInDb.timezone);
+        return data.map((item) => {
+            const parsedDate = parseStartTimeAndEndTimeForCustomer(
+                item.startTime,
+                item.endTime,
+                customerInDb.timezone,
+            );
 
             return {
                 ...item,
                 startTime: parsedDate.startTime,
-                endTime: parsedDate.endTime
-            }
+                endTime: parsedDate.endTime,
+            };
         });
     }
 
-    async getTotalSingleSlots(userId: number, dateFrom: string, dateTo: string, subjectId: number): Promise<number> {
+    async getTotalSingleSlots(
+        userId: number,
+        dateFrom: string,
+        dateTo: string,
+        subjectId: number,
+    ): Promise<number> {
         return await this.slotsServiceDb.getTotalSingleSlots({
             userId: userId,
             dateFrom: dateFrom,
             dateTo: dateTo,
-            subjectId: subjectId
+            subjectId: subjectId,
         });
     }
     async deleteSingleSlot(slotId: number, userId: number) {
         const userInDb = await this.usersServiceDb.findById(userId);
 
-        if(!userInDb) {
+        if (!userInDb) {
             throw new NotFoundException({ message: "User not found" });
         }
-        const slotInDb = await this.slotsServiceDb.findSingleSlotByUserIdAndSlotIdWithSession(userId, slotId);
+        const slotInDb =
+            await this.slotsServiceDb.findSingleSlotByUserIdAndSlotIdWithSession(
+                userId,
+                slotId,
+            );
 
-        if(!slotInDb) {
+        if (!slotInDb) {
             throw new NotFoundException({ message: "Slot not found" });
         }
-        if(slotInDb.session) {
-            throw new BadRequestException({ message: "Cannot delete slot with booked session" });
+        if (slotInDb.session) {
+            throw new BadRequestException({
+                message: "Cannot delete slot with booked session",
+            });
         }
         await this.slotsServiceDb.deleteSlotByUserIdAndId(userId, slotId);
     }
 
     async saveSingleSlot(body: CreateSingleSlotDto, userId: number) {
-        const subjectInDb = await this.subjectServiceDb.findById(body.subjectId);
+        const subjectInDb = await this.subjectServiceDb.findById(
+            body.subjectId,
+        );
 
-        if(!subjectInDb) {
+        if (!subjectInDb) {
             throw new NotFoundException({ message: "Subject not found" });
         }
-        this.validateSingleSlotTime(new Date(body.startTime), new Date(body.endTime));
+        this.validateSingleSlotTime(
+            new Date(body.startTime),
+            new Date(body.endTime),
+        );
 
         await this.slotsServiceDb.saveSingleSlot({
             startTime: body.startTime,
             endTime: body.endTime,
             userId: userId,
             subjectId: body.subjectId,
-            slotsTemplateId: null
+            slotsTemplateId: null,
         });
     }
     async getTemplatesByUserIdAndSubjectId(userId: number, subjectId: number) {
         const userInDb = await this.usersServiceDb.findById(userId);
 
-        if(!userInDb) {
+        if (!userInDb) {
             throw new NotFoundException({ message: "User not found" });
         }
-        return await this.slotsTemplatesServiceDb.findByUserIdAndSubjectId(userId, subjectId);
+        return await this.slotsTemplatesServiceDb.findByUserIdAndSubjectId(
+            userId,
+            subjectId,
+        );
     }
 
     async saveTemplate(data: CreateSlotsTemplateDto, userId: number) {
-        for(const slot of data.slots) {
+        for (const slot of data.slots) {
             this.validateSlotTime(slot.startTime, slot.endTime);
         }
-        const countCategoriesInDb = await this.categoryServiceDb.countById(data.categoryId);
-        
-        if(countCategoriesInDb <= 0) {
+        const countCategoriesInDb = await this.categoryServiceDb.countById(
+            data.categoryId,
+        );
+
+        if (countCategoriesInDb <= 0) {
             throw new NotFoundException({ message: "Category not found" });
         }
-        const countSubjectsInDb = await this.subjectServiceDb.countByCategoryIdAndId(data.categoryId, data.subjectId);
+        const countSubjectsInDb =
+            await this.subjectServiceDb.countByCategoryIdAndId(
+                data.categoryId,
+                data.subjectId,
+            );
 
-        if(countSubjectsInDb <= 0) {
+        if (countSubjectsInDb <= 0) {
             throw new NotFoundException({ message: "Subject not found" });
         }
         const templateSlotsArr: Array<SlotsTemplatesInterface> = [];
 
-        for(const templateSlot of data.slots) {
+        for (const templateSlot of data.slots) {
             templateSlotsArr.push({
                 weekday: templateSlot.weekday,
                 startTime: templateSlot.startTime,
                 endTime: templateSlot.endTime,
                 userId: userId,
                 subjectId: data.subjectId,
-                lastSlotCreation: new Date()
+                lastSlotCreation: new Date(),
             });
         }
         try {
             await this.slotsTemplatesServiceDb.saveWithSlots(
                 templateSlotsArr,
                 userId,
-                data.subjectId
+                data.subjectId,
             );
-        } catch(error: any) {
-            throw new InternalServerErrorException({ message: "Save template transaction failed" });
+        } catch (error: any) {
+            throw new InternalServerErrorException({
+                message: "Save template transaction failed",
+            });
         }
     }
 
@@ -170,21 +222,23 @@ export class SlotsService {
         page: number;
         limit: number;
     }) {
-        const subjectInDb = await this.subjectServiceDb.findById(params.subjectId);
+        const subjectInDb = await this.subjectServiceDb.findById(
+            params.subjectId,
+        );
 
-        if(!subjectInDb) {
+        if (!subjectInDb) {
             throw new NotFoundException({ message: "Subject not found" });
         }
         const userInDb = await this.usersServiceDb.findById(params.userId);
 
-        if(!userInDb) {
+        if (!userInDb) {
             throw new NotFoundException({ message: "User not found" });
         }
         const count = await this.slotsServiceDb.getTotalSingleSlots({
             userId: params.userId,
             dateFrom: params.dateFrom,
             dateTo: params.dateTo,
-            subjectId: params.subjectId
+            subjectId: params.subjectId,
         });
         const slots = await this.slotsServiceDb.findSingleSlots({
             userId: params.userId,
@@ -192,32 +246,40 @@ export class SlotsService {
             dateTo: params.dateTo,
             subjectId: params.subjectId,
             page: params.page,
-            limit: params.limit
+            limit: params.limit,
         });
-        const data = slots.map(slot => {
-            const startAndEndTime = parseStartTimeAndEndTimeForCustomer(slot.startTime, slot.endTime, userInDb.timezone);
+        const data = slots.map((slot) => {
+            const startAndEndTime = parseStartTimeAndEndTimeForCustomer(
+                slot.startTime,
+                slot.endTime,
+                userInDb.timezone,
+            );
 
             return {
                 ...slot,
                 startTime: startAndEndTime.startTime,
-                endTime: startAndEndTime.endTime
-            }
+                endTime: startAndEndTime.endTime,
+            };
         });
         return {
             data: data,
-            isLoadMoreAvailable: count > (params.page * params.limit)
-        }
+            isLoadMoreAvailable: count > params.page * params.limit,
+        };
     }
 
     private validateSlotTime(startTime: string, endTime: string): void {
         const startTimeSeconds = getSecondsFromTime(startTime);
         const endTimeSeconds = getSecondsFromTime(endTime);
 
-        if((endTimeSeconds - startTimeSeconds) < 600) {
-            throw new BadRequestException({ message: "Min interval 10 minutes" });
+        if (endTimeSeconds - startTimeSeconds < 600) {
+            throw new BadRequestException({
+                message: "Min interval 10 minutes",
+            });
         }
-        if(endTimeSeconds < startTimeSeconds) {
-            throw new BadRequestException({ message: "End time must be greater than start time" });
+        if (endTimeSeconds < startTimeSeconds) {
+            throw new BadRequestException({
+                message: "End time must be greater than start time",
+            });
         }
     }
 
@@ -228,12 +290,15 @@ export class SlotsService {
         const dateFromMillis = dateFromLuxon.toMillis();
         const dateToMillis = dateToLuxon.toMillis();
 
-        if(dateFromMillis >= dateToMillis) {
-            throw new BadRequestException({ message: "Date from must be greater than date to" });
+        if (dateFromMillis >= dateToMillis) {
+            throw new BadRequestException({
+                message: "Date from must be greater than date to",
+            });
         }
-        if((dateToMillis - dateFromMillis) <= 600000) {
-            throw new BadRequestException({ message: "Min interval 10 minutes" });
+        if (dateToMillis - dateFromMillis <= 600000) {
+            throw new BadRequestException({
+                message: "Min interval 10 minutes",
+            });
         }
     }
 }
-

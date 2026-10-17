@@ -13,4 +13,3 @@ export class UpdateAdminPasswordDto {
     @Length(8, 50)
     confirmNewPassword!: string;
 }
-

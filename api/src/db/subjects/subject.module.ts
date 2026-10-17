@@ -6,9 +6,6 @@ import { SubjectServiceDb } from "./subject.service";
 @Module({
     imports: [TypeOrmModule.forFeature([Subject])],
     providers: [SubjectServiceDb],
-    exports: [SubjectServiceDb]
+    exports: [SubjectServiceDb],
 })
-export class SubjectModuleDb {
-
-}
-
+export class SubjectModuleDb {}

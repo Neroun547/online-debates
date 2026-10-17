@@ -18,6 +18,5 @@ export class SignupController {
         await this.signupService.confirmUserAccountByMailHash(hash);
 
         return;
-    }   
+    }
 }
-

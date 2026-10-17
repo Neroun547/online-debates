@@ -1,4 +1,11 @@
-import { Controller, Get, Param, ParseIntPipe, Query, UseGuards } from "@nestjs/common";
+import {
+    Controller,
+    Get,
+    Param,
+    ParseIntPipe,
+    Query,
+    UseGuards,
+} from "@nestjs/common";
 import { AuthGuard } from "./auth/auth.guard";
 import { UserService } from "./service/users.service";
 import { FindByIdWithSubjectsResponseDto } from "./dto/find-by-id-with-subjects-response.dto";
@@ -11,13 +18,17 @@ export class UsersController {
 
     @UseGuards(AuthGuard)
     @Get()
-    async findUsers(@Query() query: FindUsersRequestDto): Promise<FindUsersResponseDto> {
+    async findUsers(
+        @Query() query: FindUsersRequestDto,
+    ): Promise<FindUsersResponseDto> {
         return await this.usersService.findUsers(query);
     }
 
     @UseGuards(AuthGuard)
     @Get(":id")
-    async getUserById(@Param("id", new ParseIntPipe()) id: number): Promise<FindByIdWithSubjectsResponseDto> {
+    async getUserById(
+        @Param("id", new ParseIntPipe()) id: number,
+    ): Promise<FindByIdWithSubjectsResponseDto> {
         return await this.usersService.findByIdWithSubjects(id);
     }
 }

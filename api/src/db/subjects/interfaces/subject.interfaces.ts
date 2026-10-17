@@ -16,4 +16,3 @@ export interface SubjectDomainInterface {
     category?: CategoryDomainInterface;
     user?: UserDomainInterface;
 }
-

@@ -26,6 +26,14 @@
             class="w-full"
           />
         </UFormField>
+        <UFormField name="emoji" label="Emoji" class="mt-5 w-full">
+          <UInput
+            v-model="formState.emoji"
+            placeholder="Emoji"
+            name="emoji"
+            class="w-full"
+          />
+        </UFormField>
         <UFormField name="priority" label="Priority" class="mt-5 w-full">
           <UInputNumber
             v-model="formState.priority"
@@ -65,6 +73,7 @@ const formSchema = zod.object({
   translateNameEn: zod.string().min(1).max(500),
   translateNameRu: zod.string().min(1).max(500),
   translateNameUk: zod.string().min(1).max(500),
+  emoji: zod.string().max(255).optional()
 });
 
 const formState = reactive({
@@ -72,5 +81,6 @@ const formState = reactive({
   translateNameEn: "",
   translateNameRu: "",
   translateNameUk: "",
+  emoji: ""
 });
 </script>

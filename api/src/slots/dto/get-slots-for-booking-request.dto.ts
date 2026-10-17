@@ -16,4 +16,3 @@ export class GetSlotsForBookingRequestDto {
     @IsDateString()
     dateTo!: string;
 }
-

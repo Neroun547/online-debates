@@ -1,4 +1,13 @@
-import { Column, Entity, JoinColumn, ManyToMany, ManyToOne, OneToMany, OneToOne, PrimaryGeneratedColumn } from "typeorm";
+import {
+    Column,
+    Entity,
+    JoinColumn,
+    ManyToMany,
+    ManyToOne,
+    OneToMany,
+    OneToOne,
+    PrimaryGeneratedColumn,
+} from "typeorm";
 import { User } from "../user/user.entity";
 import { Slots } from "../slots/slots.entity";
 import { Messages } from "../messages/messages.entity";
@@ -7,7 +16,7 @@ import { Subject } from "../subjects/subject.entity";
 export enum SessionsStatus {
     BOOKED = "booked",
     COMPLETED = "completed",
-    CANCELLED = "cancelled"
+    CANCELLED = "cancelled",
 }
 
 @Entity()
@@ -18,9 +27,9 @@ export class Sessions {
     @Column({ nullable: true })
     slotId!: number | null;
 
-    @Column({ 
+    @Column({
         type: "enum",
-        enum: SessionsStatus
+        enum: SessionsStatus,
     })
     status!: SessionsStatus;
 
@@ -36,23 +45,36 @@ export class Sessions {
     @Column({ nullable: true })
     subjectId!: number;
 
-    @ManyToOne(() => Subject, { nullable: true, onDelete: "SET NULL", onUpdate: "CASCADE" })
+    @ManyToOne(() => Subject, {
+        nullable: true,
+        onDelete: "SET NULL",
+        onUpdate: "CASCADE",
+    })
     @JoinColumn({ name: "subjectId" })
     subject!: Subject;
 
-    @ManyToOne(() => User, (user) => user.id, { onDelete: "CASCADE", onUpdate: "CASCADE" })
+    @ManyToOne(() => User, (user) => user.id, {
+        onDelete: "CASCADE",
+        onUpdate: "CASCADE",
+    })
     @JoinColumn({ name: "creatorId" })
     creator!: User;
 
-    @ManyToOne(() => User, (user) => user.id, { onDelete: "CASCADE", onUpdate: "CASCADE" })
+    @ManyToOne(() => User, (user) => user.id, {
+        onDelete: "CASCADE",
+        onUpdate: "CASCADE",
+    })
     @JoinColumn({ name: "customerId" })
-    customer!: User; 
-    
-    @OneToOne(() => Slots, (slot) => slot.id, { onDelete: "CASCADE", onUpdate: "CASCADE", nullable: true })
+    customer!: User;
+
+    @OneToOne(() => Slots, (slot) => slot.id, {
+        onDelete: "CASCADE",
+        onUpdate: "CASCADE",
+        nullable: true,
+    })
     @JoinColumn({ name: "slotId" })
     slot!: Slots;
 
     @OneToMany(() => Messages, (messages: Messages) => messages.session)
     messages!: Messages[];
 }
-

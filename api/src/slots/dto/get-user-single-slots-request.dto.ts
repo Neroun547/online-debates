@@ -23,4 +23,3 @@ export class GetUserSingleSlotsDto {
     @IsInt()
     subjectId!: number;
 }
-

@@ -9,11 +9,12 @@ dotenv.config();
 export class SessionsSchedule {
     constructor(private sessionsServiceDb: SessionsServiceDb) {}
 
-    @Interval(Number(process.env.SESSIONS_SCHEDULE_CHANGE_STATUS_INTERVAL) ?? 60000)
+    @Interval(
+        Number(process.env.SESSIONS_SCHEDULE_CHANGE_STATUS_INTERVAL) ?? 60000,
+    )
     async changeSessionsStatus() {
         await this.sessionsServiceDb.updateSessionsExpiredStatus();
 
         return;
-    }   
+    }
 }
-

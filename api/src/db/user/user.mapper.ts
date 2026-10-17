@@ -1,5 +1,9 @@
 import { SubjectMapper } from "../subjects/subject.mapper";
-import { UserDomainInterface, UserInterface, UserWithSecureParams } from "./interfaces/user.interfaces";
+import {
+    UserDomainInterface,
+    UserInterface,
+    UserWithSecureParams,
+} from "./interfaces/user.interfaces";
 import { User } from "./user.entity";
 
 export class UserMapper {
@@ -11,13 +15,18 @@ export class UserMapper {
             status: user.status,
             timezone: user.timezone,
             language: user.language,
-            isAvailableForPermanentSessions: user.isAvailableForPermanentSessions,
+            isAvailableForPermanentSessions:
+                user.isAvailableForPermanentSessions,
             avatarFilename: user.avatarFilename,
             age: user.age,
             description: user.description,
-            subjects: user.subjects ? user.subjects.map(subject => SubjectMapper.toDomain(subject)) : undefined,
-            sex: user.sex
-        }
+            subjects: user.subjects
+                ? user.subjects.map((subject) =>
+                      SubjectMapper.toDomain(subject),
+                  )
+                : undefined,
+            sex: user.sex,
+        };
     }
     static toDomainWithSecureParams(user: User): UserWithSecureParams {
         return {
@@ -30,17 +39,22 @@ export class UserMapper {
             timezone: user.timezone,
             language: user.language,
             avatarFilename: user.avatarFilename,
-            isAvailableForPermanentSessions: user.isAvailableForPermanentSessions,
+            isAvailableForPermanentSessions:
+                user.isAvailableForPermanentSessions,
             age: user.age,
             description: user.description,
-            subjects: user.subjects ? user.subjects.map(subject => SubjectMapper.toDomain(subject)) : undefined,
-            sex: user.sex
-        }
+            subjects: user.subjects
+                ? user.subjects.map((subject) =>
+                      SubjectMapper.toDomain(subject),
+                  )
+                : undefined,
+            sex: user.sex,
+        };
     }
     static toSave(user: UserInterface): User {
         const model = new User();
 
-        if(user.id) {
+        if (user.id) {
             model.id = user.id;
         }
         model.username = user.username;
@@ -58,4 +72,3 @@ export class UserMapper {
         return model;
     }
 }
-

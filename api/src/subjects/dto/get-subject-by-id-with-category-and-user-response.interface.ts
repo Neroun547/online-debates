@@ -9,4 +9,3 @@ export interface GetSubjectByIdWithCategoryAndUserResponseDto {
     user?: UserDomainInterface;
     category?: CategoryDomainInterface;
 }
-

@@ -11,10 +11,9 @@ export class SupportController {
         await this.supportService.save({
             email: body.email,
             subject: body.subject,
-            message: body.message
+            message: body.message,
         });
 
         return;
     }
 }
-

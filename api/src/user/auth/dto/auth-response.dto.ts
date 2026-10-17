@@ -5,4 +5,3 @@ export interface AuthResponseDto {
     language: string | null;
     avatarFilename: string | null;
 }
-

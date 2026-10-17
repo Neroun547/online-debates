@@ -16,4 +16,3 @@ export class GetSlotsAvailableDatesRequestDto {
     @IsString()
     dateTo!: string;
 }
-

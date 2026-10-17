@@ -1,6 +1,11 @@
-import { IsInt, IsString, Length } from "class-validator";
+import { IsInt, IsOptional, IsString, Length } from "class-validator";
 
 export class UpdateCategoryDto {
+    @IsOptional()
+    @Length(1, 255)
+    @IsString()
+    emoji?: string;
+  
     @IsString()
     @Length(1, 500)
     translateNameUk!: string;
@@ -16,4 +21,3 @@ export class UpdateCategoryDto {
     @IsInt()
     priority!: number;
 }
-

@@ -1,4 +1,15 @@
-import { Body, Controller, Delete, Get, Param, ParseIntPipe, Post, Put, Query, UseGuards } from "@nestjs/common";
+import {
+    Body,
+    Controller,
+    Delete,
+    Get,
+    Param,
+    ParseIntPipe,
+    Post,
+    Put,
+    Query,
+    UseGuards,
+} from "@nestjs/common";
 import { AdminAuthGuard } from "src/admin/auth/admin-auth.guard";
 import { GetUsersRequestDto } from "./dto/get-users-request.dto";
 import { UserService } from "./service/users.service";
@@ -8,16 +19,14 @@ import { AdminUpdateUserDto } from "./dto/admin-update-user.dto";
 @UseGuards(AdminAuthGuard)
 @Controller("/admin/users")
 export class AdminUsersController {
-    constructor(private usersService: UserService) {
+    constructor(private usersService: UserService) {}
 
-    }
-    
     @Get()
     async getUsers(@Query() query: GetUsersRequestDto) {
         return await this.usersService.getUsers({
             page: query.page,
             limit: query.limit,
-            searchUsername: query.searchUsername
+            searchUsername: query.searchUsername,
         });
     }
 
@@ -37,14 +46,17 @@ export class AdminUsersController {
             password: body.password,
             age: body.age,
             description: body.description,
-            sex: body.sex
+            sex: body.sex,
         });
 
         return;
     }
 
     @Put(":userId")
-    async updateUser(@Param("userId", new ParseIntPipe()) userId: number, @Body() body: AdminUpdateUserDto) {
+    async updateUser(
+        @Param("userId", new ParseIntPipe()) userId: number,
+        @Body() body: AdminUpdateUserDto,
+    ) {
         await this.usersService.adminUpdateUser({
             userId: userId,
             email: body.email,
@@ -53,7 +65,7 @@ export class AdminUsersController {
             age: body.age,
             description: body.description,
             sex: body.sex,
-            password: body.password
+            password: body.password,
         });
 
         return;

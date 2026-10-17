@@ -12,5 +12,4 @@ export class UpdateUserAboutInfoDto {
 
     @IsEnum(UserSex)
     sex!: UserSex;
-}   
-
+}

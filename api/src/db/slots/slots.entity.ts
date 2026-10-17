@@ -1,4 +1,11 @@
-import { Column, Entity, JoinColumn, ManyToOne, OneToOne, PrimaryGeneratedColumn } from "typeorm";
+import {
+    Column,
+    Entity,
+    JoinColumn,
+    ManyToOne,
+    OneToOne,
+    PrimaryGeneratedColumn,
+} from "typeorm";
 import { User } from "../user/user.entity";
 import { Subject } from "../subjects/subject.entity";
 import { SlotsTemplates } from "../slots-templates/slots-templates.entity";
@@ -32,11 +39,14 @@ export class Slots {
     @JoinColumn({ name: "subjectId" })
     subject!: Subject;
 
-    @ManyToOne(() => SlotsTemplates, { nullable: true, onDelete: "SET NULL", onUpdate: "CASCADE" })
+    @ManyToOne(() => SlotsTemplates, {
+        nullable: true,
+        onDelete: "SET NULL",
+        onUpdate: "CASCADE",
+    })
     @JoinColumn({ name: "slotsTemplateId" })
     slotsTemplate!: SlotsTemplates;
 
     @OneToOne(() => Sessions, (session) => session.slot)
     session!: Sessions;
 }
-

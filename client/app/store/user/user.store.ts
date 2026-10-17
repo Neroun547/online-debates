@@ -14,7 +14,6 @@ import type { UpdateUserAvatarResponseInterface } from "./interfaces/update-user
 import type { UpdateUserAboutInfoRequestInterface } from "./interfaces/update-user-about-info-request.interface";
 import type { GetUserByIdWithSubjectsResponseInterface } from "./interfaces/get-user-by-id-with-subjects-response.interface";
 import type { FindUsersRequestInterface } from "./interfaces/find-users-request.interface";
-import type { UserInterface } from "./interfaces/user-response.interface";
 import type { FindUsersResponseInterface } from "./interfaces/find-users-response.interface";
 
 export enum UserStatus {
@@ -50,7 +49,9 @@ export const useUserStore = defineStore("user", {
             window.location.href = "/auth";
         },
         async findUsers(params: FindUsersRequestInterface) {
-            try {            
+			try {
+				this.clearErrorState();
+				
                 let queryString = `?page=${params.page}&limit=${params.limit}&sex=${params.sex}&ageFrom=${params.ageFrom}&ageTo=${params.ageTo}`;
 
                 if(params.emailOrUsername) {
@@ -62,14 +63,18 @@ export const useUserStore = defineStore("user", {
             }
         },
         async getUserWithSubjectsById(id: number) {
-            try {
+			try {
+				this.clearErrorState();
+				
                 return await useApiFetch<GetUserByIdWithSubjectsResponseInterface>("/users/" + id, { method: "GET" });
             } catch(error: any) {
                 this.setError(error.response._data.message);
             }
         },
         async refreshToken() {
-            try {
+			try {
+				this.clearErrorState();
+				
                 const response = await useApiFetch<AuthResponseInterface>("/users/auth/refresh-token", { method: "POST" });
 
                 if(response) {
@@ -82,8 +87,10 @@ export const useUserStore = defineStore("user", {
                 this.setError(error.response._data.message);
             }
         },
-        async deleteAvatar() {
-            try {
+		async deleteAvatar() {
+			try {
+				this.clearErrorState();
+				
                 await useApiFetch("/user/avatar", { method: "DELETE" });
 
                 this.setAvatarFilename(null);
@@ -92,7 +99,9 @@ export const useUserStore = defineStore("user", {
             }
         },
         async updateAvatar(file: File) {
-            try {
+			try {
+				this.clearErrorState();
+				
                 const formData = new FormData();
 
                 formData.append("file", file);
@@ -109,7 +118,8 @@ export const useUserStore = defineStore("user", {
         },
         async updatePassword(oldPassword: string, newPassword: string, confirmNewPassword: string) {
             try {
-                this.clearErrorState();
+				this.clearErrorState();
+                
                 await useApiFetch("/user/password", { method: "PATCH", body: { oldPassword: oldPassword, newPassword: newPassword, confirmNewPassword: confirmNewPassword } })
             } catch(error: any) {
                 this.setError(error.response._data.message);
@@ -146,7 +156,7 @@ export const useUserStore = defineStore("user", {
         async updateEmail(email: string) {
             try {
                 this.clearErrorState();
-                
+
                 const response = await useApiFetch<UpdateUserDataResponseInterface>("/user/personal-data", { method: "PATCH", body: { email: email } });
 
                 if(response) {
@@ -159,9 +169,9 @@ export const useUserStore = defineStore("user", {
         async updateUsername(username: string) {
             try {
                 this.clearErrorState();
-                
+
                 const response = await useApiFetch<UpdateUsernameResponseInterface>("/user/personal-data", { method: "PATCH", body: { username: username } });
-                  
+
                 if(response) {
                     this.setToken(response.token);
                 }
@@ -173,6 +183,7 @@ export const useUserStore = defineStore("user", {
             this.isOnline = value;
 
             try {
+                this.clearErrorState();
                 await useApiFetch("/user/status", { method: "PATCH", body: {
                         status: value ? "online" : "offline"
                     }
@@ -181,8 +192,10 @@ export const useUserStore = defineStore("user", {
                 this.setError(error.response._data.message);
             }
         },
-        async sendPasswordRecoveryLink(email: string) {
-            try {
+      async sendPasswordRecoveryLink(email: string) {
+          try {
+                this.clearErrorState();
+            
                 await useApiFetch("/user/send-password-recovery-link", { method: "POST", body: { email: email } });
             } catch(error: any) {
                 console.log(error)
@@ -190,7 +203,9 @@ export const useUserStore = defineStore("user", {
             }
         },
         async passwordRecovery(newPassword: string, hash: string) {
-            try {
+			try {
+				this.clearErrorState();
+				
                 await useApiFetch("/user/password-recovery/" + hash, { method: "PATCH", body: { password: newPassword } });
             } catch(error: any) {
                 this.setError(error.response._data.message);
@@ -302,14 +317,18 @@ export const useUserStore = defineStore("user", {
             page: number;
             limit: number;
         }): Promise<GetUsersBySubjectResponseInterface[] | undefined> {
-            try {
+			try {
+				this.clearErrorState();
+				
                 return await useApiFetch<GetUsersBySubjectResponseInterface[]>(`/subjects/${params.subjectId}/users?limit=${params.limit}&page=${params.page}&subjectId=${params.subjectId}`);
             } catch(error: any) {
                 this.setError(error.response._data.message);
             }
         },
         async updateUserLanguage(language: string) {
-            try {
+			try {
+				this.clearErrorState();
+				
                 this.setLanguage(language);
 
                 await useApiFetch("/user/language", { method: "PATCH", body: { language: language } });

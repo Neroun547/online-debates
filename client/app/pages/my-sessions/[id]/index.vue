@@ -12,6 +12,14 @@
           playsinline
           class="w-full"
         ></video>
+        <div
+          v-if="!isLocalVideoAvailable"
+          class="bg-gray-400 w-full h-full absolute top-0 flex items-center justify-center max-md:w-full max-md:h-full"
+        >
+          <div>
+            <h2 class="text-2xl text-white text-center">No video</h2>
+          </div>
+        </div>
         <div class="microphone-off-banner" v-if="isMicrophoneDisabled">
           {{ $t("mySessions.microphoneOff") }}
         </div>
@@ -125,6 +133,7 @@ const localVideoElement = ref<HTMLVideoElement | null>(null);
 const remoteVideoElement = ref<HTMLVideoElement | null>(null);
 
 const isRemoteVideoAvailable = ref<boolean>(false);
+const isLocalVideoAvailable = ref<boolean>(false);
 
 const isLoadMoreMessagesAvailable = ref<boolean>(false);
 const chatMessagesSkip = ref(0);
@@ -178,9 +187,11 @@ function toggleVideo() {
   isVideoDisabled.value = !isVideoDisabled.value;
 
   if (isVideoDisabled.value && videoProducer) {
+	isLocalVideoAvailable.value = false;
     videoProducer.pause();
   }
-  if (!isVideoDisabled.value && videoProducer) {
+	if (!isVideoDisabled.value && videoProducer) {
+		isLocalVideoAvailable.value = true;
     videoProducer.resume();
   }
 }
@@ -445,7 +456,9 @@ async function createSendTransport() {
       });
       audioProducer = await transport.produce({
         track: audioTrack,
-      });
+	  });
+
+      isLocalVideoAvailable.value = true;
     }
   } catch (error: any) {
     if (error.name === "UnsupportedError")

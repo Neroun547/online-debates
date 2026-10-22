@@ -49,6 +49,7 @@ async function getCategories() {
         isLink: true,
         title: getCategoryItemTranslate(item),
         link: "/categories/" + item.id,
+        emoji: item.emoji
       })),
     );
     isLoadMoreButtonShow.value = response.isLoadMoreAvailable;

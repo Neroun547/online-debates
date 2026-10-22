@@ -8,9 +8,10 @@ export interface CategoryItem {
     translateNameEn?: string;
     priority: number;
     subjects: SubjectItem[];
+    emoji?: string;
 }
 
 export interface GetCategoriesResponseInterface {
     data: Array<CategoryItem>;
-    isLoadMoreAvailable: boolean; 
+    isLoadMoreAvailable: boolean;
 }

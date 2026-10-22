@@ -6,6 +6,7 @@
         class="text-primary text-xl text-left mt-3 list-inside"
         style="list-style-type: disclosure-closed; color: rgb(174, 174, 174)"
       >
+      	<span v-if="item.emoji" class="mr-2">{{ item.emoji }}</span>
         <ULink
           v-if="item.isLink"
           class="text-primary cursor-pointer underline max-sm:text-base"
@@ -23,6 +24,7 @@ export interface ListItem {
   isLink: boolean;
   link: string;
   title: string;
+  emoji?: string;
   [key: string]: any;
 }
 interface Props {

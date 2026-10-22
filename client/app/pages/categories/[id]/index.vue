@@ -1,8 +1,11 @@
 <template>
   <div v-if="currentCategory">
     <div class="mt-15">
+      <h2 class="text-4xl text-center flex items-center justify-center">
+        <span v-if="currentCategory.emoji" class="mr-2 block text-[28px] mb-[5px]">{{ currentCategory.emoji }}</span>
+        <span class="block">{{ currentCategory?.name }}</span>
+      </h2>
       <div v-if="subjects.length">
-        <h2 class="text-4xl text-center">{{ currentCategory?.name }}</h2>
         <div class="mt-15">
           <BaseList :items="subjects" />
         </div>
@@ -13,7 +16,7 @@
           class="m-auto block mt-15"
         />
       </div>
-      <div v-if="!subjects.length">
+      <div v-if="!subjects.length" class="mt-15">
         <h2 class="text-4xl max-md:text-2xl max-sm:text-xl text-center">
           {{ $t("categories.noSubjects") }}
         </h2>

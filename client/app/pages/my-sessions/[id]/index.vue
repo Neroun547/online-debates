@@ -530,8 +530,6 @@ onMounted(async () => {
 
   await getChatMessages();
 
-  appStore.setIsLoading(false);
-
   $sessionsSocket.emit("session:join", {
     sessionId: Number(route.params.id),
   });
@@ -544,6 +542,8 @@ onMounted(async () => {
   $sessionsSocket.on("session:microphone-toggle", handleAnotherUserMicrophoneDisabled);
 
   await createSendTransport();
+
+  appStore.setIsLoading(false);
 
   const producerData = await sessionsStore.getProducerData(
     Number(route.params.id),

@@ -3,7 +3,7 @@
     <div class="mt-15">
       <h2 class="text-4xl text-center flex items-center justify-center">
         <span v-if="currentCategory.emoji" class="mr-2 block text-[28px] mb-[5px]">{{ currentCategory.emoji }}</span>
-        <span class="block">{{ currentCategory?.name }}</span>
+        <span class="block">{{ currentCategoryNameTranslate }}</span>
       </h2>
       <div v-if="subjects.length">
         <div class="mt-15">
@@ -30,6 +30,8 @@ import { useAppStore } from "~/store/app-store";
 import { useCategoriesStore } from "~/store/categories/categories.store";
 import type { CategoryItem } from "~/store/categories/interfaces/get-categories-response.interface";
 
+const { locale } = useI18n();
+
 const subjects = ref<ListItem[]>([]);
 const route = useRoute();
 
@@ -43,6 +45,15 @@ const isLoadMoreAvailable = ref(false);
 const isLoadMoreButtonLoading = ref(false);
 
 const appStore = useAppStore();
+
+const currentCategoryNameTranslate = computed(() => {
+	if(locale.value == "ru" && currentCategory.value?.translateNameRu) {
+		return currentCategory.value?.translateNameRu;
+	} else if(locale.value == "uk" && currentCategory.value?.translateNameUk) {
+		return currentCategory.value?.translateNameUk;
+	}
+	return currentCategory.value?.name;
+});
 
 function incrementPage() {
   page.value += 1;

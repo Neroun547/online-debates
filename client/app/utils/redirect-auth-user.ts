@@ -1,10 +1,9 @@
-import { useUserStore } from "~/store/user/user.store";
+import { useUserStore } from "~/store/user/user.store"
 
 export function redirectAuthUser() {
-    const userStore = useUserStore();
+	const userStore = useUserStore()
 
-    if(userStore.isAuth) {
-        window.location.href = "/home";
-    }
+	if (userStore.isAuth) {
+		window.location.href = "/home"
+	}
 }
-

@@ -23,7 +23,7 @@ export class CategoriesService {
     ): Promise<GetCategoriesResponseDto> {
         const currentSkipElements = page * limit;
         const count = await this.categoriesServiceDb.countAll();
-        const data = await this.categoriesServiceDb.find(page, limit);
+        const data = await this.categoriesServiceDb.findWith5TheMostPopularSubjects(page, limit);
 
         return {
             data: data,

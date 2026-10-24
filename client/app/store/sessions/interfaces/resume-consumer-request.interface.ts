@@ -1,4 +1,4 @@
 export interface ResumeConsumeRequestInterface {
-    sessionId: number;
-    consumerId: string;
+	sessionId: number
+	consumerId: string
 }

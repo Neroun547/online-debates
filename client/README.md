@@ -8,5 +8,5 @@ store - folder for app stores
 
 All api communication is taking place in stores.
 
-utils - folder for utils function 
-libs - folder for libs function, some abstraction 
+utils - folder for utils function
+libs - folder for libs function, some abstraction

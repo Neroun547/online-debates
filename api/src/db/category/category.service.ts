@@ -59,7 +59,7 @@ export class CategoryServiceDb {
 
         return CategoryMapper.toDomain(await this.repository.save(model));
     }
-    async find(page: number, limit: number) {
+    async findWith5TheMostPopularSubjects(page: number, limit: number) {
         const data = await this.repository.find({
             where: {},
             order: { priority: "ASC" },
@@ -67,6 +67,26 @@ export class CategoryServiceDb {
             skip: (page - 1) * limit,
             relations: { translates: true },
         });
+
+        await Promise.all(
+            data.map(async (category) => {
+                const categoryWithSubjects = await this.repository
+                    .createQueryBuilder("category")
+                    .leftJoinAndSelect("category.subjects", "subject")
+                    .leftJoin("subject.sessions", "session")
+                    .where("category.id = :categoryId", {
+                        categoryId: category.id,
+                    })
+                    .groupBy("category.id")
+                    .addGroupBy("subject.id")
+                    .orderBy("COUNT(session.id)", "DESC")
+                    .addOrderBy("subject.id", "ASC")
+                    .limit(5)
+                    .getOne();
+
+                category.subjects = categoryWithSubjects?.subjects ?? [];
+            }),
+        );
 
         return data.map((item) => CategoryMapper.toDomain(item));
     }

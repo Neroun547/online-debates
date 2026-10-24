@@ -1,9 +1,6 @@
 export interface UpdatePersonalInfoRequestInterface {
-    email?: string;
-    username?: string;
-    timezone?: string;
-    isAvailableForPermanentSessions?: boolean; 
+	email?: string
+	username?: string
+	timezone?: string
+	isAvailableForPermanentSessions?: boolean
 }
-
-
-

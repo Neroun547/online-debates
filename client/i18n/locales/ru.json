@@ -1,400 +1,406 @@
 {
-    "errors": {
-        "slots": {
-            "overlapsWithAnotherSlot": "Выбранный временной интервал конфликтует с существующим слотом"
-        }
-    },
-    "noCategoriesFound": "Категорий не найдено",
-    "noSubjectsFound": "Тем не найдено",
-    "loading": "Загрузка",
-    "loadMore": "Загрузить больше",
-    "nav": {
-        "offlineStatusLabel": "Я офлайн",
-        "onlineStatusLabel": "Я онлайн"
-    },
-    "landingNav": {
-        "tryIt": "Попробовать",
-        "support": "Поддержка",
-        "chatRules": "Правила общения",
-        "login": "Войти"
-    },
-    "landing": {
-        "morePeopleBetterConversation": "Больше людей — интереснее общение",
-        "talkAboutWhat": "Обсуждайте то, что",
-        "interestsYou": "вам интересно",
-        "findLikeMindedPeople": "Находите единомышленников, знакомьтесь с новыми людьми и участвуйте в увлекательных обсуждениях",
-        "sharedInterestsSpace": "Wanna Talk — это пространство для общения на основе общих интересов.",
-        "chooseSubjectAndStart": "Выберите тему, найдите собеседников и начните обсуждение в удобное для вас время.",
-        "tryNow": "Попробовать",
-        "findPeopleDescription": "Wanna Talk помогает находить людей с похожими интересами. Просто выберите тему, найдите свободное время или создайте собственную тему.",
-        "worldIsCloser": "Мир ближе, чем кажется",
-        "howItWorks": "Как это работает?",
-        "fewStepsToConversation": "Всего несколько шагов — и вы уже участвуете в беседе.",
-        "chooseSubject": "Выберите тему",
-        "toTalkAbout": "для обсуждения",
-        "selectDateAndTime": "Выберите дату и время",
-        "toMakeBooking": "чтобы забронировать встречу",
-        "wait": "Подождите",
-        "forSessionStart": "начала сессии",
-        "enjoyDiscussion": "Наслаждайтесь общением",
-        "createOwnTopicDescription": "Вы также можете создать собственную тему для обсуждения в одной из существующих категорий или выбрать готовую тему и добавить удобные временные слоты.",
-        "popularCategoriesToday": "Самые популярные категории сегодня",
-        "viewAllCategories": "Посмотреть все категории",
-        "categories": {
-        	"goToCategory": "Перейти к категории"
-        }
-    },
-    "footer": {
-        "brand": "Wanna talk",
-        "support": "Поддержка",
-        "privacyPolicy": "Политика конфиденциальности"
-    },
-    "baseDeleteModal": {
-        "cancel": "Отмена"
-    },
-    "sideNav": {
-        "mySlots": "Мои слоты",
-        "mySubjects": "Мои темы",
-        "categories": "Категории",
-        "mySessions": "Мои сессии",
-        "settings": "Настройки",
-        "support": "Поддержка",
-        "exit": "Выйти",
-        "users": "Пользователи"
-    },
-    "settings": {
-        "title": "Настройки",
-        "personalInfo": "Личная информация",
-        "email": "Электронная почта",
-        "username": "Имя пользователя",
-        "timezone": "Часовой пояс",
-        "availableForPermanentSessions": "Доступен для постоянных сессий",
-        "permanentSessionsDescription": "Включив эту опцию, вы разрешите пользователям создавать с вами постоянную сессию и связываться с вами в любое время.",
-        "language": "Язык",
-        "savePersonalData": "Сохранить новые личные данные",
-        "changePassword": "Изменить пароль",
-        "enterOldPassword": "Введите текущий пароль",
-        "oldPassword": "Текущий пароль",
-        "enterNewPassword": "Введите новый пароль",
-        "newPassword": "Новый пароль",
-        "confirmNewPassword": "Подтвердите новый пароль",
-        "confirmNewPasswordPlaceholder": "Подтвердите новый пароль",
-        "updatePassword": "Обновить пароль",
-        "dangerZone": "Опасная зона",
-        "deleteAccount": "Удалить аккаунт",
-        "passwordsDoNotMatch": "Пароли не совпадают",
-        "error": "Ошибка",
-        "success": "Успешно",
-        "passwordChangedSuccessfully": "Пароль успешно изменён",
-        "personalDataUpdatedSuccessfully": "Личные данные успешно обновлены",
-        "avatar": {
-            "title": "Фото профиля",
-            "description": "Загрузите изображение, которое другие пользователи будут видеть в вашем профиле.",
-            "currentAvatar": "Текущий аватар",
-            "currentAvatarDescription": "Изображение будет обрезано по кругу",
-            "selectImage": "Перетащите изображение сюда или нажмите, чтобы выбрать",
-            "requirements": "PNG, JPG, JPEG или WebP, размер файла до 30 МБ",
-            "invalidFormat": "Допускаются только изображения JPG, JPEG, PNG и WebP",
-            "fileTooLarge": "Размер изображения не должен превышать 30 МБ",
-            "removeAvatar": "Удалить фото",
-            "saveAvatar": "Сохранить фото",
-            "updatedSuccessfully": "Аватар обновлено успешно",
-            "updated": "Обновлено",
-            "deleted": "Удалено",
-            "deletedSuccessfully": "Аватар успешно удален"
-        },
-        "aboutMySelf": "О себе",
-        "age": "Возраст",
-        "describeYourself": "Опишите себя",
-        "save": "Сохранить",
-        "infoAboutMySelfUpdatedSuccessfully": "Информация обо мне обновлена успешно",
-        "sex": "Пол"
-    },
-    "categories": {
-        "noSubjects": "Тем пока нет :( Вы можете стать первым",
-        "allCategories": "Все категории",
-        "allCategoriesDescription": "На этой странице представлены все доступные в системе категории для общения. В каждой категории находятся темы, созданные пользователями. Выберите тему, затем пользователя и начните общение.",
-        "createTopicDescription": "Вы также можете создать собственную тему для обсуждения в одной из доступных категорий на странице «Мои темы». Приятного общения!"
-    },
-    "subjects": {
-        "participants": "Участники",
-        "chooseParticipant": "Выберите собеседника для обсуждения этой темы и начните общение.",
-        "noParticipants": "Участников пока нет",
-        "noParticipantsDescription": "Здесь появятся пользователи, которым интересна эта тема.",
-        "email": "Электронная почта",
-        "username": "Имя пользователя",
-        "status": "Статус",
-        "itsYou": "Это вы",
-        "bookSession": "Забронировать сессию",
-        "startSessionNow": "Начать сессию сейчас",
-        "error": "Ошибка",
-        "success": "Успешно",
-        "sessionBookedSuccessfully": "Сессия успешно забронирована",
-        "bookingModal": {
-            "title": "Забронировать сессию",
-            "description": "Выберите дату и доступный временной слот.",
-            "selectDate": "Выберите дату",
-            "availableDatesDescription": "Доступные даты показаны ниже",
-            "availableTime": "Доступное время",
-            "availableSlots": "Доступно: {count}",
-            "noAvailableSlots": "Нет доступных слотов",
-            "tryAnotherDate": "Выберите другую дату, чтобы найти доступное время.",
-            "timeZone": "Часовой пояс: {timezone}",
-            "yourLocalTime": "Ваше местное время",
-            "selectTimeToContinue": "Выберите время, чтобы продолжить",
-            "cancel": "Отмена",
-            "bookSession": "Забронировать сессию"
-        },
-        "sex": "Пол"
-    },
-    "support": {
-        "title": "Связаться с поддержкой",
-        "description": "Опишите свой вопрос или проблему, и мы свяжемся с вами.",
-        "email": "Электронная почта",
-        "subject": "Тема",
-        "subjectPlaceholder": "Чем мы можем вам помочь?",
-        "message": "Сообщение",
-        "messagePlaceholder": "Напишите своё сообщение здесь...",
-        "sendMessage": "Отправить сообщение",
-        "error": "Ошибка",
-        "sentSuccessfully": "Успешно отправлено",
-        "sentDescription": "Ваше сообщение успешно отправлено. Мы ответим на вашу электронную почту."
-    },
-    "mySessions": {
-        "title": "Мои сессии",
-        "sessions": "Сессии",
-        "dateFrom": "Дата с",
-        "dateTo": "Дата по",
-        "bookedWithMe": "Забронированы со мной",
-        "myBookings": "Мои бронирования",
-        "myBooking": "Моё бронирование",
-        "all": "Все",
-        "invalidDateRange": "Некорректный диапазон дат",
-        "dateRangeDescription": "Начальная дата не может быть позже конечной.",
-        "couldNotLoadSessions": "Не удалось загрузить сессии",
-        "tryAgain": "Попробовать снова",
-        "withUser": "С пользователем",
-        "statusBooked": "Забронирована",
-        "statusCompleted": "Завершена",
-        "statusCancelled": "Отменена",
-        "statusOnline": "В сети",
-        "statusOffline": "Не в сети",
-        "statusBusy": "Занят",
-        "permanentBookedWithYou": "Это постоянная сессия. Забронирована с вами {date}",
-        "permanentCreatedByYou": "Это постоянная сессия. Вы создали её {date}",
-        "startAt": "Начало в {date}",
-        "startNow": "Начать сейчас",
-        "start": "Начать",
-        "noSessions": "У вас нет сессий",
-        "changeFilters": "Попробуйте изменить тип сессии или диапазон дат.",
-        "loadingMore": "Загружаем ещё сессии...",
-        "userNumber": "Пользователь №{id}",
-        "anotherUserInSession": "Другой пользователь уже в сессии",
-        "anotherUserNotInSession": "Другой пользователь ещё не в сессии",
-        "microphoneOff": "Ваш микрофон был выключен",
-        "anotherUserMicrophoneDisabled": "Микрофон был отключен",
-        "permanentSession": "Постоянная сессия"
-    },
-    "mySubjects": {
-        "title": "Мои темы",
-        "addNewSubject": "Добавить новую тему",
-        "error": "Ошибка",
-        "success": "Успешно",
-        "updatedSuccessfully": "Тема успешно обновлена",
-        "deletedSuccessfully": "Тема успешно удалена",
-        "createSubjectModal": {
-            "title": "Создать собственную тему",
-            "category": "Категория",
-            "subjectName": "Название темы",
-            "createSubject": "Создать тему",
-            "error": "Ошибка",
-            "success": "Успешно",
-            "createdSuccessfully": "Тема успешно создана"
-        },
-        "editSubjectModal": {
-            "title": "Редактировать тему «{name}»",
-            "category": "Категория",
-            "subjectName": "Название темы",
-            "editSubject": "Сохранить изменения"
-        },
-        "deleteSubjectModal": {
-            "title": "Удалить тему",
-            "content": "Вы уверены, что хотите удалить тему «{name}»?",
-            "confirmButtonText": "Удалить тему"
-        }
-    },
-    "userSlots": {
-        "title": "Мои слоты",
-        "category": "Категория",
-        "subject": "Тема",
-        "addSlot": "Добавить слот",
-        "from": "С",
-        "to": "До",
-        "saveSchedule": "Сохранить расписание",
-        "singleSlots": "Разовые слоты",
-        "createSingleSlot": "Создать разовый слот",
-        "dateFrom": "Дата с",
-        "dateTo": "Дата по",
-        "monday": "Понедельник",
-        "tuesday": "Вторник",
-        "wednesday": "Среда",
-        "thursday": "Четверг",
-        "friday": "Пятница",
-        "saturday": "Суббота",
-        "sunday": "Воскресенье",
-        "deleteSingleSlot": "Удалить разовый слот",
-        "error": "Ошибка",
-        "success": "Успешно",
-        "deletedSuccessfully": "Успешно удалено",
-        "categoryRequired": "Выберите категорию.",
-        "subjectRequired": "Выберите тему.",
-        "timeFromAfterTimeTo": "Время начала ({from}) не может быть позже времени окончания ({to}).",
-        "timeConflict": "Конфликт времени: интервал {from}–{to} пересекается с {conflictFrom}–{conflictTo}.",
-        "scheduleSavedSuccessfully": "Расписание успешно сохранено",
-        "slotCreatedSuccessfully": "Слот успешно создан",
-        "CreateSingleSlotModal": {
-            "title": "Создать разовый слот",
-            "timeFrom": "Время с",
-            "timeTo": "Время до",
-            "save": "Сохранить"
-        },
-        "DeleteSingleSlotModal": {
-            "title": "Удалить разовый слот",
-            "description": "Это действие нельзя отменить.",
-            "content": "Вы уверены, что хотите удалить этот разовый слот?",
-            "dateFrom": "Дата с",
-            "dateTo": "Дата по",
-            "cancel": "Отмена",
-            "deleteSlot": "Удалить слот"
-        }
-    },
-    "sessionChat": {
-        "ariaLabel": "Чат сессии",
-        "title": "Чат сессии",
-        "closeChat": "Закрыть чат",
-        "openChat": "Открыть чат"
-    },
-    "mobileChat": {
-        "ariaLabel": "Чат сессии",
-        "title": "Чат сессии"
-    },
-    "sessionChatContent": {
-        "loadMore": "Загрузить ещё",
-        "messageAriaLabel": "Сообщение",
-        "messagePlaceholder": "Напишите сообщение...",
-        "sendMessage": "Отправить сообщение"
-    },
-    "signup": {
-        "title": "Регистрация",
-        "successMessage": "Подтвердите адрес электронной почты. Мы отправили вам письмо. Если вы не увидели письмо проверьте спам.",
-        "submit": "Зарегистрироваться",
-        "alreadyHaveAccount": "Уже есть аккаунт?",
-        "signIn": "Войти",
-        "email": "Электронная почта",
-        "username": "Имя пользователя",
-        "password": "Пароль",
-        "timezone": "Часовой пояс",
-        "yourAge": "Ваш возраст",
-        "age": "Возраст",
-        "aboutMySelf": "Про себя",
-        "writeAboutYourself": "Напишите что-то о себе",
-        "sex": "Пол"
-    },
-    "auth": {
-        "title": "Вход",
-        "submit": "Войти",
-        "successMessage": "Вход выполнен успешно",
-        "noAccount": "Нет аккаунта?",
-        "signUp": "Зарегистрироваться",
-        "forgotPassword": "Забыли пароль?",
-        "passwordRecovery": "Восстановление пароля",
-        "usernameOrEmailPlaceholder": "Имя пользователя или электронная почта",
-        "usernameOrEmailLabel": "Ваше имя пользователя или электронная почта",
-        "password": "Пароль",
-        "passwordLabel": "Ваш пароль"
-    },
-    "forget-password": {
-        "title": "Восстановление пароля",
-        "submit": "Отправить ссылку для восстановления",
-        "successMessage": "Ссылка для восстановления отправлена на вашу электронную почту",
-        "email": "Электронная почта",
-        "emailPlaceholder": "Введите электронную почту аккаунта",
-        "error": "Ошибка"
-    },
-    "password-recovery": {
-        "title": "Введите новый пароль",
-        "submit": "Установить новый пароль",
-        "successMessage": "Пароль успешно обновлён",
-        "newPassword": "Новый пароль",
-        "error": "Ошибка"
-    },
-    "zodI18n": {
-        "errors": {
-            "custom": "Некорректное значение",
-            "invalid_type": "Ожидался тип {expected}, получен {received}",
-            "invalid_type_received_undefined": "Обязательное поле",
-            "invalid_string": {
-                "email": "Введите корректный адрес электронной почты",
-                "url": "Введите корректную ссылку",
-                "uuid": "Введите корректный UUID",
-                "regex": "Некорректный формат"
-            },
-            "too_small": {
-                "string": {
-                    "exact": "Введите ровно {minimum} символов",
-                    "inclusive": "Введите не менее {minimum} символов",
-                    "not_inclusive": "Введите больше {minimum} символов"
-                }
-            },
-            "too_big": {
-                "string": {
-                    "exact": "Введите ровно {maximum} символов",
-                    "inclusive": "Введите не более {maximum} символов",
-                    "not_inclusive": "Введите меньше {maximum} символов"
-                }
-            }
-        },
-        "types": {
-            "string": "строка",
-            "number": "число",
-            "boolean": "логическое значение",
-            "undefined": "неопределённое значение"
-        },
-        "validations": {
-            "email": "адрес электронной почты",
-            "url": "ссылка",
-            "uuid": "UUID",
-            "regex": "формат"
-        }
-    },
-    "userProfile": {
-        "age": "Возраст",
-        "subjectsTitle": "Темы на которые общается пользователь",
-        "timezone": "Часовой пояс",
-        "aboutUser": "О пользователе",
-        "sex": "Пол",
-        "female": "Женщина",
-        "male": "Мужчина"
-    },
-    "users": {
-        "title": "Пользователи",
-        "usernameOrEmail": "Имя пользователя или почта",
-        "ageFrom": "Возраст от",
-        "ageTo": "Возраст до",
-        "search": "Поиск",
-        "sex": "Пол",
-        "sexSelect": {
-            "male": "Мужчина",
-            "female": "Женщина",
-            "all": "Все"
-        },
-        "viewProfile": "Посмотреть профиль",
-        "loadMore": "Загрузить больше",
-        "usersNotFound": "Пользователей не найдено",
-        "itsYou": "Это вы"
-    },
-    "user": {
-        "male": "Мужчина",
-        "female": "Женщина"
-    }
+	"errors": {
+		"slots": {
+			"overlapsWithAnotherSlot": "Выбранный временной интервал конфликтует с существующим слотом"
+		}
+	},
+	"noCategoriesFound": "Категорий не найдено",
+	"noSubjectsFound": "Тем не найдено",
+	"loading": "Загрузка",
+	"loadMore": "Загрузить больше",
+	"nav": {
+		"offlineStatusLabel": "Я офлайн",
+		"onlineStatusLabel": "Я онлайн"
+	},
+	"landingNav": {
+		"tryIt": "Попробовать",
+		"support": "Поддержка",
+		"chatRules": "Правила общения",
+		"login": "Войти"
+	},
+	"landing": {
+		"morePeopleBetterConversation": "Больше людей — интереснее общение",
+		"talkAboutWhat": "Обсуждайте то, что",
+		"interestsYou": "вам интересно",
+		"findLikeMindedPeople": "Находите единомышленников, знакомьтесь с новыми людьми и участвуйте в увлекательных обсуждениях",
+		"sharedInterestsSpace": "Wanna Talk — это пространство для общения на основе общих интересов.",
+		"chooseSubjectAndStart": "Выберите тему, найдите собеседников и начните обсуждение в удобное для вас время.",
+		"tryNow": "Попробовать",
+		"findPeopleDescription": "Wanna Talk помогает находить людей с похожими интересами. Просто выберите тему, найдите свободное время или создайте собственную тему.",
+		"worldIsCloser": "Мир ближе, чем кажется",
+		"howItWorks": "Как это работает?",
+		"fewStepsToConversation": "Всего несколько шагов — и вы уже участвуете в беседе.",
+		"chooseSubject": "Выберите тему",
+		"toTalkAbout": "для обсуждения",
+		"selectDateAndTime": "Выберите дату и время",
+		"toMakeBooking": "чтобы забронировать встречу",
+		"wait": "Подождите",
+		"forSessionStart": "начала сессии",
+		"enjoyDiscussion": "Наслаждайтесь общением",
+		"createOwnTopicDescription": "Вы также можете создать собственную тему для обсуждения в одной из существующих категорий или выбрать готовую тему и добавить удобные временные слоты.",
+		"popularCategoriesToday": "Самые популярные категории сегодня",
+		"viewAllCategories": "Посмотреть все категории",
+		"categories": {
+			"goToCategory": "Перейти к категории"
+		}
+	},
+	"footer": {
+		"brand": "Wanna talk",
+		"support": "Поддержка",
+		"privacyPolicy": "Политика конфиденциальности"
+	},
+	"baseDeleteModal": {
+		"cancel": "Отмена"
+	},
+	"sideNav": {
+		"mySlots": "Мои слоты",
+		"mySubjects": "Мои темы",
+		"categories": "Категории",
+		"mySessions": "Мои сессии",
+		"settings": "Настройки",
+		"support": "Поддержка",
+		"exit": "Выйти",
+		"users": "Пользователи"
+	},
+	"settings": {
+		"title": "Настройки",
+		"personalInfo": "Личная информация",
+		"email": "Электронная почта",
+		"username": "Имя пользователя",
+		"timezone": "Часовой пояс",
+		"availableForPermanentSessions": "Доступен для постоянных сессий",
+		"permanentSessionsDescription": "Включив эту опцию, вы разрешите пользователям создавать с вами постоянную сессию и связываться с вами в любое время.",
+		"language": "Язык",
+		"savePersonalData": "Сохранить новые личные данные",
+		"changePassword": "Изменить пароль",
+		"enterOldPassword": "Введите текущий пароль",
+		"oldPassword": "Текущий пароль",
+		"enterNewPassword": "Введите новый пароль",
+		"newPassword": "Новый пароль",
+		"confirmNewPassword": "Подтвердите новый пароль",
+		"confirmNewPasswordPlaceholder": "Подтвердите новый пароль",
+		"updatePassword": "Обновить пароль",
+		"dangerZone": "Опасная зона",
+		"deleteAccount": "Удалить аккаунт",
+		"passwordsDoNotMatch": "Пароли не совпадают",
+		"error": "Ошибка",
+		"success": "Успешно",
+		"passwordChangedSuccessfully": "Пароль успешно изменён",
+		"personalDataUpdatedSuccessfully": "Личные данные успешно обновлены",
+		"avatar": {
+			"title": "Фото профиля",
+			"description": "Загрузите изображение, которое другие пользователи будут видеть в вашем профиле.",
+			"currentAvatar": "Текущий аватар",
+			"currentAvatarDescription": "Изображение будет обрезано по кругу",
+			"selectImage": "Перетащите изображение сюда или нажмите, чтобы выбрать",
+			"requirements": "PNG, JPG, JPEG или WebP, размер файла до 30 МБ",
+			"invalidFormat": "Допускаются только изображения JPG, JPEG, PNG и WebP",
+			"fileTooLarge": "Размер изображения не должен превышать 30 МБ",
+			"removeAvatar": "Удалить фото",
+			"saveAvatar": "Сохранить фото",
+			"updatedSuccessfully": "Аватар обновлено успешно",
+			"updated": "Обновлено",
+			"deleted": "Удалено",
+			"deletedSuccessfully": "Аватар успешно удален"
+		},
+		"aboutMySelf": "О себе",
+		"age": "Возраст",
+		"describeYourself": "Опишите себя",
+		"save": "Сохранить",
+		"infoAboutMySelfUpdatedSuccessfully": "Информация обо мне обновлена успешно",
+		"sex": "Пол"
+	},
+	"categories": {
+		"noSubjects": "Тем пока нет :( Вы можете стать первым",
+		"allCategories": "Все категории",
+		"allCategoriesDescription": "На этой странице представлены все доступные в системе категории для общения. В каждой категории находятся темы, созданные пользователями. Выберите тему, затем пользователя и начните общение.",
+		"createTopicDescription": "Вы также можете создать собственную тему для обсуждения в одной из доступных категорий на странице «Мои темы». Приятного общения!"
+	},
+	"subjects": {
+		"participants": "Участники",
+		"chooseParticipant": "Выберите собеседника для обсуждения этой темы и начните общение.",
+		"noParticipants": "Участников пока нет",
+		"noParticipantsDescription": "Здесь появятся пользователи, которым интересна эта тема.",
+		"email": "Электронная почта",
+		"username": "Имя пользователя",
+		"status": "Статус",
+		"itsYou": "Это вы",
+		"bookSession": "Забронировать сессию",
+		"startSessionNow": "Начать сессию сейчас",
+		"error": "Ошибка",
+		"success": "Успешно",
+		"sessionBookedSuccessfully": "Сессия успешно забронирована",
+		"bookingModal": {
+			"title": "Забронировать сессию",
+			"description": "Выберите дату и доступный временной слот.",
+			"selectDate": "Выберите дату",
+			"availableDatesDescription": "Доступные даты показаны ниже",
+			"availableTime": "Доступное время",
+			"availableSlots": "Доступно: {count}",
+			"noAvailableSlots": "Нет доступных слотов",
+			"tryAnotherDate": "Выберите другую дату, чтобы найти доступное время.",
+			"timeZone": "Часовой пояс: {timezone}",
+			"yourLocalTime": "Ваше местное время",
+			"selectTimeToContinue": "Выберите время, чтобы продолжить",
+			"cancel": "Отмена",
+			"bookSession": "Забронировать сессию"
+		},
+		"sex": "Пол"
+	},
+	"support": {
+		"title": "Связаться с поддержкой",
+		"description": "Опишите свой вопрос или проблему, и мы свяжемся с вами.",
+		"email": "Электронная почта",
+		"subject": "Тема",
+		"subjectPlaceholder": "Чем мы можем вам помочь?",
+		"message": "Сообщение",
+		"messagePlaceholder": "Напишите своё сообщение здесь...",
+		"sendMessage": "Отправить сообщение",
+		"error": "Ошибка",
+		"sentSuccessfully": "Успешно отправлено",
+		"sentDescription": "Ваше сообщение успешно отправлено. Мы ответим на вашу электронную почту."
+	},
+	"mySessions": {
+		"title": "Мои сессии",
+		"sessions": "Сессии",
+		"dateFrom": "Дата с",
+		"dateTo": "Дата по",
+		"bookedWithMe": "Забронированы со мной",
+		"myBookings": "Мои бронирования",
+		"myBooking": "Моё бронирование",
+		"all": "Все",
+		"invalidDateRange": "Некорректный диапазон дат",
+		"dateRangeDescription": "Начальная дата не может быть позже конечной.",
+		"couldNotLoadSessions": "Не удалось загрузить сессии",
+		"tryAgain": "Попробовать снова",
+		"withUser": "С пользователем",
+		"statusBooked": "Забронирована",
+		"statusCompleted": "Завершена",
+		"statusCancelled": "Отменена",
+		"statusOnline": "В сети",
+		"statusOffline": "Не в сети",
+		"statusBusy": "Занят",
+		"permanentBookedWithYou": "Это постоянная сессия. Забронирована с вами {date}",
+		"permanentCreatedByYou": "Это постоянная сессия. Вы создали её {date}",
+		"startAt": "Начало в {date}",
+		"startNow": "Начать сейчас",
+		"start": "Начать",
+		"noSessions": "У вас нет сессий",
+		"changeFilters": "Попробуйте изменить тип сессии или диапазон дат.",
+		"loadingMore": "Загружаем ещё сессии...",
+		"userNumber": "Пользователь №{id}",
+		"anotherUserInSession": "Другой пользователь уже в сессии",
+		"anotherUserNotInSession": "Другой пользователь ещё не в сессии",
+		"microphoneOff": "Ваш микрофон был выключен",
+		"anotherUserMicrophoneDisabled": "Микрофон был отключен",
+		"permanentSession": "Постоянная сессия"
+	},
+	"mySubjects": {
+		"title": "Мои темы",
+		"addNewSubject": "Добавить новую тему",
+		"error": "Ошибка",
+		"success": "Успешно",
+		"updatedSuccessfully": "Тема успешно обновлена",
+		"deletedSuccessfully": "Тема успешно удалена",
+		"createSubjectModal": {
+			"title": "Создать собственную тему",
+			"category": "Категория",
+			"subjectName": "Название темы",
+			"createSubject": "Создать тему",
+			"error": "Ошибка",
+			"success": "Успешно",
+			"createdSuccessfully": "Тема успешно создана"
+		},
+		"editSubjectModal": {
+			"title": "Редактировать тему «{name}»",
+			"category": "Категория",
+			"subjectName": "Название темы",
+			"editSubject": "Сохранить изменения"
+		},
+		"deleteSubjectModal": {
+			"title": "Удалить тему",
+			"content": "Вы уверены, что хотите удалить тему «{name}»?",
+			"confirmButtonText": "Удалить тему"
+		}
+	},
+	"userSlots": {
+		"title": "Мои слоты",
+		"category": "Категория",
+		"subject": "Тема",
+		"addSlot": "Добавить слот",
+		"from": "С",
+		"to": "До",
+		"saveSchedule": "Сохранить расписание",
+		"singleSlots": "Разовые слоты",
+		"createSingleSlot": "Создать разовый слот",
+		"dateFrom": "Дата с",
+		"dateTo": "Дата по",
+		"monday": "Понедельник",
+		"tuesday": "Вторник",
+		"wednesday": "Среда",
+		"thursday": "Четверг",
+		"friday": "Пятница",
+		"saturday": "Суббота",
+		"sunday": "Воскресенье",
+		"deleteSingleSlot": "Удалить разовый слот",
+		"error": "Ошибка",
+		"success": "Успешно",
+		"deletedSuccessfully": "Успешно удалено",
+		"categoryRequired": "Выберите категорию.",
+		"subjectRequired": "Выберите тему.",
+		"timeFromAfterTimeTo": "Время начала ({from}) не может быть позже времени окончания ({to}).",
+		"timeConflict": "Конфликт времени: интервал {from}–{to} пересекается с {conflictFrom}–{conflictTo}.",
+		"scheduleSavedSuccessfully": "Расписание успешно сохранено",
+		"slotCreatedSuccessfully": "Слот успешно создан",
+		"CreateSingleSlotModal": {
+			"title": "Создать разовый слот",
+			"timeFrom": "Время с",
+			"timeTo": "Время до",
+			"save": "Сохранить"
+		},
+		"DeleteSingleSlotModal": {
+			"title": "Удалить разовый слот",
+			"description": "Это действие нельзя отменить.",
+			"content": "Вы уверены, что хотите удалить этот разовый слот?",
+			"dateFrom": "Дата с",
+			"dateTo": "Дата по",
+			"cancel": "Отмена",
+			"deleteSlot": "Удалить слот"
+		}
+	},
+	"sessionChat": {
+		"ariaLabel": "Чат сессии",
+		"title": "Чат сессии",
+		"closeChat": "Закрыть чат",
+		"openChat": "Открыть чат"
+	},
+	"mobileChat": {
+		"ariaLabel": "Чат сессии",
+		"title": "Чат сессии"
+	},
+	"sessionChatContent": {
+		"loadMore": "Загрузить ещё",
+		"messageAriaLabel": "Сообщение",
+		"messagePlaceholder": "Напишите сообщение...",
+		"sendMessage": "Отправить сообщение"
+	},
+	"signup": {
+		"title": "Регистрация",
+		"successMessage": "Подтвердите адрес электронной почты. Мы отправили вам письмо. Если вы не увидели письмо проверьте спам.",
+		"submit": "Зарегистрироваться",
+		"alreadyHaveAccount": "Уже есть аккаунт?",
+		"signIn": "Войти",
+		"email": "Электронная почта",
+		"username": "Имя пользователя",
+		"password": "Пароль",
+		"timezone": "Часовой пояс",
+		"yourAge": "Ваш возраст",
+		"age": "Возраст",
+		"aboutMySelf": "Про себя",
+		"writeAboutYourself": "Напишите что-то о себе",
+		"sex": "Пол"
+	},
+	"auth": {
+		"title": "Вход",
+		"submit": "Войти",
+		"successMessage": "Вход выполнен успешно",
+		"noAccount": "Нет аккаунта?",
+		"signUp": "Зарегистрироваться",
+		"forgotPassword": "Забыли пароль?",
+		"passwordRecovery": "Восстановление пароля",
+		"usernameOrEmailPlaceholder": "Имя пользователя или электронная почта",
+		"usernameOrEmailLabel": "Ваше имя пользователя или электронная почта",
+		"password": "Пароль",
+		"passwordLabel": "Ваш пароль"
+	},
+	"forget-password": {
+		"title": "Восстановление пароля",
+		"submit": "Отправить ссылку для восстановления",
+		"successMessage": "Ссылка для восстановления отправлена на вашу электронную почту",
+		"email": "Электронная почта",
+		"emailPlaceholder": "Введите электронную почту аккаунта",
+		"error": "Ошибка"
+	},
+	"password-recovery": {
+		"title": "Введите новый пароль",
+		"submit": "Установить новый пароль",
+		"successMessage": "Пароль успешно обновлён",
+		"newPassword": "Новый пароль",
+		"error": "Ошибка"
+	},
+	"zodI18n": {
+		"errors": {
+			"custom": "Некорректное значение",
+			"invalid_type": "Ожидался тип {expected}, получен {received}",
+			"invalid_type_received_undefined": "Обязательное поле",
+			"invalid_string": {
+				"email": "Введите корректный адрес электронной почты",
+				"url": "Введите корректную ссылку",
+				"uuid": "Введите корректный UUID",
+				"regex": "Некорректный формат"
+			},
+			"too_small": {
+				"string": {
+					"exact": "Введите ровно {minimum} символов",
+					"inclusive": "Введите не менее {minimum} символов",
+					"not_inclusive": "Введите больше {minimum} символов"
+				}
+			},
+			"too_big": {
+				"string": {
+					"exact": "Введите ровно {maximum} символов",
+					"inclusive": "Введите не более {maximum} символов",
+					"not_inclusive": "Введите меньше {maximum} символов"
+				}
+			}
+		},
+		"types": {
+			"string": "строка",
+			"number": "число",
+			"boolean": "логическое значение",
+			"undefined": "неопределённое значение"
+		},
+		"validations": {
+			"email": "адрес электронной почты",
+			"url": "ссылка",
+			"uuid": "UUID",
+			"regex": "формат"
+		}
+	},
+	"userProfile": {
+		"age": "Возраст",
+		"subjectsTitle": "Темы на которые общается пользователь",
+		"timezone": "Часовой пояс",
+		"aboutUser": "О пользователе",
+		"sex": "Пол",
+		"female": "Женщина",
+		"male": "Мужчина"
+	},
+	"users": {
+		"title": "Пользователи",
+		"usernameOrEmail": "Имя пользователя или почта",
+		"ageFrom": "Возраст от",
+		"ageTo": "Возраст до",
+		"search": "Поиск",
+		"sex": "Пол",
+		"sexSelect": {
+			"male": "Мужчина",
+			"female": "Женщина",
+			"all": "Все"
+		},
+		"viewProfile": "Посмотреть профиль",
+		"loadMore": "Загрузить больше",
+		"usersNotFound": "Пользователей не найдено",
+		"itsYou": "Это вы"
+	},
+	"user": {
+		"male": "Мужчина",
+		"female": "Женщина"
+	},
+	"chatRules": {
+		"title": "Правила чата",
+		"rules": {
+			"first": "Не оскорбляйте человека, с которым разговариваете."
+		}
+	}
 }

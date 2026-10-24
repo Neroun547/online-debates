@@ -1,63 +1,71 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
-  modules: ['@nuxt/eslint', '@nuxt/ui', '@pinia/nuxt', 'pinia-plugin-persistedstate/nuxt', [
-    "nuxt-socket-io",
-    {
-      sockets: [
-        {
-          name: "sessions",
-          url: process.env.NUXT_PUBLIC_WS_HOST ?? "http://192.168.1.100:8082",
-          default: true,
-        },
-        {
-          name: "user",
-          url: process.env.NUXT_PUBLIC_WS_HOST ?? "http://192.168.1.100:8082",
-          default: true
-        }
-      ],
-      server: false,
-    },
-  ], 'nuxt-zod-i18n', '@nuxtjs/i18n'],
-  ui: {
-  	colorMode: false
-  },
-  i18n: {
-    locales: [
-      { code: 'en', name: 'English', file: 'en.json'},
-      { code: 'uk', name: 'Ukrainian', file: 'uk.json' },
-      { code: 'ru', language: 'Russian', file: 'ru.json' }
-    ],
-    defaultLocale: 'en',
-    strategy: "no_prefix"
-  },
-  devServer: {
-    port: Number(process.env.DEV_PORT),
-    host: process.env.APP_HOST_NAME ?? '0.0.0.0',
-  },
-  devtools: {
-    enabled: false
-  },
+	modules: [
+		"@nuxt/eslint",
+		"@nuxt/ui",
+		"@pinia/nuxt",
+		"pinia-plugin-persistedstate/nuxt",
+		[
+			"nuxt-socket-io",
+			{
+				sockets: [
+					{
+						name: "sessions",
+						url: process.env.NUXT_PUBLIC_WS_HOST ?? "http://192.168.1.100:8082",
+						default: true
+					},
+					{
+						name: "user",
+						url: process.env.NUXT_PUBLIC_WS_HOST ?? "http://192.168.1.100:8082",
+						default: true
+					}
+				],
+				server: false
+			}
+		],
+		"nuxt-zod-i18n",
+		"@nuxtjs/i18n"
+	],
+	devtools: {
+		enabled: false
+	},
 
-  css: ['~/assets/css/main.css'],
+	css: ["~/assets/css/main.css"],
+	ui: {
+		colorMode: false
+	},
+	runtimeConfig: {
+		public: {
+			apiBaseUrl: process.env.NUXT_PUBLIC_API_BASE_URL,
+			userAvatarsBaseUrl: process.env.USER_AVATARS_BASE_URL
+		}
+	},
 
-  routeRules: {
-    '/': { prerender: true }
-  },
+	routeRules: {
+		"/": { prerender: true }
+	},
+	devServer: {
+		port: Number(process.env.DEV_PORT),
+		host: process.env.APP_HOST_NAME ?? "0.0.0.0"
+	},
 
-  compatibilityDate: '2026-06-30',
+	compatibilityDate: "2026-06-30",
 
-  eslint: {
-    config: {
-      stylistic: {
-        commaDangle: 'never',
-        braceStyle: '1tbs'
-      }
-    }
-  },
-  runtimeConfig: {
-    public: {
-      apiBaseUrl: process.env.NUXT_PUBLIC_API_BASE_URL,
-      userAvatarsBaseUrl: process.env.USER_AVATARS_BASE_URL
-    }
-  }
+	eslint: {
+		config: {
+			stylistic: {
+				commaDangle: "never",
+				braceStyle: "1tbs"
+			}
+		}
+	},
+	i18n: {
+		locales: [
+			{ code: "en", name: "English", file: "en.json" },
+			{ code: "uk", name: "Ukrainian", file: "uk.json" },
+			{ code: "ru", language: "Russian", file: "ru.json" }
+		],
+		defaultLocale: "en",
+		strategy: "no_prefix"
+	}
 })

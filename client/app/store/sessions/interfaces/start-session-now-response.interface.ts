@@ -1,3 +1,3 @@
 export interface StartSessionNowResponseInterface {
-    sessionId: number;
+	sessionId: number
 }

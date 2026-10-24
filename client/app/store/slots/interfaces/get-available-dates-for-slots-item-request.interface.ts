@@ -1,3 +1,3 @@
 export interface GetAvailableDatesForSlotsItemRequestInterface {
-    date: string;
+	date: string
 }

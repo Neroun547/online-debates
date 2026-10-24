@@ -1,44 +1,44 @@
 <script setup>
 const props = defineProps({
-  loading: {
-    type: Boolean,
-    default: false,
-  }
-});
+	loading: {
+		type: Boolean,
+		default: false
+	}
+})
 
 const isOpen = defineModel("isOpen", {
-  type: Boolean,
-  default: false,
-  required: true
-});
+	type: Boolean,
+	default: false,
+	required: true
+})
 
-const emit = defineEmits(["close"]);
+const emit = defineEmits(["close"])
 
 function confirm() {
-  emit("close");
+	emit("close")
 }
 </script>
 
 <template>
-  <UModal
-    title="Confirm your new email address"
-    v-model:open="isOpen"
-  >
-    <template #body>
-      <p class="text-sm text-gray-700">
-        Letter with confirmation link was sent to your new email.
-      </p>
-    </template>
+	<UModal
+v-model:open="isOpen"
+title="Confirm your new email address"
+>
+		<template #body>
+			<p class="text-sm text-gray-700">
+				Letter with confirmation link was sent to your new email.
+			</p>
+		</template>
 
-    <template #footer>
-      <div class="flex w-full justify-end gap-3">
-        <UButton
-          label="Ok"
-          color="primary"
-          @click="confirm"
-          class="cursor-pointer"
-        />
-      </div>
-    </template>
-  </UModal>
+		<template #footer>
+			<div class="flex w-full justify-end gap-3">
+				<UButton
+					label="Ok"
+					color="primary"
+					class="cursor-pointer"
+					@click="confirm"
+				/>
+			</div>
+		</template>
+	</UModal>
 </template>

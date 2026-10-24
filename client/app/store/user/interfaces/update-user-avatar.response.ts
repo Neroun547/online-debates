@@ -1,4 +1,4 @@
 export interface UpdateUserAvatarResponseInterface {
-    token: string;
-    avatarFilename: string;
+	token: string
+	avatarFilename: string
 }

@@ -1,11 +1,11 @@
 export interface SlotItemInTemplateDto {
-  weekday: number;
-  startTime: string;
-  endTime: string;
+	weekday: number
+	startTime: string
+	endTime: string
 }
 
 export interface CreateSlotsTemplatesRequestInterface {
-  slots: SlotItemInTemplateDto[];
-  subjectId: number;
-  categoryId: number;
+	slots: SlotItemInTemplateDto[]
+	subjectId: number
+	categoryId: number
 }

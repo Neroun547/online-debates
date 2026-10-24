@@ -1,6 +1,3 @@
-import type { BaseStoreInterface } from "~/store/base-store.interface";
+import type { BaseStoreInterface } from "~/store/base-store.interface"
 
-export interface CategoriesStore extends BaseStoreInterface {
-
-}
-
+export interface CategoriesStore extends BaseStoreInterface {}

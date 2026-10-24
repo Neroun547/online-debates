@@ -1,398 +1,404 @@
 {
-    "errors": {
-        "slots": {
-            "overlapsWithAnotherSlot": "The selected time period overlaps with another slot"
-        }
-    },
-    "noCategoriesFound": "No categories found",
-    "noSubjectsFound": "No subjects found",
-    "loading": "Loading",
-    "loadMore": "Load more",
-    "nav": {
-        "offlineStatusLabel": "I am offline",
-        "onlineStatusLabel": "I am online"
-    },
-    "landingNav": {
-        "tryIt": "Try it",
-        "support": "Support",
-        "chatRules": "Chat rules",
-        "login": "Log in"
-    },
-    "landing": {
-        "morePeopleBetterConversation": "More people better conversation",
-        "talkAboutWhat": "Talk about what",
-        "interestsYou": "interests you",
-        "findLikeMindedPeople": "Find like-minded people, meet someone new, or join engaging discussions",
-        "sharedInterestsSpace": "Wanna talk is a space to connect through shared interests.",
-        "chooseSubjectAndStart": "Choose subject, find people, and start a discussion when it suits you.",
-        "tryNow": "Try now",
-        "findPeopleDescription": "Wanna talk helps you find people with similar interests. Simply choose a topic, find a booking, or create your own subject.",
-        "worldIsCloser": "The world is closer than you think",
-        "howItWorks": "How it works?",
-        "fewStepsToConversation": "Just a few steps — and you’re in the conversation.",
-        "chooseSubject": "Choose a subject",
-        "toTalkAbout": "to talk about",
-        "selectDateAndTime": "Select date and time",
-        "toMakeBooking": "to make booking",
-        "wait": "Wait",
-        "forSessionStart": "for session start time",
-        "enjoyDiscussion": "Enjoy the discussion",
-        "createOwnTopicDescription": "You can also create your own topic for discussion in the list of existing categories or select an existing topic and create slots in it.",
-        "popularCategoriesToday": "Today's most popular categories",
-        "viewAllCategories": "View all categories",
-        "categories": {
-        	"goToCategory": "Go to category"
-        }
-    },
-    "footer": {
-        "brand": "Wanna talk",
-        "support": "Support",
-        "privacyPolicy": "Privacy Policy"
-    },
-    "baseDeleteModal": {
-        "cancel": "Cancel"
-    },
-    "sideNav": {
-        "mySlots": "My slots",
-        "mySubjects": "My subjects",
-        "categories": "Categories",
-        "mySessions": "My sessions",
-        "settings": "Settings",
-        "support": "Support",
-        "exit": "Exit",
-        "users": "Users"
-    },
-    "settings": {
-        "title": "Settings",
-        "personalInfo": "Personal info",
-        "email": "Email",
-        "username": "Username",
-        "timezone": "Timezone",
-        "availableForPermanentSessions": "Is available for permanent sessions",
-        "permanentSessionsDescription": "By enabling this option, users can establish a persistent session with you to communicate with you at any time.",
-        "language": "Language",
-        "savePersonalData": "Save new personal data",
-        "changePassword": "Change password",
-        "enterOldPassword": "Write your old password",
-        "oldPassword": "Old password",
-        "enterNewPassword": "Write your new password",
-        "newPassword": "New password",
-        "confirmNewPassword": "Confirm your new password",
-        "confirmNewPasswordPlaceholder": "Confirm new password",
-        "updatePassword": "Update password",
-        "dangerZone": "Danger zone",
-        "deleteAccount": "Delete account",
-        "passwordsDoNotMatch": "Passwords do not match",
-        "error": "Error",
-        "success": "Success",
-        "passwordChangedSuccessfully": "Password changed successfully",
-        "personalDataUpdatedSuccessfully": "Personal data updated successfully",
-        "avatar": {
-            "title": "Profile photo",
-            "description": "Upload an image that other users will see in your profile.",
-            "currentAvatar": "Current avatar",
-            "currentAvatarDescription": "The image will be cropped to a circle",
-            "selectImage": "Drop an image here or click to select",
-            "requirements": "PNG, JPG, JPEG or WebP, up to 30 MB",
-            "invalidFormat": "Only JPG, JPEG, PNG and WebP images are allowed",
-            "fileTooLarge": "The image must not exceed 30 MB",
-            "removeAvatar": "Remove photo",
-            "saveAvatar": "Save photo",
-            "updatedSuccessfully": "Avatar updated successfully",
-            "updated": "Updated",
-            "deleted": "Deleted",
-            "deletedSuccessfully": "Avatar deleted successfully"
-        },
-        "aboutMySelf": "About myself",
-        "age": "Age",
-        "describeYourself": "Describe yourself",
-        "save": "Save",
-        "infoAboutMySelfUpdatedSuccessfully": "Info about myself updated successfully",
-        "sex": "Sex"
-    },
-    "categories": {
-        "noSubjects": "No subjects yet :( You can be the first",
-        "allCategories": "All categories",
-        "allCategoriesDescription": "This page contains all the communication categories available in the system. Each category contains user-created topics. Select a topic, then a user, and start a conversation.",
-        "createTopicDescription": "You can also create your own discussion topic in one of the available categories on the \"My Topics\" page. Enjoy!"
-    },
-    "subjects": {
-        "participants": "Participants",
-        "chooseParticipant": "Choose someone to discuss this topic with and start a conversation.",
-        "noParticipants": "No participants yet",
-        "noParticipantsDescription": "Users interested in this topic will appear here.",
-        "email": "Email",
-        "username": "Username",
-        "status": "Status",
-        "itsYou": "It's you",
-        "bookSession": "Book session",
-        "startSessionNow": "Start session now",
-        "error": "Error",
-        "success": "Success",
-        "sessionBookedSuccessfully": "Session booked successfully",
-        "bookingModal": {
-            "title": "Book a session",
-            "description": "Choose a date and an available time slot.",
-            "selectDate": "Select a date",
-            "availableDatesDescription": "Available dates are shown below",
-            "availableTime": "Available time",
-            "availableSlots": "Available: {count}",
-            "noAvailableSlots": "No available slots",
-            "tryAnotherDate": "Try another date to find an available time.",
-            "timeZone": "Time zone: {timezone}",
-            "yourLocalTime": "Your local time",
-            "selectTimeToContinue": "Select a time to continue",
-            "cancel": "Cancel",
-            "bookSession": "Book session"
-        },
-        "sex": "Sex"
-    },
-    "support": {
-        "title": "Contact support",
-        "description": "Describe your question or problem and we will get back to you.",
-        "email": "Email",
-        "subject": "Subject",
-        "subjectPlaceholder": "What can we help you with?",
-        "message": "Message",
-        "messagePlaceholder": "Write your message here...",
-        "sendMessage": "Send message",
-        "error": "Error",
-        "sentSuccessfully": "Sent successfully",
-        "sentDescription": "Your message was sent successfully. We will reply to your email."
-    },
-    "mySessions": {
-        "title": "My sessions",
-        "sessions": "Sessions",
-        "dateFrom": "Date from",
-        "dateTo": "Date to",
-        "bookedWithMe": "Booked with me",
-        "myBookings": "My bookings",
-        "myBooking": "My booking",
-        "all": "All",
-        "invalidDateRange": "Invalid date range",
-        "dateRangeDescription": "Date from cannot be later than date to.",
-        "couldNotLoadSessions": "Could not load sessions",
-        "tryAgain": "Try again",
-        "withUser": "With",
-        "statusBooked": "Booked",
-        "statusCompleted": "Completed",
-        "statusCancelled": "Cancelled",
-        "statusOnline": "Online",
-        "statusOffline": "Offline",
-        "statusBusy": "Busy",
-        "permanentBookedWithYou": "This is a permanent session. Booked with you at {date}",
-        "permanentCreatedByYou": "This is a permanent session. You created it at {date}",
-        "startAt": "Start at {date}",
-        "startNow": "Start now",
-        "start": "Start",
-        "noSessions": "You don't have sessions",
-        "changeFilters": "Try changing the session type or date range.",
-        "loadingMore": "Loading more sessions...",
-        "userNumber": "User #{id}",
-        "anotherUserInSession": "The other user is already in the session",
-        "anotherUserNotInSession": "The other user is not in the session yet",
-        "microphoneOff": "Your microphone was disabled",
-        "anotherUserMicrophoneDisabled": "Microphone was disabled",
-        "permanentSession": "Permanent session"
-    },
-    "mySubjects": {
-        "title": "My subjects",
-        "addNewSubject": "Add new subject",
-        "error": "Error",
-        "success": "Success",
-        "updatedSuccessfully": "Subject updated successfully",
-        "deletedSuccessfully": "Subject deleted successfully",
-        "createSubjectModal": {
-            "title": "Create your own subject",
-            "category": "Category",
-            "subjectName": "Subject name",
-            "createSubject": "Create subject",
-            "error": "Error",
-            "success": "Success",
-            "createdSuccessfully": "Subject created successfully"
-        },
-        "editSubjectModal": {
-            "title": "Edit {name}",
-            "category": "Category",
-            "subjectName": "Subject name",
-            "editSubject": "Edit subject"
-        },
-        "deleteSubjectModal": {
-            "title": "Delete subject",
-            "content": "Are you sure you want to delete your subject ({name})?",
-            "confirmButtonText": "Delete subject"
-        }
-    },
-    "userSlots": {
-        "title": "My slots",
-        "category": "Category",
-        "subject": "Subject",
-        "addSlot": "Add slot",
-        "from": "From",
-        "to": "To",
-        "saveSchedule": "Save schedule",
-        "singleSlots": "Single slots",
-        "createSingleSlot": "Create single slot",
-        "dateFrom": "Date from",
-        "dateTo": "Date to",
-        "monday": "Monday",
-        "tuesday": "Tuesday",
-        "wednesday": "Wednesday",
-        "thursday": "Thursday",
-        "friday": "Friday",
-        "saturday": "Saturday",
-        "sunday": "Sunday",
-        "deleteSingleSlot": "Delete single slot",
-        "error": "Error",
-        "success": "Success",
-        "deletedSuccessfully": "Deleted successfully",
-        "categoryRequired": "Category is required.",
-        "subjectRequired": "Subject is required.",
-        "timeFromAfterTimeTo": "Start time ({from}) cannot be later than end time ({to}).",
-        "timeConflict": "Time conflict: {from}–{to} overlaps with {conflictFrom}–{conflictTo}.",
-        "scheduleSavedSuccessfully": "Schedule saved successfully",
-        "slotCreatedSuccessfully": "Slot created successfully",
-        "CreateSingleSlotModal": {
-            "title": "Create single slot",
-            "timeFrom": "Time from",
-            "timeTo": "Time to",
-            "save": "Save"
-        },
-        "DeleteSingleSlotModal": {
-            "title": "Delete single slot",
-            "description": "This action cannot be undone.",
-            "content": "Are you sure you want to delete this single slot?",
-            "dateFrom": "Date from",
-            "dateTo": "Date to",
-            "cancel": "Cancel",
-            "deleteSlot": "Delete slot"
-        }
-    },
-    "sessionChat": {
-        "ariaLabel": "Session chat",
-        "title": "Session chat",
-        "closeChat": "Close chat",
-        "openChat": "Open chat"
-    },
-    "mobileChat": {
-        "ariaLabel": "Session chat",
-        "title": "Session chat"
-    },
-    "sessionChatContent": {
-        "loadMore": "Load more",
-        "messageAriaLabel": "Message",
-        "messagePlaceholder": "Write a message...",
-        "sendMessage": "Send message"
-    },
-    "signup": {
-        "title": "Sign up",
-        "successMessage": "Confirm your email address. A message was sent to your email. If you don't find the email, check spam.",
-        "submit": "Sign up",
-        "alreadyHaveAccount": "Already have an account?",
-        "signIn": "Sign in",
-        "email": "Email",
-        "username": "Username",
-        "password": "Password",
-        "timezone": "Timezone",
-        "yourAge": "Your age",
-        "age": "Age",
-        "aboutMySelf": "About myself",
-        "writeAboutYourself": "Write about yourself",
-        "sex": "Sex"
-    },
-    "auth": {
-        "title": "Log in",
-        "submit": "Log in",
-        "successMessage": "Log in successful",
-        "noAccount": "Don't have an account?",
-        "signUp": "Sign up",
-        "forgotPassword": "Forgot your password?",
-        "passwordRecovery": "Password recovery",
-        "usernameOrEmailPlaceholder": "Username or email address",
-        "usernameOrEmailLabel": "Your username or email address",
-        "password": "Password",
-        "passwordLabel": "Your password"
-    },
-    "forget-password": {
-        "title": "Password recovery",
-        "submit": "Send recovery link",
-        "successMessage": "A recovery link was sent to your email",
-        "email": "Email",
-        "emailPlaceholder": "Enter account email",
-        "error": "Error"
-    },
-    "password-recovery": {
-        "title": "Enter a new password",
-        "submit": "Set new password",
-        "successMessage": "Password updated successfully",
-        "newPassword": "New password",
-        "error": "Error"
-    },
-    "zodI18n": {
-        "errors": {
-            "custom": "Invalid value",
-            "invalid_type": "Expected {expected}, received {received}",
-            "invalid_type_received_undefined": "Required field",
-            "invalid_string": {
-                "email": "Enter a valid email address",
-                "url": "Enter a valid URL",
-                "uuid": "Enter a valid UUID",
-                "regex": "Invalid format"
-            },
-            "too_small": {
-                "string": {
-                    "exact": "Enter exactly {minimum} character(s)",
-                    "inclusive": "Enter at least {minimum} character(s)",
-                    "not_inclusive": "Enter more than {minimum} character(s)"
-                }
-            },
-            "too_big": {
-                "string": {
-                    "exact": "Enter exactly {maximum} character(s)",
-                    "inclusive": "Enter no more than {maximum} character(s)",
-                    "not_inclusive": "Enter fewer than {maximum} character(s)"
-                }
-            }
-        },
-        "types": {
-            "string": "string",
-            "number": "number",
-            "boolean": "boolean",
-            "undefined": "undefined value"
-        },
-        "validations": {
-            "email": "email address",
-            "url": "URL",
-            "uuid": "UUID",
-            "regex": "format"
-        }
-    },
-    "userProfile": {
-        "age": "Age",
-        "subjectsTitle": "Subjects on which the user communicates",
-        "timezone": "Timezone",
-        "aboutUser": "About user",
-        "sex": "Sex"
-    },
-    "users": {
-        "title": "Users",
-        "usernameOrEmail": "Username or email",
-        "ageFrom": "Age from",
-        "ageTo": "Age to",
-        "search": "Search",
-        "sex": "Sex",
-        "sexSelect": {
-            "male": "Male",
-            "female": "Female",
-            "all": "All"
-        },
-        "viewProfile": "View profile",
-        "loadMore": "Load more",
-        "usersNotFound": "Users not found",
-        "itsYou": "It's you"
-    },
-    "user": {
-        "male": "Male",
-        "female": "Female"
-    }
+	"errors": {
+		"slots": {
+			"overlapsWithAnotherSlot": "The selected time period overlaps with another slot"
+		}
+	},
+	"noCategoriesFound": "No categories found",
+	"noSubjectsFound": "No subjects found",
+	"loading": "Loading",
+	"loadMore": "Load more",
+	"nav": {
+		"offlineStatusLabel": "I am offline",
+		"onlineStatusLabel": "I am online"
+	},
+	"landingNav": {
+		"tryIt": "Try it",
+		"support": "Support",
+		"chatRules": "Chat rules",
+		"login": "Log in"
+	},
+	"landing": {
+		"morePeopleBetterConversation": "More people better conversation",
+		"talkAboutWhat": "Talk about what",
+		"interestsYou": "interests you",
+		"findLikeMindedPeople": "Find like-minded people, meet someone new, or join engaging discussions",
+		"sharedInterestsSpace": "Wanna talk is a space to connect through shared interests.",
+		"chooseSubjectAndStart": "Choose subject, find people, and start a discussion when it suits you.",
+		"tryNow": "Try now",
+		"findPeopleDescription": "Wanna talk helps you find people with similar interests. Simply choose a topic, find a booking, or create your own subject.",
+		"worldIsCloser": "The world is closer than you think",
+		"howItWorks": "How it works?",
+		"fewStepsToConversation": "Just a few steps — and you’re in the conversation.",
+		"chooseSubject": "Choose a subject",
+		"toTalkAbout": "to talk about",
+		"selectDateAndTime": "Select date and time",
+		"toMakeBooking": "to make booking",
+		"wait": "Wait",
+		"forSessionStart": "for session start time",
+		"enjoyDiscussion": "Enjoy the discussion",
+		"createOwnTopicDescription": "You can also create your own topic for discussion in the list of existing categories or select an existing topic and create slots in it.",
+		"popularCategoriesToday": "Today's most popular categories",
+		"viewAllCategories": "View all categories",
+		"categories": {
+			"goToCategory": "Go to category"
+		}
+	},
+	"footer": {
+		"brand": "Wanna talk",
+		"support": "Support",
+		"privacyPolicy": "Privacy Policy"
+	},
+	"baseDeleteModal": {
+		"cancel": "Cancel"
+	},
+	"sideNav": {
+		"mySlots": "My slots",
+		"mySubjects": "My subjects",
+		"categories": "Categories",
+		"mySessions": "My sessions",
+		"settings": "Settings",
+		"support": "Support",
+		"exit": "Exit",
+		"users": "Users"
+	},
+	"settings": {
+		"title": "Settings",
+		"personalInfo": "Personal info",
+		"email": "Email",
+		"username": "Username",
+		"timezone": "Timezone",
+		"availableForPermanentSessions": "Is available for permanent sessions",
+		"permanentSessionsDescription": "By enabling this option, users can establish a persistent session with you to communicate with you at any time.",
+		"language": "Language",
+		"savePersonalData": "Save new personal data",
+		"changePassword": "Change password",
+		"enterOldPassword": "Write your old password",
+		"oldPassword": "Old password",
+		"enterNewPassword": "Write your new password",
+		"newPassword": "New password",
+		"confirmNewPassword": "Confirm your new password",
+		"confirmNewPasswordPlaceholder": "Confirm new password",
+		"updatePassword": "Update password",
+		"dangerZone": "Danger zone",
+		"deleteAccount": "Delete account",
+		"passwordsDoNotMatch": "Passwords do not match",
+		"error": "Error",
+		"success": "Success",
+		"passwordChangedSuccessfully": "Password changed successfully",
+		"personalDataUpdatedSuccessfully": "Personal data updated successfully",
+		"avatar": {
+			"title": "Profile photo",
+			"description": "Upload an image that other users will see in your profile.",
+			"currentAvatar": "Current avatar",
+			"currentAvatarDescription": "The image will be cropped to a circle",
+			"selectImage": "Drop an image here or click to select",
+			"requirements": "PNG, JPG, JPEG or WebP, up to 30 MB",
+			"invalidFormat": "Only JPG, JPEG, PNG and WebP images are allowed",
+			"fileTooLarge": "The image must not exceed 30 MB",
+			"removeAvatar": "Remove photo",
+			"saveAvatar": "Save photo",
+			"updatedSuccessfully": "Avatar updated successfully",
+			"updated": "Updated",
+			"deleted": "Deleted",
+			"deletedSuccessfully": "Avatar deleted successfully"
+		},
+		"aboutMySelf": "About myself",
+		"age": "Age",
+		"describeYourself": "Describe yourself",
+		"save": "Save",
+		"infoAboutMySelfUpdatedSuccessfully": "Info about myself updated successfully",
+		"sex": "Sex"
+	},
+	"categories": {
+		"noSubjects": "No subjects yet :( You can be the first",
+		"allCategories": "All categories",
+		"allCategoriesDescription": "This page contains all the communication categories available in the system. Each category contains user-created topics. Select a topic, then a user, and start a conversation.",
+		"createTopicDescription": "You can also create your own discussion topic in one of the available categories on the \"My Topics\" page. Enjoy!"
+	},
+	"subjects": {
+		"participants": "Participants",
+		"chooseParticipant": "Choose someone to discuss this topic with and start a conversation.",
+		"noParticipants": "No participants yet",
+		"noParticipantsDescription": "Users interested in this topic will appear here.",
+		"email": "Email",
+		"username": "Username",
+		"status": "Status",
+		"itsYou": "It's you",
+		"bookSession": "Book session",
+		"startSessionNow": "Start session now",
+		"error": "Error",
+		"success": "Success",
+		"sessionBookedSuccessfully": "Session booked successfully",
+		"bookingModal": {
+			"title": "Book a session",
+			"description": "Choose a date and an available time slot.",
+			"selectDate": "Select a date",
+			"availableDatesDescription": "Available dates are shown below",
+			"availableTime": "Available time",
+			"availableSlots": "Available: {count}",
+			"noAvailableSlots": "No available slots",
+			"tryAnotherDate": "Try another date to find an available time.",
+			"timeZone": "Time zone: {timezone}",
+			"yourLocalTime": "Your local time",
+			"selectTimeToContinue": "Select a time to continue",
+			"cancel": "Cancel",
+			"bookSession": "Book session"
+		},
+		"sex": "Sex"
+	},
+	"support": {
+		"title": "Contact support",
+		"description": "Describe your question or problem and we will get back to you.",
+		"email": "Email",
+		"subject": "Subject",
+		"subjectPlaceholder": "What can we help you with?",
+		"message": "Message",
+		"messagePlaceholder": "Write your message here...",
+		"sendMessage": "Send message",
+		"error": "Error",
+		"sentSuccessfully": "Sent successfully",
+		"sentDescription": "Your message was sent successfully. We will reply to your email."
+	},
+	"mySessions": {
+		"title": "My sessions",
+		"sessions": "Sessions",
+		"dateFrom": "Date from",
+		"dateTo": "Date to",
+		"bookedWithMe": "Booked with me",
+		"myBookings": "My bookings",
+		"myBooking": "My booking",
+		"all": "All",
+		"invalidDateRange": "Invalid date range",
+		"dateRangeDescription": "Date from cannot be later than date to.",
+		"couldNotLoadSessions": "Could not load sessions",
+		"tryAgain": "Try again",
+		"withUser": "With",
+		"statusBooked": "Booked",
+		"statusCompleted": "Completed",
+		"statusCancelled": "Cancelled",
+		"statusOnline": "Online",
+		"statusOffline": "Offline",
+		"statusBusy": "Busy",
+		"permanentBookedWithYou": "This is a permanent session. Booked with you at {date}",
+		"permanentCreatedByYou": "This is a permanent session. You created it at {date}",
+		"startAt": "Start at {date}",
+		"startNow": "Start now",
+		"start": "Start",
+		"noSessions": "You don't have sessions",
+		"changeFilters": "Try changing the session type or date range.",
+		"loadingMore": "Loading more sessions...",
+		"userNumber": "User #{id}",
+		"anotherUserInSession": "The other user is already in the session",
+		"anotherUserNotInSession": "The other user is not in the session yet",
+		"microphoneOff": "Your microphone was disabled",
+		"anotherUserMicrophoneDisabled": "Microphone was disabled",
+		"permanentSession": "Permanent session"
+	},
+	"mySubjects": {
+		"title": "My subjects",
+		"addNewSubject": "Add new subject",
+		"error": "Error",
+		"success": "Success",
+		"updatedSuccessfully": "Subject updated successfully",
+		"deletedSuccessfully": "Subject deleted successfully",
+		"createSubjectModal": {
+			"title": "Create your own subject",
+			"category": "Category",
+			"subjectName": "Subject name",
+			"createSubject": "Create subject",
+			"error": "Error",
+			"success": "Success",
+			"createdSuccessfully": "Subject created successfully"
+		},
+		"editSubjectModal": {
+			"title": "Edit {name}",
+			"category": "Category",
+			"subjectName": "Subject name",
+			"editSubject": "Edit subject"
+		},
+		"deleteSubjectModal": {
+			"title": "Delete subject",
+			"content": "Are you sure you want to delete your subject ({name})?",
+			"confirmButtonText": "Delete subject"
+		}
+	},
+	"userSlots": {
+		"title": "My slots",
+		"category": "Category",
+		"subject": "Subject",
+		"addSlot": "Add slot",
+		"from": "From",
+		"to": "To",
+		"saveSchedule": "Save schedule",
+		"singleSlots": "Single slots",
+		"createSingleSlot": "Create single slot",
+		"dateFrom": "Date from",
+		"dateTo": "Date to",
+		"monday": "Monday",
+		"tuesday": "Tuesday",
+		"wednesday": "Wednesday",
+		"thursday": "Thursday",
+		"friday": "Friday",
+		"saturday": "Saturday",
+		"sunday": "Sunday",
+		"deleteSingleSlot": "Delete single slot",
+		"error": "Error",
+		"success": "Success",
+		"deletedSuccessfully": "Deleted successfully",
+		"categoryRequired": "Category is required.",
+		"subjectRequired": "Subject is required.",
+		"timeFromAfterTimeTo": "Start time ({from}) cannot be later than end time ({to}).",
+		"timeConflict": "Time conflict: {from}–{to} overlaps with {conflictFrom}–{conflictTo}.",
+		"scheduleSavedSuccessfully": "Schedule saved successfully",
+		"slotCreatedSuccessfully": "Slot created successfully",
+		"CreateSingleSlotModal": {
+			"title": "Create single slot",
+			"timeFrom": "Time from",
+			"timeTo": "Time to",
+			"save": "Save"
+		},
+		"DeleteSingleSlotModal": {
+			"title": "Delete single slot",
+			"description": "This action cannot be undone.",
+			"content": "Are you sure you want to delete this single slot?",
+			"dateFrom": "Date from",
+			"dateTo": "Date to",
+			"cancel": "Cancel",
+			"deleteSlot": "Delete slot"
+		}
+	},
+	"sessionChat": {
+		"ariaLabel": "Session chat",
+		"title": "Session chat",
+		"closeChat": "Close chat",
+		"openChat": "Open chat"
+	},
+	"mobileChat": {
+		"ariaLabel": "Session chat",
+		"title": "Session chat"
+	},
+	"sessionChatContent": {
+		"loadMore": "Load more",
+		"messageAriaLabel": "Message",
+		"messagePlaceholder": "Write a message...",
+		"sendMessage": "Send message"
+	},
+	"signup": {
+		"title": "Sign up",
+		"successMessage": "Confirm your email address. A message was sent to your email. If you don't find the email, check spam.",
+		"submit": "Sign up",
+		"alreadyHaveAccount": "Already have an account?",
+		"signIn": "Sign in",
+		"email": "Email",
+		"username": "Username",
+		"password": "Password",
+		"timezone": "Timezone",
+		"yourAge": "Your age",
+		"age": "Age",
+		"aboutMySelf": "About myself",
+		"writeAboutYourself": "Write about yourself",
+		"sex": "Sex"
+	},
+	"auth": {
+		"title": "Log in",
+		"submit": "Log in",
+		"successMessage": "Log in successful",
+		"noAccount": "Don't have an account?",
+		"signUp": "Sign up",
+		"forgotPassword": "Forgot your password?",
+		"passwordRecovery": "Password recovery",
+		"usernameOrEmailPlaceholder": "Username or email address",
+		"usernameOrEmailLabel": "Your username or email address",
+		"password": "Password",
+		"passwordLabel": "Your password"
+	},
+	"forget-password": {
+		"title": "Password recovery",
+		"submit": "Send recovery link",
+		"successMessage": "A recovery link was sent to your email",
+		"email": "Email",
+		"emailPlaceholder": "Enter account email",
+		"error": "Error"
+	},
+	"password-recovery": {
+		"title": "Enter a new password",
+		"submit": "Set new password",
+		"successMessage": "Password updated successfully",
+		"newPassword": "New password",
+		"error": "Error"
+	},
+	"zodI18n": {
+		"errors": {
+			"custom": "Invalid value",
+			"invalid_type": "Expected {expected}, received {received}",
+			"invalid_type_received_undefined": "Required field",
+			"invalid_string": {
+				"email": "Enter a valid email address",
+				"url": "Enter a valid URL",
+				"uuid": "Enter a valid UUID",
+				"regex": "Invalid format"
+			},
+			"too_small": {
+				"string": {
+					"exact": "Enter exactly {minimum} character(s)",
+					"inclusive": "Enter at least {minimum} character(s)",
+					"not_inclusive": "Enter more than {minimum} character(s)"
+				}
+			},
+			"too_big": {
+				"string": {
+					"exact": "Enter exactly {maximum} character(s)",
+					"inclusive": "Enter no more than {maximum} character(s)",
+					"not_inclusive": "Enter fewer than {maximum} character(s)"
+				}
+			}
+		},
+		"types": {
+			"string": "string",
+			"number": "number",
+			"boolean": "boolean",
+			"undefined": "undefined value"
+		},
+		"validations": {
+			"email": "email address",
+			"url": "URL",
+			"uuid": "UUID",
+			"regex": "format"
+		}
+	},
+	"userProfile": {
+		"age": "Age",
+		"subjectsTitle": "Subjects on which the user communicates",
+		"timezone": "Timezone",
+		"aboutUser": "About user",
+		"sex": "Sex"
+	},
+	"users": {
+		"title": "Users",
+		"usernameOrEmail": "Username or email",
+		"ageFrom": "Age from",
+		"ageTo": "Age to",
+		"search": "Search",
+		"sex": "Sex",
+		"sexSelect": {
+			"male": "Male",
+			"female": "Female",
+			"all": "All"
+		},
+		"viewProfile": "View profile",
+		"loadMore": "Load more",
+		"usersNotFound": "Users not found",
+		"itsYou": "It's you"
+	},
+	"user": {
+		"male": "Male",
+		"female": "Female"
+	},
+	"chatRules": {
+		"title": "Chat rules",
+		"rules": {
+			"first": "Do not insult the person you are speaking with."
+		}
+	}
 }

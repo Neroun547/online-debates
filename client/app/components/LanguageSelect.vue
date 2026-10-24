@@ -1,40 +1,44 @@
 <template>
-  <div>
-    <USelect :items="languageSelectItems" v-model="selectedLanguage" />
-  </div>
+	<div>
+		<USelect
+v-model="selectedLanguage"
+:items="languageSelectItems"
+/>
+	</div>
 </template>
+
 <script setup lang="ts">
-import { useUserStore } from "~/store/user/user.store";
+import { useUserStore } from "~/store/user/user.store"
 
-const userStore = useUserStore();
-const { setLocale, locale } = useI18n();
+const userStore = useUserStore()
+const { setLocale, locale } = useI18n()
 
-const selectedLanguage = ref<"en" | "uk" | "ru">("en");
+const selectedLanguage = ref<"en" | "uk" | "ru">("en")
 
 const languageSelectItems = [
-  {
-    label: "Ukrainian",
-    value: "uk",
-  },
-  {
-    label: "Russian",
-    value: "ru",
-  },
-  {
-    label: "English",
-    value: "en",
-  },
-];
+	{
+		label: "Ukrainian",
+		value: "uk"
+	},
+	{
+		label: "Russian",
+		value: "ru"
+	},
+	{
+		label: "English",
+		value: "en"
+	}
+]
 
 watch(selectedLanguage, (newValue: "en" | "uk" | "ru") => {
-  setLocale(newValue);
+	setLocale(newValue)
 
-  if (userStore.isAuth) {
-    userStore.updateUserLanguage(newValue);
-  }
-});
+	if (userStore.isAuth) {
+		userStore.updateUserLanguage(newValue)
+	}
+})
 
 onMounted(() => {
-  selectedLanguage.value = locale.value;
-});
+	selectedLanguage.value = locale.value
+})
 </script>

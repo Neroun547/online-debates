@@ -23,20 +23,20 @@
 <script setup lang="ts">
 import BaseUserCredentialsForm, {
 	type PropsFieldItemInterface
-} from "~/components/BaseUserCredentialsForm.vue"
-import z from "zod"
-import { useUserStore } from "~/store/user/user.store"
-import { useAppStore } from "~/store/app-store"
+} from "~/components/BaseUserCredentialsForm.vue";
+import z from "zod";
+import { useUserStore } from "~/store/user/user.store";
+import { useAppStore } from "~/store/app-store";
 
-const userStore = useUserStore()
-const appStore = useAppStore()
-const { t } = useI18n()
+const userStore = useUserStore();
+const appStore = useAppStore();
+const { t } = useI18n();
 
-const isError = ref<boolean>(false)
-const errorMessage = ref<string>("")
+const isError = ref<boolean>(false);
+const errorMessage = ref<string>("");
 
-const isSuccess = ref<boolean>(false)
-const isFormLoading = ref<boolean>(false)
+const isSuccess = ref<boolean>(false);
+const isFormLoading = ref<boolean>(false);
 
 const formFields = computed<Array<PropsFieldItemInterface>>(() => [
 	{
@@ -46,34 +46,34 @@ const formFields = computed<Array<PropsFieldItemInterface>>(() => [
 		htmlTag: "input",
 		label: t("forget-password.email")
 	}
-])
+]);
 
 const formSchema = z.object({
 	email: z.string().email()
-})
+});
 
 async function sendRecoveryLink(data: { email: string }) {
-	clearErrorAndSuccessState()
-	isFormLoading.value = true
+	clearErrorAndSuccessState();
+	isFormLoading.value = true;
 
-	await userStore.sendPasswordRecoveryLink(data.email)
+	await userStore.sendPasswordRecoveryLink(data.email);
 
 	if (userStore.isError) {
-		isError.value = true
-		errorMessage.value = userStore.errorMessage ?? t("forget-password.error")
+		isError.value = true;
+		errorMessage.value = userStore.errorMessage ?? t("forget-password.error");
 	} else {
-		isSuccess.value = true
+		isSuccess.value = true;
 	}
-	isFormLoading.value = false
+	isFormLoading.value = false;
 }
 
 function clearErrorAndSuccessState() {
-	isError.value = false
-	errorMessage.value = ""
-	isSuccess.value = false
+	isError.value = false;
+	errorMessage.value = "";
+	isSuccess.value = false;
 }
 
 onMounted(() => {
-	appStore.setIsLoading(false)
-})
+	appStore.setIsLoading(false);
+});
 </script>

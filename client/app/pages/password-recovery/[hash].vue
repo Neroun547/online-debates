@@ -21,13 +21,13 @@
 </template>
 
 <script setup lang="ts">
-import BaseUserCredentialsForm from "~/components/BaseUserCredentialsForm.vue"
-import type { PropsFieldItemInterface } from "~/components/BaseUserCredentialsForm.vue"
-import { useUserStore } from "~/store/user/user.store"
-import z from "zod"
-import { useAppStore } from "~/store/app-store"
+import BaseUserCredentialsForm from "~/components/BaseUserCredentialsForm.vue";
+import type { PropsFieldItemInterface } from "~/components/BaseUserCredentialsForm.vue";
+import { useUserStore } from "~/store/user/user.store";
+import z from "zod";
+import { useAppStore } from "~/store/app-store";
 
-const { t } = useI18n()
+const { t } = useI18n();
 
 const formFields = computed<Array<PropsFieldItemInterface>>(() => [
 	{
@@ -37,47 +37,47 @@ const formFields = computed<Array<PropsFieldItemInterface>>(() => [
 		htmlTag: "input",
 		label: t("password-recovery.newPassword")
 	}
-])
+]);
 const formSchema = z.object({
 	password: z.string().min(8).max(50)
-})
+});
 
-const errorMessage = ref("")
-const isError = ref(false)
+const errorMessage = ref("");
+const isError = ref(false);
 
-const isFormLoading = ref(false)
+const isFormLoading = ref(false);
 
-const isSuccess = ref(false)
+const isSuccess = ref(false);
 
-const route = useRoute()
-const userStore = useUserStore()
-const appStore = useAppStore()
+const route = useRoute();
+const userStore = useUserStore();
+const appStore = useAppStore();
 
 async function updatePassword(data: { password: string }) {
-	clearErrorAndSuccessState()
+	clearErrorAndSuccessState();
 
-	isFormLoading.value = true
+	isFormLoading.value = true;
 
-	await userStore.passwordRecovery(data.password, String(route.params.hash))
+	await userStore.passwordRecovery(data.password, String(route.params.hash));
 
 	if (userStore.isError) {
-		isError.value = true
-		errorMessage.value = userStore.errorMessage ?? t("password-recovery.error")
+		isError.value = true;
+		errorMessage.value = userStore.errorMessage ?? t("password-recovery.error");
 	} else {
-		isSuccess.value = true
+		isSuccess.value = true;
 
-		window.location.href = "/auth"
+		window.location.href = "/auth";
 	}
-	isFormLoading.value = false
+	isFormLoading.value = false;
 }
 
 function clearErrorAndSuccessState() {
-	isSuccess.value = false
-	isError.value = false
-	errorMessage.value = ""
+	isSuccess.value = false;
+	isError.value = false;
+	errorMessage.value = "";
 }
 
 onMounted(() => {
-	appStore.setIsLoading(false)
-})
+	appStore.setIsLoading(false);
+});
 </script>

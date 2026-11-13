@@ -33,9 +33,7 @@
 				<p class="text-sm">
 					{{ profile.email }}
 				</p>
-				<p class="text-sm">
-{{ $t("userProfile.age") }}: {{ profile.age }}
-</p>
+				<p class="text-sm">{{ $t("userProfile.age") }}: {{ profile.age }}</p>
 				<p class="text-sm">
 					{{ $t("userProfile.sex") }}: {{ getUserSexLabel(profile.sex) }}
 				</p>
@@ -56,10 +54,7 @@
 				/>
 			</div>
 		</div>
-		<div
-v-if="profile.description"
-class="mt-5"
->
+		<div v-if="profile.description" class="mt-5">
 			<h2 class="font-bold text-xl">
 				{{ $t("userProfile.aboutUser") }}
 			</h2>
@@ -71,17 +66,11 @@ class="mt-5"
 			{{ $t("userProfile.subjectsTitle") }}
 		</h2>
 		<div class="mt-5 mx-auto max-w-5xl">
-			<div
-v-for="subject in userSubjects"
-class="shadow-sm p-5 mt-5"
->
+			<div v-for="subject in userSubjects" class="shadow-sm p-5 mt-5">
 				<h2 class="font-bold text-xl">
 					{{ subject.name }}
 				</h2>
-				<p
-v-if="subject.category"
-class="text-sm"
->
+				<p v-if="subject.category" class="text-sm">
 					{{ getCategoryNameTranslate(subject.category) }}
 				</p>
 				<div class="flex justify-end">
@@ -113,34 +102,34 @@ class="text-sm"
 </template>
 
 <script setup lang="ts">
-import BookSessionModal from "~/components/subjects/BookSessionModal.vue"
-import { useAppStore } from "~/store/app-store"
-import type { CategoryItem } from "~/store/categories/interfaces/get-categories-response.interface"
-import type { SubjectItem } from "~/store/categories/interfaces/get-subjects-response.interface"
-import { UserStatus, useUserStore } from "~/store/user/user.store"
+import BookSessionModal from "~/components/subjects/BookSessionModal.vue";
+import { useAppStore } from "~/store/app-store";
+import type { CategoryItem } from "~/store/categories/interfaces/get-categories-response.interface";
+import type { SubjectItem } from "~/store/categories/interfaces/get-subjects-response.interface";
+import { UserStatus, useUserStore } from "~/store/user/user.store";
 
 interface UserProfile {
-	username: string
-	age: number
-	avatarFilename: string | null
-	description: string
-	email: string
-	isAvailableForPermanentSessions: boolean
-	timezone: string
-	status: string
-	sex: "male" | "female"
+	username: string;
+	age: number;
+	avatarFilename: string | null;
+	description: string;
+	email: string;
+	isAvailableForPermanentSessions: boolean;
+	timezone: string;
+	status: string;
+	sex: "male" | "female";
 }
 
-const route = useRoute()
-const { t, locale } = useI18n()
+const route = useRoute();
+const { t, locale } = useI18n();
 
-const userId = computed(() => Number(route.params.id))
-const activeSubjectId = ref()
+const userId = computed(() => Number(route.params.id));
+const activeSubjectId = ref();
 
 const currentCalendarState = ref({
 	year: new Date().getFullYear(),
 	month: new Date().getMonth() + 1
-})
+});
 
 const {
 	bookingSlots,
@@ -155,7 +144,7 @@ const {
 	defaultSelectedDate
 } = useBookSession({
 	currentCalendarState: currentCalendarState
-})
+});
 
 const profile = reactive<UserProfile>({
 	username: "",
@@ -167,56 +156,56 @@ const profile = reactive<UserProfile>({
 	timezone: "",
 	status: "",
 	sex: "male"
-})
+});
 
-const userSubjects = ref<SubjectItem[]>([])
+const userSubjects = ref<SubjectItem[]>([]);
 
-const appStore = useAppStore()
-const userStore = useUserStore()
+const appStore = useAppStore();
+const userStore = useUserStore();
 
 function getUserSexLabel(sex: "male" | "female") {
 	if (sex === "male") {
-		return t("userProfile.male")
+		return t("userProfile.male");
 	} else {
-		return t("userProfile.female")
+		return t("userProfile.female");
 	}
 }
 
 async function loadUserData() {
 	const response = await userStore.getUserWithSubjectsById(
 		Number(route.params.id)
-	)
+	);
 
 	if (response) {
-		profile.username = response.username
-		profile.age = response.age
-		profile.avatarFilename = response.avatarFilename
-		profile.email = response.email
-		profile.isAvailableForPermanentSessions
-			= response.isAvailableForPermanentSessions
-		profile.timezone = response.timezone
-		profile.description = response.description ?? ""
-		profile.status = response.status
-		profile.sex = response.sex
+		profile.username = response.username;
+		profile.age = response.age;
+		profile.avatarFilename = response.avatarFilename;
+		profile.email = response.email;
+		profile.isAvailableForPermanentSessions =
+			response.isAvailableForPermanentSessions;
+		profile.timezone = response.timezone;
+		profile.description = response.description ?? "";
+		profile.status = response.status;
+		profile.sex = response.sex;
 
 		if (response.subjects) {
-			userSubjects.value = response.subjects
+			userSubjects.value = response.subjects;
 		}
 	}
 }
 
 function getCategoryNameTranslate(category: CategoryItem): string {
 	if (locale.value === "uk") {
-		return category.translateNameUk ?? category.name
+		return category.translateNameUk ?? category.name;
 	} else if (locale.value === "ru") {
-		return category.translateNameRu ?? category.name
+		return category.translateNameRu ?? category.name;
 	} else {
-		return category.translateNameEn ?? category.name
+		return category.translateNameEn ?? category.name;
 	}
 }
 
 function localOpenBookingModal(subjectId: number) {
-	activeSubjectId.value = subjectId
+	activeSubjectId.value = subjectId;
 
 	openBookSessionModal(
 		{
@@ -230,12 +219,12 @@ function localOpenBookingModal(subjectId: number) {
 			sex: profile.sex
 		},
 		subjectId
-	)
+	);
 }
 
 onMounted(() => {
 	loadUserData().finally(() => {
-		appStore.setIsLoading(false)
-	})
-})
+		appStore.setIsLoading(false);
+	});
+});
 </script>

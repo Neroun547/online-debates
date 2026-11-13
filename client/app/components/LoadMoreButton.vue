@@ -9,10 +9,10 @@
 </template>
 
 <script setup>
-const emit = defineEmits(["loadMore"])
-const props = defineProps(["isLoading"])
+const emit = defineEmits(["loadMore"]);
+const props = defineProps(["isLoading"]);
 
 function loadMore() {
-	emit("loadMore")
+	emit("loadMore");
 }
 </script>

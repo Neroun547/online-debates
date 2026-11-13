@@ -1,27 +1,27 @@
 <script setup lang="ts">
 interface TimezoneOption {
-	name: string
-	value: string
+	name: string;
+	value: string;
 }
 
 interface Props {
-	placeholder?: string
-	disabled?: boolean
+	placeholder?: string;
+	disabled?: boolean;
 }
 
 const props = withDefaults(defineProps<Props>(), {
 	placeholder: "Select timezone",
 	disabled: false
-})
+});
 
-const selectedTimezone = defineModel<string | null>({ default: null })
+const selectedTimezone = defineModel<string | null>({ default: null });
 
 const timezones: TimezoneOption[] = Intl.supportedValuesOf("timeZone").map(
-	timezoneName => ({
+	(timezoneName) => ({
 		name: timezoneName,
 		value: timezoneName
 	})
-)
+);
 </script>
 
 <template>

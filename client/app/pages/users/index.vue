@@ -22,20 +22,14 @@
 						:placeholder="$t('users.usernameOrEmail')"
 					/>
 				</UFormField>
-				<UFormField
-name="ageFrom"
-:label="$t('users.ageFrom')"
->
+				<UFormField name="ageFrom" :label="$t('users.ageFrom')">
 					<UInputNumber
 						v-model="formState.ageFrom"
 						name="ageFrom"
 						:placeholder="$t('users.ageFrom')"
 					/>
 				</UFormField>
-				<UFormField
-name="ageTo"
-:label="$t('users.ageTo')"
->
+				<UFormField name="ageTo" :label="$t('users.ageTo')">
 					<UInputNumber
 						v-model="formState.ageTo"
 						name="ageTo"
@@ -70,14 +64,8 @@ name="ageTo"
 			{{ $t("users.usersNotFound") }}
 		</h2>
 		<div>
-			<Loader
-v-if="isFindUsersLoading"
-class="mt-20 m-auto w-max"
-/>
-			<div
-v-for="user in users"
-class="shadow p-5 mt-5"
->
+			<Loader v-if="isFindUsersLoading" class="mt-20 m-auto w-max" />
+			<div v-for="user in users" class="shadow p-5 mt-5">
 				<div class="flex items-center max-md:flex-col max-md:items-start">
 					<div class="max-md:flex max-md:items-center">
 						<UAvatar
@@ -124,7 +112,8 @@ class="shadow p-5 mt-5"
 							usersStore.userId !== user.id
 								? $t("users.viewProfile")
 								: $t("users.itsYou")
-						}}</RouterLink>
+						}}</RouterLink
+					>
 				</div>
 			</div>
 			<UButton
@@ -139,67 +128,67 @@ class="shadow p-5 mt-5"
 </template>
 
 <script setup lang="ts">
-import { useAppStore } from "~/store/app-store"
-import zod, { z } from "zod"
-import { useUserStore } from "~/store/user/user.store"
-import type { UserInterface } from "~/store/user/interfaces/user-response.interface"
-import Loader from "~/components/Loader.vue"
+import { useAppStore } from "~/store/app-store";
+import zod, { z } from "zod";
+import { useUserStore } from "~/store/user/user.store";
+import type { UserInterface } from "~/store/user/interfaces/user-response.interface";
+import Loader from "~/components/Loader.vue";
 
-const { t } = useI18n()
+const { t } = useI18n();
 
-const appStore = useAppStore()
-const usersStore = useUserStore()
+const appStore = useAppStore();
+const usersStore = useUserStore();
 
-const isFindUsersLoading = ref<boolean>(true)
+const isFindUsersLoading = ref<boolean>(true);
 
 const sexSelectItems = [
 	{ value: "all", label: t("users.sexSelect.all") },
 	{ value: "male", label: t("users.sexSelect.male") },
 	{ value: "female", label: t("users.sexSelect.female") }
-]
+];
 
 const formSchema = zod.object({
 	usernameOrEmail: z.string().max(256).optional(),
 	ageFrom: z.number().int().optional(),
 	ageTo: z.number().max(130).int().optional(),
 	sex: z.string()
-})
+});
 
-const users = ref<UserInterface[]>([])
+const users = ref<UserInterface[]>([]);
 
-const isLoadMoreButtonAvailable = ref<boolean>(false)
+const isLoadMoreButtonAvailable = ref<boolean>(false);
 
 const formState = reactive<{
-	usernameOrEmail: string
-	ageFrom: number
-	ageTo: number
-	sex: "all" | "male" | "female"
+	usernameOrEmail: string;
+	ageFrom: number;
+	ageTo: number;
+	sex: "all" | "male" | "female";
 }>({
 	usernameOrEmail: "",
 	ageFrom: 14,
 	ageTo: 70,
 	sex: "all"
-})
+});
 
-const page = ref(1)
-const limit = 20
+const page = ref(1);
+const limit = 20;
 
 function findByFilters(activateLoader?: boolean) {
-	page.value = 1
-	users.value = []
+	page.value = 1;
+	users.value = [];
 
-	findUsers(activateLoader)
+	findUsers(activateLoader);
 }
 
 function loadMoreUsers() {
-	page.value += 1
+	page.value += 1;
 
-	findUsers(true)
+	findUsers(true);
 }
 
 async function findUsers(activateLoader?: boolean) {
 	if (activateLoader) {
-		isFindUsersLoading.value = true
+		isFindUsersLoading.value = true;
 	}
 	const response = await usersStore.findUsers({
 		emailOrUsername: formState.usernameOrEmail.trim().length
@@ -210,20 +199,20 @@ async function findUsers(activateLoader?: boolean) {
 		sex: formState.sex,
 		page: page.value,
 		limit: limit
-	})
+	});
 
 	if (response) {
-		users.value.push(...response.data)
-		isLoadMoreButtonAvailable.value = response.isLoadMoreAvailable
+		users.value.push(...response.data);
+		isLoadMoreButtonAvailable.value = response.isLoadMoreAvailable;
 	}
-	isFindUsersLoading.value = false
+	isFindUsersLoading.value = false;
 }
 
 onMounted(() => {
-	page.value = 1
+	page.value = 1;
 
 	findUsers().finally(() => {
-		appStore.setIsLoading(false)
-	})
-})
+		appStore.setIsLoading(false);
+	});
+});
 </script>

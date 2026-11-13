@@ -1,19 +1,16 @@
 <template>
 	<div>
-		<USelect
-v-model="selectedLanguage"
-:items="languageSelectItems"
-/>
+		<USelect v-model="selectedLanguage" :items="languageSelectItems" />
 	</div>
 </template>
 
 <script setup lang="ts">
-import { useUserStore } from "~/store/user/user.store"
+import { useUserStore } from "~/store/user/user.store";
 
-const userStore = useUserStore()
-const { setLocale, locale } = useI18n()
+const userStore = useUserStore();
+const { setLocale, locale } = useI18n();
 
-const selectedLanguage = ref<"en" | "uk" | "ru">("en")
+const selectedLanguage = ref<"en" | "uk" | "ru">("en");
 
 const languageSelectItems = [
 	{
@@ -28,17 +25,17 @@ const languageSelectItems = [
 		label: "English",
 		value: "en"
 	}
-]
+];
 
 watch(selectedLanguage, (newValue: "en" | "uk" | "ru") => {
-	setLocale(newValue)
+	setLocale(newValue);
 
 	if (userStore.isAuth) {
-		userStore.updateUserLanguage(newValue)
+		userStore.updateUserLanguage(newValue);
 	}
-})
+});
 
 onMounted(() => {
-	selectedLanguage.value = locale.value
-})
+	selectedLanguage.value = locale.value;
+});
 </script>

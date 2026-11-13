@@ -20,15 +20,9 @@
 		<div class="max-w-[300px]">
 			<div class="mt-5">
 				<label class="max-sm:text-xs">{{ $t("userSlots.category") }}</label>
-				<PaginationCategoriesSelect
-v-model="selectedCategoryId"
-class="mt-2"
-/>
+				<PaginationCategoriesSelect v-model="selectedCategoryId" class="mt-2" />
 
-				<div
-v-if="isCategoryValidationError"
-class="text-red-600 mt-2"
->
+				<div v-if="isCategoryValidationError" class="text-red-600 mt-2">
 					{{ categoryValidationErrorMessage }}
 				</div>
 			</div>
@@ -43,10 +37,7 @@ class="text-red-600 mt-2"
 					:category-id="selectedCategoryId ?? undefined"
 					class="mt-2"
 				/>
-				<div
-v-if="isSubjectValidationError"
-class="text-red-600 mt-2"
->
+				<div v-if="isSubjectValidationError" class="text-red-600 mt-2">
 					{{ subjectValidationErrorMessage }}
 				</div>
 			</div>
@@ -54,10 +45,7 @@ class="text-red-600 mt-2"
 		<div :class="[isSlotsBlockDisabled ? 'blur-sm' : '']">
 			<div class="mt-10">
 				<div class="border rounded border-gray-300 shadow">
-					<div
-v-for="slot in slots"
-class="p-5 border-b-gray-300 border-b"
->
+					<div v-for="slot in slots" class="p-5 border-b-gray-300 border-b">
 						<div class="flex">
 							<UCheckbox
 								v-model="slot.enabled"
@@ -108,10 +96,7 @@ class="p-5 border-b-gray-300 border-b"
 									</div>
 								</div>
 							</div>
-							<div
-v-if="slot.isError"
-class="text-red-600 text-sm mt-5"
->
+							<div v-if="slot.isError" class="text-red-600 text-sm mt-5">
 								{{ slot.errorMessage }}
 							</div>
 						</div>
@@ -149,22 +134,14 @@ class="text-red-600 text-sm mt-5"
 					>
 						<div class="max-md:text-sm max-sm:text-xs max-[426px]:text-sm!">
 							<label for="">{{ $t("userSlots.dateFrom") }}</label>
-							<input
-v-model="singleSlotsDateFrom"
-type="date"
-class="ml-2"
->
+							<input v-model="singleSlotsDateFrom" type="date" class="ml-2" />
 						</div>
 
 						<div
 							class="ml-20 max-md:ml-0 max-sm:text-xs max-md:text-sm max-[426px]:text-sm! max-[426px]:mt-2"
 						>
 							<label for="">{{ $t("userSlots.dateTo") }}</label>
-							<input
-v-model="singleSlotsDateTo"
-type="date"
-class="ml-2"
->
+							<input v-model="singleSlotsDateTo" type="date" class="ml-2" />
 						</div>
 					</div>
 					<div
@@ -185,25 +162,25 @@ class="ml-2"
 </template>
 
 <script setup lang="ts">
-import { useAppStore } from "~/store/app-store"
-import type { CalendarDate } from "@internationalized/date"
-import { Time } from "@internationalized/date"
-import PaginationSubjectSelect from "~/components/subjects/PaginationSubjectSelect.vue"
-import PaginationCategoriesSelect from "~/components/subjects/PaginationCategoriesSelect.vue"
-import { useSlotsStore } from "~/store/slots/slots.store"
-import type { SlotItemInTemplateDto } from "~/store/slots/interfaces/create-slots-templates-request.interface"
-import CreateSingleSlotModal from "~/components/slots/CreateSingleSlotModal.vue"
-import { DateTime } from "luxon"
-import type { GetSingleSlotsResponseDataItemInterface } from "~/store/slots/interfaces/get-single-slots-response.interface"
-import type { TableColumn } from "@nuxt/ui"
-import DeleteSingleSlotModal from "~/components/slots/DeleteSingleSlotModal.vue"
-import { useInfiniteScroll } from "@vueuse/core"
+import { useAppStore } from "~/store/app-store";
+import type { CalendarDate } from "@internationalized/date";
+import { Time } from "@internationalized/date";
+import PaginationSubjectSelect from "~/components/subjects/PaginationSubjectSelect.vue";
+import PaginationCategoriesSelect from "~/components/subjects/PaginationCategoriesSelect.vue";
+import { useSlotsStore } from "~/store/slots/slots.store";
+import type { SlotItemInTemplateDto } from "~/store/slots/interfaces/create-slots-templates-request.interface";
+import CreateSingleSlotModal from "~/components/slots/CreateSingleSlotModal.vue";
+import { DateTime } from "luxon";
+import type { GetSingleSlotsResponseDataItemInterface } from "~/store/slots/interfaces/get-single-slots-response.interface";
+import type { TableColumn } from "@nuxt/ui";
+import DeleteSingleSlotModal from "~/components/slots/DeleteSingleSlotModal.vue";
+import { useInfiniteScroll } from "@vueuse/core";
 
-const { t, locale } = useI18n()
+const { t, locale } = useI18n();
 
-const UButton = resolveComponent("UButton")
+const UButton = resolveComponent("UButton");
 
-const slotsStore = useSlotsStore()
+const slotsStore = useSlotsStore();
 const weekDaysMap = computed(
 	() =>
 		new Map<number, string>([
@@ -215,51 +192,51 @@ const weekDaysMap = computed(
 			[6, t("userSlots.saturday")],
 			[7, t("userSlots.sunday")]
 		])
-)
+);
 
 export interface SlotItem {
-	weekday: number // 1-7 monday-sunday
+	weekday: number; // 1-7 monday-sunday
 	intervals: Array<{
-		id: number
-		timeFrom: any
-		timeTo: any
-	}>
-	enabled: boolean
-	isError: boolean
-	errorMessage: string
+		id: number;
+		timeFrom: any;
+		timeTo: any;
+	}>;
+	enabled: boolean;
+	isError: boolean;
+	errorMessage: string;
 }
 
-const isSaveTemplateButtonLoading = ref(false)
+const isSaveTemplateButtonLoading = ref(false);
 
-const toast = useToast()
+const toast = useToast();
 
-const appStore = useAppStore()
+const appStore = useAppStore();
 
-const selectedCategoryId = ref<number | null>(null)
-const selectedSubjectId = ref<number | null>(null)
+const selectedCategoryId = ref<number | null>(null);
+const selectedSubjectId = ref<number | null>(null);
 
-const isCategoryValidationError = ref<boolean>(false)
-const categoryValidationErrorMessage = ref<string>("")
+const isCategoryValidationError = ref<boolean>(false);
+const categoryValidationErrorMessage = ref<string>("");
 
-const isSubjectValidationError = ref<boolean>(false)
-const subjectValidationErrorMessage = ref<string>("")
+const isSubjectValidationError = ref<boolean>(false);
+const subjectValidationErrorMessage = ref<string>("");
 
-const isSaveRegularSlotsButtonDisabled = ref<boolean>(true)
-const isSaveSingleSlotButtonDisabled = ref<boolean>(true)
+const isSaveRegularSlotsButtonDisabled = ref<boolean>(true);
+const isSaveSingleSlotButtonDisabled = ref<boolean>(true);
 
 const isSlotsBlockDisabled = computed(() => {
-	return selectedCategoryId.value === null || selectedSubjectId.value === null
-})
+	return selectedCategoryId.value === null || selectedSubjectId.value === null;
+});
 
-const isCreateSingleSlotModalOpen = ref(false)
-const isSaveSingleSlotButtonLoading = ref(false)
-const isDeleteSingleSlotModalOpen = ref(false)
-const activeDeleteSingleSlot = ref<GetSingleSlotsResponseDataItemInterface>()
+const isCreateSingleSlotModalOpen = ref(false);
+const isSaveSingleSlotButtonLoading = ref(false);
+const isDeleteSingleSlotModalOpen = ref(false);
+const activeDeleteSingleSlot = ref<GetSingleSlotsResponseDataItemInterface>();
 
-const singleSlotsDateFrom = ref()
-const singleSlotsDateTo = ref()
-const singleSlotsPage = ref(1)
-const singleSlotsLimit = ref(20)
+const singleSlotsDateFrom = ref();
+const singleSlotsDateTo = ref();
+const singleSlotsPage = ref(1);
+const singleSlotsLimit = ref(20);
 
 const singleSlotsTableColumns = computed<
 	TableColumn<GetSingleSlotsResponseDataItemInterface>[]
@@ -293,25 +270,25 @@ const singleSlotsTableColumns = computed<
 		},
 		cell: ({ row }) => {
 			return h(UButton, {
-				"icon": "i-lucide-trash-2",
-				"color": "",
-				"class": "bg-red-600 text-white cursor-pointer",
-				"variant": "ghost",
-				"size": "xs",
+				icon: "i-lucide-trash-2",
+				color: "",
+				class: "bg-red-600 text-white cursor-pointer",
+				variant: "ghost",
+				size: "xs",
 				"aria-label": t("userSlots.deleteSingleSlot"),
-				"onClick": () => {
-					openDeleteSingleSlotModal(row.original)
+				onClick: () => {
+					openDeleteSingleSlotModal(row.original);
 				}
-			})
+			});
 		}
 	}
-])
+]);
 
-const singleSlotsScrollContainer = useTemplateRef("singleSlotsScrollContainer")
-const singleSlots = ref<GetSingleSlotsResponseDataItemInterface[]>([])
-const singleSlotsCount = ref<number>()
-const isSingleSlotsTableLoading = ref<boolean>(false)
-const isSingleSlotsLoadMoreAvailable = ref<boolean>(false)
+const singleSlotsScrollContainer = useTemplateRef("singleSlotsScrollContainer");
+const singleSlots = ref<GetSingleSlotsResponseDataItemInterface[]>([]);
+const singleSlotsCount = ref<number>();
+const isSingleSlotsTableLoading = ref<boolean>(false);
+const isSingleSlotsLoadMoreAvailable = ref<boolean>(false);
 
 const slots = ref<SlotItem[]>([
 	{
@@ -405,22 +382,22 @@ const slots = ref<SlotItem[]>([
 		errorMessage: "",
 		isError: false
 	}
-])
+]);
 
 function openCreateSingleSlotModal() {
-	isCreateSingleSlotModalOpen.value = true
+	isCreateSingleSlotModalOpen.value = true;
 }
 
 function openDeleteSingleSlotModal(
 	slot: GetSingleSlotsResponseDataItemInterface
 ) {
-	activeDeleteSingleSlot.value = slot
-	isDeleteSingleSlotModalOpen.value = true
+	activeDeleteSingleSlot.value = slot;
+	isDeleteSingleSlotModalOpen.value = true;
 }
 
 async function deleteSingleSlot() {
 	if (activeDeleteSingleSlot.value) {
-		await slotsStore.deleteSingleSlot(activeDeleteSingleSlot.value.id)
+		await slotsStore.deleteSingleSlot(activeDeleteSingleSlot.value.id);
 
 		if (slotsStore.isError) {
 			toast.add({
@@ -429,7 +406,7 @@ async function deleteSingleSlot() {
 				progress: {
 					color: "error"
 				}
-			})
+			});
 		} else {
 			toast.add({
 				title: t("userSlots.success"),
@@ -437,21 +414,21 @@ async function deleteSingleSlot() {
 				progress: {
 					color: "success"
 				}
-			})
+			});
 		}
-		getSingleSlots(true)
+		getSingleSlots(true);
 	}
-	isDeleteSingleSlotModalOpen.value = false
+	isDeleteSingleSlotModalOpen.value = false;
 }
 
 function deleteTimeFromSlot(weekday: number, timeId: number) {
-	const slot = slots.value[weekday - 1]
+	const slot = slots.value[weekday - 1];
 
 	if (slot?.intervals) {
-		slot.intervals = slot.intervals.filter(time => time.id !== timeId)
+		slot.intervals = slot.intervals.filter((time) => time.id !== timeId);
 
 		if (slot.intervals.length === 0) {
-			slot.enabled = false
+			slot.enabled = false;
 		}
 	}
 }
@@ -461,134 +438,134 @@ function addTimeToSlot(weekday: number) {
 		id: Date.now(),
 		timeFrom: new Time(10, 0, 0),
 		timeTo: new Time(12, 0, 0)
-	})
+	});
 }
 
 function validateCategoryAndSubject(): boolean {
 	if (
-		selectedCategoryId.value === -1
-		|| selectedCategoryId.value === undefined
-		|| selectedCategoryId.value === null
+		selectedCategoryId.value === -1 ||
+		selectedCategoryId.value === undefined ||
+		selectedCategoryId.value === null
 	) {
-		categoryValidationErrorMessage.value = t("userSlots.categoryRequired")
-		isCategoryValidationError.value = true
+		categoryValidationErrorMessage.value = t("userSlots.categoryRequired");
+		isCategoryValidationError.value = true;
 	} else {
-		isCategoryValidationError.value = false
+		isCategoryValidationError.value = false;
 	}
 	if (
-		selectedSubjectId.value === -1
-		|| selectedSubjectId.value === undefined
-		|| selectedSubjectId.value === null
+		selectedSubjectId.value === -1 ||
+		selectedSubjectId.value === undefined ||
+		selectedSubjectId.value === null
 	) {
-		subjectValidationErrorMessage.value = t("userSlots.subjectRequired")
-		isSubjectValidationError.value = true
+		subjectValidationErrorMessage.value = t("userSlots.subjectRequired");
+		isSubjectValidationError.value = true;
 	} else {
-		isSubjectValidationError.value = false
+		isSubjectValidationError.value = false;
 	}
-	return !isSubjectValidationError.value && !isCategoryValidationError.value
+	return !isSubjectValidationError.value && !isCategoryValidationError.value;
 }
 
 function validateSlots(): boolean {
-	let isTimeSlotsExists = false
+	let isTimeSlotsExists = false;
 
 	for (const slot of slots.value) {
 		if (slot.intervals.length && slot.enabled) {
-			isTimeSlotsExists = true
+			isTimeSlotsExists = true;
 
-			break
+			break;
 		}
 	}
 	if (!isTimeSlotsExists) {
-		isSaveRegularSlotsButtonDisabled.value = true
+		isSaveRegularSlotsButtonDisabled.value = true;
 
-		return false
+		return false;
 	}
 	for (const slot of slots.value) {
 		for (const time of slot.intervals) {
-			const timeFromInSeconds = getTimeInSeconds(time.timeFrom.toString())
-			const timeToInSeconds = getTimeInSeconds(time.timeTo.toString())
+			const timeFromInSeconds = getTimeInSeconds(time.timeFrom.toString());
+			const timeToInSeconds = getTimeInSeconds(time.timeTo.toString());
 
 			if (timeFromInSeconds > timeToInSeconds) {
-				slot.isError = true
+				slot.isError = true;
 				slot.errorMessage = t("userSlots.timeFromAfterTimeTo", {
 					from: time.timeFrom.toString().substring(0, 5),
 					to: time.timeTo.toString().substring(0, 5)
-				})
+				});
 
-				return false
+				return false;
 			}
 			const conflictSlot = slot.intervals.find((item) => {
 				const currentTimeFromInSeconds = getTimeInSeconds(
 					item.timeFrom.toString()
-				)
-				const currentTimeToInSeconds = getTimeInSeconds(item.timeTo.toString())
+				);
+				const currentTimeToInSeconds = getTimeInSeconds(item.timeTo.toString());
 
 				if (
-					item.id !== time.id
-					&& ((timeFromInSeconds >= currentTimeFromInSeconds
-						&& timeToInSeconds <= currentTimeToInSeconds)
-					|| (timeFromInSeconds <= currentTimeToInSeconds
-						&& timeToInSeconds >= currentTimeFromInSeconds)
-					|| (timeFromInSeconds <= currentTimeFromInSeconds
-						&& timeToInSeconds >= currentTimeToInSeconds)
-					|| (timeFromInSeconds >= currentTimeFromInSeconds
-						&& timeToInSeconds >= currentTimeToInSeconds
-						&& timeFromInSeconds <= currentTimeToInSeconds))
+					item.id !== time.id &&
+					((timeFromInSeconds >= currentTimeFromInSeconds &&
+						timeToInSeconds <= currentTimeToInSeconds) ||
+						(timeFromInSeconds <= currentTimeToInSeconds &&
+							timeToInSeconds >= currentTimeFromInSeconds) ||
+						(timeFromInSeconds <= currentTimeFromInSeconds &&
+							timeToInSeconds >= currentTimeToInSeconds) ||
+						(timeFromInSeconds >= currentTimeFromInSeconds &&
+							timeToInSeconds >= currentTimeToInSeconds &&
+							timeFromInSeconds <= currentTimeToInSeconds))
 				) {
-					return item
+					return item;
 				}
 				if (
-					item.id !== time.id
-					&& currentTimeFromInSeconds >= timeFromInSeconds
-					&& currentTimeToInSeconds <= timeToInSeconds
+					item.id !== time.id &&
+					currentTimeFromInSeconds >= timeFromInSeconds &&
+					currentTimeToInSeconds <= timeToInSeconds
 				) {
-					return item
+					return item;
 				}
-			})
+			});
 
 			if (conflictSlot) {
-				slot.isError = true
+				slot.isError = true;
 				slot.errorMessage = t("userSlots.timeConflict", {
 					from: time.timeFrom.toString().substring(0, 5),
 					to: time.timeTo.toString().substring(0, 5),
 					conflictFrom: conflictSlot.timeFrom.toString().substring(0, 5),
 					conflictTo: conflictSlot.timeTo.toString().substring(0, 5)
-				})
-				isSaveRegularSlotsButtonDisabled.value = true
-				return false
+				});
+				isSaveRegularSlotsButtonDisabled.value = true;
+				return false;
 			}
-			slot.isError = false
-			slot.errorMessage = ""
+			slot.isError = false;
+			slot.errorMessage = "";
 		}
 	}
-	isSaveRegularSlotsButtonDisabled.value = false
-	return true
+	isSaveRegularSlotsButtonDisabled.value = false;
+	return true;
 }
 
 function getTimeInSeconds(time: string) {
-	const arr = time.substring(0, 5).split(":")
+	const arr = time.substring(0, 5).split(":");
 
-	return Number(arr[0]) * 60 * 60 + Number(arr[1]) * 60
+	return Number(arr[0]) * 60 * 60 + Number(arr[1]) * 60;
 }
 
 function onEnableSlot(weekday: number) {
-	const slot = slots.value[weekday - 1]
+	const slot = slots.value[weekday - 1];
 
 	if (slot && !slot.intervals.length) {
 		slot.intervals.push({
 			id: Date.now(),
 			timeFrom: new Time(10, 0, 0),
 			timeTo: new Time(12, 0, 0)
-		})
+		});
 	}
 }
 
 async function saveRegularSlots() {
-	const isValid = validateSlots() && validateCategoryAndSubject()
+	const isValid = validateSlots() && validateCategoryAndSubject();
 
 	if (isValid && selectedCategoryId.value && selectedSubjectId.value) {
-		isSaveTemplateButtonLoading.value = true
-		const parsedSlots: Array<SlotItemInTemplateDto> = []
+		isSaveTemplateButtonLoading.value = true;
+		const parsedSlots: Array<SlotItemInTemplateDto> = [];
 
 		for (const slot of slots.value) {
 			if (slot.enabled) {
@@ -597,7 +574,7 @@ async function saveRegularSlots() {
 						weekday: slot.weekday,
 						startTime: time.timeFrom.toString().substring(0, 5),
 						endTime: time.timeTo.toString().substring(0, 5)
-					})
+					});
 				}
 			}
 		}
@@ -605,7 +582,7 @@ async function saveRegularSlots() {
 			slots: parsedSlots,
 			subjectId: selectedSubjectId.value,
 			categoryId: selectedCategoryId.value
-		})
+		});
 
 		if (slotsStore.isError) {
 			toast.add({
@@ -614,7 +591,7 @@ async function saveRegularSlots() {
 				progress: {
 					color: "error"
 				}
-			})
+			});
 		} else {
 			toast.add({
 				title: t("userSlots.success"),
@@ -622,29 +599,29 @@ async function saveRegularSlots() {
 				progress: {
 					color: "success"
 				}
-			})
+			});
 		}
-		isSaveTemplateButtonLoading.value = false
+		isSaveTemplateButtonLoading.value = false;
 	}
 }
 
 async function getTemplateSlots() {
 	if (selectedSubjectId.value) {
-		const response = await slotsStore.getTimeSlots(selectedSubjectId.value)
+		const response = await slotsStore.getTimeSlots(selectedSubjectId.value);
 
 		if (response && response.length) {
 			slots.value = slots.value.map((slot) => {
 				const currentSlotInResponse = response.find(
-					item => item.weekday === slot.weekday
-				)
+					(item) => item.weekday === slot.weekday
+				);
 
 				if (currentSlotInResponse) {
 					return {
 						...currentSlotInResponse
-					}
+					};
 				}
-				return slot
-			})
+				return slot;
+			});
 		}
 	}
 }
@@ -742,18 +719,18 @@ function setInitialValueToSlots() {
 			errorMessage: "",
 			isError: false
 		}
-	]
+	];
 
-	singleSlots.value = []
+	singleSlots.value = [];
 }
 
 async function saveSingleSlot(data: {
-	timeTo: Time
-	timeFrom: Time
-	date: CalendarDate
+	timeTo: Time;
+	timeFrom: Time;
+	date: CalendarDate;
 }) {
 	if (selectedSubjectId.value) {
-		isSaveSingleSlotButtonLoading.value = true
+		isSaveSingleSlotButtonLoading.value = true;
 
 		await slotsStore.createSingleSlot({
 			subjectId: selectedSubjectId.value,
@@ -761,7 +738,7 @@ async function saveSingleSlot(data: {
 				data.date.toString() + " " + data.timeFrom.toString().substring(0, 5),
 			endTime:
 				data.date.toString() + " " + data.timeTo.toString().substring(0, 5)
-		})
+		});
 
 		if (slotsStore.isError) {
 			toast.add({
@@ -773,7 +750,7 @@ async function saveSingleSlot(data: {
 				progress: {
 					color: "error"
 				}
-			})
+			});
 		} else {
 			toast.add({
 				title: t("userSlots.success"),
@@ -781,11 +758,11 @@ async function saveSingleSlot(data: {
 				progress: {
 					color: "success"
 				}
-			})
-			getSingleSlots(true)
-			isCreateSingleSlotModalOpen.value = false
+			});
+			getSingleSlots(true);
+			isCreateSingleSlotModalOpen.value = false;
 		}
-		isSaveSingleSlotButtonLoading.value = false
+		isSaveSingleSlotButtonLoading.value = false;
 	}
 }
 
@@ -795,17 +772,17 @@ async function getSingleSlotsCount() {
 			subjectId: selectedSubjectId.value,
 			dateFrom: singleSlotsDateFrom.value,
 			dateTo: singleSlotsDateTo.value
-		})
+		});
 
 		if (typeof count === "number") {
-			singleSlotsCount.value = count
+			singleSlotsCount.value = count;
 		}
 	}
 }
 
 async function getSingleSlots(reload?: boolean) {
 	if (selectedSubjectId.value) {
-		isSingleSlotsTableLoading.value = true
+		isSingleSlotsTableLoading.value = true;
 
 		const response = await slotsStore.getSingleSlots(
 			selectedSubjectId.value,
@@ -813,106 +790,106 @@ async function getSingleSlots(reload?: boolean) {
 			singleSlotsDateTo.value,
 			singleSlotsPage.value,
 			singleSlotsLimit.value
-		)
+		);
 		if (response) {
 			if (!reload) {
-				singleSlots.value.push(...response.data)
+				singleSlots.value.push(...response.data);
 			} else {
-				singleSlots.value = response.data
+				singleSlots.value = response.data;
 			}
-			isSingleSlotsLoadMoreAvailable.value = response.isLoadMoreAvailable
+			isSingleSlotsLoadMoreAvailable.value = response.isLoadMoreAvailable;
 		}
-		isSingleSlotsTableLoading.value = false
+		isSingleSlotsTableLoading.value = false;
 	}
 }
 
 function clearSingleSlotsState() {
-	singleSlotsPage.value = 1
-	isSingleSlotsLoadMoreAvailable.value = false
-	singleSlotsCount.value = 0
-	singleSlots.value = []
+	singleSlotsPage.value = 1;
+	isSingleSlotsLoadMoreAvailable.value = false;
+	singleSlotsCount.value = 0;
+	singleSlots.value = [];
 }
 
 function mapToWatcher(slots: Array<SlotItem>) {
-	return slots.map(item => ({
+	return slots.map((item) => ({
 		weekday: item.weekday,
 		intervals: item.intervals,
 		enabled: item.enabled
-	}))
+	}));
 }
 // Map to watcher. Because isError and errorMessage prop make recursion ...
 watch(
 	() => mapToWatcher(slots.value),
 	() => {
-		validateSlots()
+		validateSlots();
 	},
 	{ deep: true }
-)
+);
 
 watch(selectedCategoryId, () => {
 	if (selectedSubjectId.value && selectedCategoryId.value) {
-		isSaveSingleSlotButtonDisabled.value = false
+		isSaveSingleSlotButtonDisabled.value = false;
 	} else {
-		isSaveSingleSlotButtonDisabled.value = true
+		isSaveSingleSlotButtonDisabled.value = true;
 	}
-	setInitialValueToSlots()
-	validateCategoryAndSubject()
-})
+	setInitialValueToSlots();
+	validateCategoryAndSubject();
+});
 
 watch(selectedSubjectId, () => {
 	if (selectedSubjectId.value && selectedCategoryId.value) {
-		isSaveSingleSlotButtonDisabled.value = false
+		isSaveSingleSlotButtonDisabled.value = false;
 	} else {
-		isSaveSingleSlotButtonDisabled.value = true
+		isSaveSingleSlotButtonDisabled.value = true;
 	}
-	setInitialValueToSlots()
-	validateCategoryAndSubject()
-	getTemplateSlots()
+	setInitialValueToSlots();
+	validateCategoryAndSubject();
+	getTemplateSlots();
 	getSingleSlotsCount().then(() => {
-		getSingleSlots(true)
-	})
-})
+		getSingleSlots(true);
+	});
+});
 
 watch(singleSlotsDateFrom, () => {
-	clearSingleSlotsState()
+	clearSingleSlotsState();
 	getSingleSlotsCount().then(() => {
-		getSingleSlots(true)
-	})
-})
+		getSingleSlots(true);
+	});
+});
 
 watch(singleSlotsDateTo, () => {
-	clearSingleSlotsState()
+	clearSingleSlotsState();
 
 	getSingleSlotsCount().then(() => {
-		getSingleSlots(true)
-	})
-})
+		getSingleSlots(true);
+	});
+});
 
 onMounted(() => {
-	appStore.setIsLoading(false)
+	appStore.setIsLoading(false);
 
-	const now = new Date()
+	const now = new Date();
 
-	singleSlotsDateFrom.value = DateTime.fromJSDate(now).toFormat("yyyy-MM-dd")
+	singleSlotsDateFrom.value = DateTime.fromJSDate(now).toFormat("yyyy-MM-dd");
 	singleSlotsDateTo.value = DateTime.fromJSDate(now)
 		.plus({ days: 7 })
-		.toFormat("yyyy-MM-dd")
+		.toFormat("yyyy-MM-dd");
 
 	useInfiniteScroll(
 		singleSlotsScrollContainer,
 		async () => {
-			singleSlotsPage.value += 1
-			await getSingleSlots()
+			singleSlotsPage.value += 1;
+			await getSingleSlots();
 		},
 		{
 			distance: 0,
 			canLoadMore: () => {
 				return (
-					!isSingleSlotsTableLoading.value
-					&& isSingleSlotsLoadMoreAvailable.value
-				)
+					!isSingleSlotsTableLoading.value &&
+					isSingleSlotsLoadMoreAvailable.value
+				);
 			}
 		}
-	)
-})
+	);
+});
 </script>

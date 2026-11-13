@@ -18,10 +18,7 @@
 				<template #footerLinks>
 					<p>
 						{{ $t("auth.noAccount") }}
-						<ULink
-to="/signup"
-class="text-primary hover:text-primary"
->
+						<ULink to="/signup" class="text-primary hover:text-primary">
 							{{ $t("auth.signUp") }}
 						</ULink>
 					</p>
@@ -41,30 +38,30 @@ class="text-primary hover:text-primary"
 </template>
 
 <script setup lang="ts">
-import { z } from "zod"
-import type { PropsFieldItemInterface } from "~/components/BaseUserCredentialsForm.vue"
-import BaseUserCredentialsForm from "~/components/BaseUserCredentialsForm.vue"
-import { useAppStore } from "~/store/app-store"
-import type { AuthRequestInterface } from "~/store/user/interfaces/auth-request.interface"
-import { useUserStore } from "~/store/user/user.store"
-import { redirectAuthUser } from "~/utils/redirect-auth-user"
+import { z } from "zod";
+import type { PropsFieldItemInterface } from "~/components/BaseUserCredentialsForm.vue";
+import BaseUserCredentialsForm from "~/components/BaseUserCredentialsForm.vue";
+import { useAppStore } from "~/store/app-store";
+import type { AuthRequestInterface } from "~/store/user/interfaces/auth-request.interface";
+import { useUserStore } from "~/store/user/user.store";
+import { redirectAuthUser } from "~/utils/redirect-auth-user";
 
-const { setLocale } = useI18n()
+const { setLocale } = useI18n();
 
-const appStore = useAppStore()
-const userStore = useUserStore()
-const { t } = useI18n()
+const appStore = useAppStore();
+const userStore = useUserStore();
+const { t } = useI18n();
 
-const isFormLoading = ref(false)
+const isFormLoading = ref(false);
 
 const formSchema = z.object({
 	usernameOrEmail: z.string().trim().max(256).min(1),
 	password: z.string().trim().min(8).max(50)
-})
+});
 
-const isFormSubmittedSuccess = ref(false)
-const isAuthError = ref(false)
-const authErrorMessage = ref<string | undefined>(undefined)
+const isFormSubmittedSuccess = ref(false);
+const isAuthError = ref(false);
+const authErrorMessage = ref<string | undefined>(undefined);
 
 const fields = computed<Array<PropsFieldItemInterface>>(() => [
 	{
@@ -81,36 +78,36 @@ const fields = computed<Array<PropsFieldItemInterface>>(() => [
 		htmlTag: "input",
 		label: t("auth.passwordLabel")
 	}
-])
+]);
 
 async function auth(state: AuthRequestInterface) {
-	isFormLoading.value = true
+	isFormLoading.value = true;
 
 	const response = await userStore.auth({
 		usernameOrEmail: state.usernameOrEmail,
 		password: state.password
-	})
+	});
 	if (!userStore.isError) {
 		if (response?.language) {
 			// @ts-ignore
-			setLocale(response.language)
+			setLocale(response.language);
 		}
-		authErrorMessage.value = ""
-		isFormSubmittedSuccess.value = true
-		isAuthError.value = false
+		authErrorMessage.value = "";
+		isFormSubmittedSuccess.value = true;
+		isAuthError.value = false;
 
-		window.location.href = "/home"
+		window.location.href = "/home";
 	} else {
-		authErrorMessage.value = userStore.errorMessage
-		isFormSubmittedSuccess.value = false
-		isAuthError.value = true
+		authErrorMessage.value = userStore.errorMessage;
+		isFormSubmittedSuccess.value = false;
+		isAuthError.value = true;
 	}
-	isFormLoading.value = false
+	isFormLoading.value = false;
 }
 
 onMounted(() => {
-	appStore.setIsLoading(false)
+	appStore.setIsLoading(false);
 
-	redirectAuthUser()
-})
+	redirectAuthUser();
+});
 </script>

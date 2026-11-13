@@ -1,63 +1,60 @@
 <script setup lang="ts">
-import PageLoader from "./components/PageLoader.vue"
-import SideNav from "./components/SideNav.vue"
-import Nav from "./components/Nav.vue"
-import { useUserStore } from "./store/user/user.store.ts"
-import { useAppStore } from "./store/app-store.ts"
+import PageLoader from "./components/PageLoader.vue";
+import SideNav from "./components/SideNav.vue";
+import Nav from "./components/Nav.vue";
+import { useUserStore } from "./store/user/user.store.ts";
+import { useAppStore } from "./store/app-store.ts";
 
-const route = useRoute()
+const route = useRoute();
 
-const showPublicLayout = ref<boolean>(false)
-const isCurrentSessionPage = ref<boolean>(false)
+const showPublicLayout = ref<boolean>(false);
+const isCurrentSessionPage = ref<boolean>(false);
 
-const userStore = useUserStore()
-const appStore = useAppStore()
+const userStore = useUserStore();
+const appStore = useAppStore();
 
-const isMenuOpen = ref(true)
+const isMenuOpen = ref(true);
 
 onMounted(() => {
-	const pageData = isPublicPage(route.path)
+	const pageData = isPublicPage(route.path);
 
 	if (pageData.page === "/support" && userStore.isAuth) {
-		showPublicLayout.value = false
+		showPublicLayout.value = false;
 	} else if (pageData.page === "/support" && !userStore.isAuth) {
-		showPublicLayout.value = true
+		showPublicLayout.value = true;
 	} else {
-		showPublicLayout.value = isPublicPage(route.path).value
+		showPublicLayout.value = isPublicPage(route.path).value;
 	}
-	isCurrentSessionPage.value = route.path.includes("/my-sessions/")
+	isCurrentSessionPage.value = route.path.includes("/my-sessions/");
 
 	if (userStore.isAuth) {
 		setInterval(() => {
-			userStore.refreshToken()
-		}, 5000)
+			userStore.refreshToken();
+		}, 5000);
 	}
-})
+});
 
 watch(
 	() => route.path,
 	() => {
-		const pageData = isPublicPage(route.path)
+		const pageData = isPublicPage(route.path);
 
 		if (pageData.page === "/support" && userStore.isAuth) {
-			showPublicLayout.value = false
+			showPublicLayout.value = false;
 		} else if (pageData.page === "/support" && !userStore.isAuth) {
-			showPublicLayout.value = true
+			showPublicLayout.value = true;
 		} else {
-			showPublicLayout.value = isPublicPage(route.path).value
+			showPublicLayout.value = isPublicPage(route.path).value;
 		}
-		isCurrentSessionPage.value = route.path.includes("/my-sessions/")
+		isCurrentSessionPage.value = route.path.includes("/my-sessions/");
 	}
-)
+);
 </script>
 
 <template>
 	<UApp>
 		<UMain>
-			<div
-v-if="!showPublicLayout"
-class="min-h-screen flex flex-col"
->
+			<div v-if="!showPublicLayout" class="min-h-screen flex flex-col">
 				<Nav
 					v-if="userStore.getIsAuth"
 					@toggle-menu="(value) => (isMenuOpen = value)"
@@ -96,10 +93,7 @@ class="min-h-screen flex flex-col"
 					]"
 				/>
 			</div>
-			<div
-v-if="showPublicLayout"
-class="min-h-screen h-full"
->
+			<div v-if="showPublicLayout" class="min-h-screen h-full">
 				<LandingNav />
 				<NuxtPage class="m-auto max-sm:w-[90%] w-[85%] min-h-screen" />
 				<Footer

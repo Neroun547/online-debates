@@ -22,31 +22,31 @@
 </template>
 
 <script setup lang="ts">
-import { userAuthGuard } from "~/guards/user-auth.guard"
-import { useCategoriesStore } from "~/store/categories/categories.store"
-import LoadMoreButton from "~/components/LoadMoreButton.vue"
-import { useAppStore } from "~/store/app-store"
-import type { ListItem } from "~/components/BaseList.vue"
-import type { CategoryItem } from "~/store/categories/interfaces/get-categories-response.interface"
+import { userAuthGuard } from "~/guards/user-auth.guard";
+import { useCategoriesStore } from "~/store/categories/categories.store";
+import LoadMoreButton from "~/components/LoadMoreButton.vue";
+import { useAppStore } from "~/store/app-store";
+import type { ListItem } from "~/components/BaseList.vue";
+import type { CategoryItem } from "~/store/categories/interfaces/get-categories-response.interface";
 
-const appStore = useAppStore()
-const categoriesStore = useCategoriesStore()
+const appStore = useAppStore();
+const categoriesStore = useCategoriesStore();
 
-const { locale } = useI18n()
+const { locale } = useI18n();
 
-const page = ref(1)
-const limit = ref(20)
-const categories = ref<Array<ListItem>>([])
+const page = ref(1);
+const limit = ref(20);
+const categories = ref<Array<ListItem>>([]);
 
-const isLoadMoreButtonLoading = ref(false)
-const isLoadMoreButtonShow = ref(false)
+const isLoadMoreButtonLoading = ref(false);
+const isLoadMoreButtonShow = ref(false);
 
 async function getCategories() {
-	const response = await categoriesStore.getCategories(page.value, limit.value)
+	const response = await categoriesStore.getCategories(page.value, limit.value);
 
 	if (response) {
 		categories.value.push(
-			...response.data.map(item => ({
+			...response.data.map((item) => ({
 				id: item.id,
 				isLink: true,
 				title: getCategoryItemTranslate(item),
@@ -54,39 +54,39 @@ async function getCategories() {
 				emoji: item.emoji,
 				subjects: item.subjects
 			}))
-		)
-		isLoadMoreButtonShow.value = response.isLoadMoreAvailable
+		);
+		isLoadMoreButtonShow.value = response.isLoadMoreAvailable;
 	}
 }
 
 function getCategoryItemTranslate(category: CategoryItem) {
 	if (locale.value === "en" && category.translateNameEn) {
-		return category.translateNameEn
+		return category.translateNameEn;
 	}
 	if (locale.value === "uk" && category.translateNameUk) {
-		return category.translateNameUk
+		return category.translateNameUk;
 	}
 	if (locale.value === "ru" && category.translateNameRu) {
-		return category.translateNameRu
+		return category.translateNameRu;
 	}
-	return category.name
+	return category.name;
 }
 
 function incrementPage() {
-	page.value += 1
+	page.value += 1;
 }
 
 watch(page, () => {
-	isLoadMoreButtonLoading.value = true
+	isLoadMoreButtonLoading.value = true;
 
 	getCategories().then(() => {
-		isLoadMoreButtonLoading.value = false
-	})
-})
+		isLoadMoreButtonLoading.value = false;
+	});
+});
 
 onMounted(() => {
-	appStore.setIsLoading(true)
-	userAuthGuard()
-	getCategories().then(() => appStore.setIsLoading(false))
-})
+	appStore.setIsLoading(true);
+	userAuthGuard();
+	getCategories().then(() => appStore.setIsLoading(false));
+});
 </script>

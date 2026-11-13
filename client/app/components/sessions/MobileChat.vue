@@ -7,10 +7,7 @@
 			<div
 				class="flex size-10 shrink-0 items-center justify-center rounded-full bg-sky-100 text-sky-700"
 			>
-				<UIcon
-name="lucide:messages-square"
-class="size-5"
-/>
+				<UIcon name="lucide:messages-square" class="size-5" />
 			</div>
 
 			<h2 class="truncate font-semibold text-slate-900">
@@ -28,18 +25,18 @@ class="size-5"
 </template>
 
 <script setup lang="ts">
-import type { SessionChatMessage } from "./types/session-chat.types"
-import SessionChatContent from "./SessionChatContent.vue"
+import type { SessionChatMessage } from "./types/session-chat.types";
+import SessionChatContent from "./SessionChatContent.vue";
 
 interface Props {
-	messages: SessionChatMessage[]
-	isLoadMoreAvailable: boolean
+	messages: SessionChatMessage[];
+	isLoadMoreAvailable: boolean;
 }
 
-const props = defineProps<Props>()
+const props = defineProps<Props>();
 
 const emit = defineEmits<{
-	sendMessage: [message: string]
-	loadMore: []
-}>()
+	sendMessage: [message: string];
+	loadMore: [];
+}>();
 </script>

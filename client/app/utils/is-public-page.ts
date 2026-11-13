@@ -3,20 +3,22 @@ const publicPages = [
 	"/signup",
 	"/forget-password",
 	"/password-recovery",
-	"/support"
-]
+	"/support",
+	"/chat-rules",
+	"/privacy-policy"
+];
 
 export function isPublicPage(path: string): {
-	value: boolean
-	page: string | undefined
+	value: boolean;
+	page: string | undefined;
 } {
 	if (path === "/") {
-		return { value: true, page: undefined }
+		return { value: true, page: undefined };
 	}
-	const foundIndex = publicPages.findIndex(item => path.startsWith(item))
+	const foundIndex = publicPages.findIndex((item) => path.startsWith(item));
 
 	if (foundIndex !== -1) {
-		return { value: true, page: publicPages[foundIndex] }
+		return { value: true, page: publicPages[foundIndex] };
 	}
-	return { page: undefined, value: false }
+	return { page: undefined, value: false };
 }

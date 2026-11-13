@@ -1,4 +1,4 @@
-import type { AppStoreInterface } from "./app-store.interface"
+import type { AppStoreInterface } from "./app-store.interface";
 
 export const useAppStore = defineStore("appStore", {
 	state: (): AppStoreInterface => ({
@@ -10,24 +10,24 @@ export const useAppStore = defineStore("appStore", {
 	}),
 	actions: {
 		setIsLoading(value: boolean) {
-			this.isPageLoading = value
+			this.isPageLoading = value;
 		},
 		setIsSideNavHidden(value: boolean) {
-			this.isSideNavHidden = value
+			this.isSideNavHidden = value;
 		},
 		setIsGoBackButtonVisible(value: boolean) {
-			this.isGoBackButtonVisible = value
+			this.isGoBackButtonVisible = value;
 		},
 		setGoBackAction(action: Function) {
-			this.goBackAction = action
+			this.goBackAction = action;
 		},
 		setIsSessionPage(value: boolean) {
-			this.isSessionPage = value
+			this.isSessionPage = value;
 		}
 	},
 	getters: {
 		getIsLoading: (state) => {
-			return state.isPageLoading
+			return state.isPageLoading;
 		}
 	}
-})
+});

@@ -7,10 +7,7 @@
 				class="text-primary text-xl text-left mt-3 list-inside"
 				style="list-style-type: disclosure-closed; color: rgb(174, 174, 174)"
 			>
-				<span
-v-if="item.emoji"
-class="mr-2"
->{{ item.emoji }}</span>
+				<span v-if="item.emoji" class="mr-2">{{ item.emoji }}</span>
 				<ULink
 					v-if="item.isLink"
 					class="text-primary cursor-pointer underline max-sm:text-base"
@@ -20,7 +17,13 @@ class="mr-2"
 				</ULink>
 				<span v-if="!item.isLink">{{ item.title }}</span>
 				<div v-if="item.subjects">
-					<ULink :key="subject.id" v-for="subject in item.subjects" :to="'/categories/' + item.id + '/subjects/' + subject.id" class="text-sm underline text-primary ml-5 max-md:text-xs">{{ subject.name }}</ULink>
+					<ULink
+						v-for="subject in item.subjects"
+						:key="subject.id"
+						:to="'/categories/' + item.id + '/subjects/' + subject.id"
+						class="text-sm underline text-primary ml-5 max-md:text-xs"
+						>{{ subject.name }}</ULink
+					>
 				</div>
 			</li>
 		</ul>
@@ -29,15 +32,15 @@ class="mr-2"
 
 <script setup lang="ts">
 export interface ListItem {
-	isLink: boolean
-	link: string
-	title: string
-	emoji?: string
-	[key: string]: any
+	isLink: boolean;
+	link: string;
+	title: string;
+	emoji?: string;
+	[key: string]: any;
 }
 interface Props {
-	items: Array<ListItem>
+	items: Array<ListItem>;
 }
 
-const props = defineProps<Props>()
+const props = defineProps<Props>();
 </script>

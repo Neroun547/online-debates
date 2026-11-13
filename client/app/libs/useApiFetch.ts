@@ -1,19 +1,19 @@
-import { useUserStore } from "~/store/user/user.store"
+import { useUserStore } from "~/store/user/user.store";
 
-type ApiFetchOptions = Parameters<typeof $fetch>[1]
+type ApiFetchOptions = Parameters<typeof $fetch>[1];
 
 export async function useApiFetch<T>(
 	url: string,
 	options: ApiFetchOptions = {}
 ) {
-	const config = useRuntimeConfig()
-	const userStore = useUserStore()
-	const token = userStore.getToken
+	const config = useRuntimeConfig();
+	const userStore = useUserStore();
+	const token = userStore.getToken;
 
-	const headers = new Headers(options?.headers)
+	const headers = new Headers(options?.headers);
 
 	if (token) {
-		headers.set("Authorization", `Bearer ${token}`)
+		headers.set("Authorization", `Bearer ${token}`);
 	}
 	try {
 		const api = await $fetch<T>(url, {
@@ -21,17 +21,17 @@ export async function useApiFetch<T>(
 			baseURL: config.public.apiBaseUrl,
 			...options,
 			headers
-		})
+		});
 
-		return api
+		return api;
 	} catch (err: any) {
 		if (err.statusCode === 401) {
-			userStore.setIsAuth(false)
+			userStore.setIsAuth(false);
 
-			window.location.href = "/auth"
+			window.location.href = "/auth";
 
-			return
+			return;
 		}
-		throw err
+		throw err;
 	}
 }

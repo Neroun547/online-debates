@@ -27,10 +27,7 @@
 				<div
 					class="flex size-11 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary"
 				>
-					<UIcon
-name="lucide:user-round-pen"
-class="size-5"
-/>
+					<UIcon name="lucide:user-round-pen" class="size-5" />
 				</div>
 				<div>
 					<h2 class="text-2xl font-semibold max-md:text-xl">
@@ -115,10 +112,7 @@ class="size-5"
 							:schema="updateEmailUserSchema"
 							@submit.prevent="updateUserPersonalInfo"
 						>
-							<UFormField
-name="email"
-:label="$t('settings.email')"
->
+							<UFormField name="email" :label="$t('settings.email')">
 								<UInput
 									v-model="user.email"
 									:placeholder="$t('settings.email')"
@@ -160,10 +154,7 @@ name="email"
 							</UFormField>
 
 							<div class="mt-5">
-								<label
-for=""
-class="text-sm font-bold"
->
+								<label for="" class="text-sm font-bold">
 									{{ $t("settings.language") }}
 								</label>
 								<LanguageSelect class="mt-2" />
@@ -252,37 +243,37 @@ class="text-sm font-bold"
 </template>
 
 <script setup lang="ts">
-import { useAppStore } from "~/store/app-store"
-import type { GetUserInfoResponseInterface } from "~/store/user/interfaces/get-user-data-response.interface"
-import { useUserStore } from "~/store/user/user.store"
-import DeleteAccountModal from "~/components/settings/DeleteAccountModal.vue"
-import { z } from "zod"
-import ConfirmYourNewEmailModal from "~/components/settings/ConfirmYourNewEmailModal.vue"
-import UploadAvatar from "~/components/settings/UploadAvatar.vue"
+import { useAppStore } from "~/store/app-store";
+import type { GetUserInfoResponseInterface } from "~/store/user/interfaces/get-user-data-response.interface";
+import { useUserStore } from "~/store/user/user.store";
+import DeleteAccountModal from "~/components/settings/DeleteAccountModal.vue";
+import { z } from "zod";
+import ConfirmYourNewEmailModal from "~/components/settings/ConfirmYourNewEmailModal.vue";
+import UploadAvatar from "~/components/settings/UploadAvatar.vue";
 
-const { t } = useI18n()
+const { t } = useI18n();
 
 const aboutMySelfFormSchema = z.object({
 	age: z.number().int().min(1).max(130),
 	description: z.string().max(5000)
-})
+});
 
 const aboutMySelfFormState = reactive<{
-	age: number
-	description: string
-	sex: "male" | "female"
+	age: number;
+	description: string;
+	sex: "male" | "female";
 }>({
 	age: 18,
 	description: "",
 	sex: "male"
-})
+});
 
 const updateEmailUserSchema = z.object({
 	email: z.string().email(),
 	username: z.string().trim().min(6).max(50),
 	timezone: z.string(),
 	isAvailableForPermanentSessions: z.boolean()
-})
+});
 
 const updatePasswordSchema = computed(() =>
 	z
@@ -291,23 +282,23 @@ const updatePasswordSchema = computed(() =>
 			newPassword: z.string().trim().min(8).max(50),
 			confirmNewPassword: z.string().trim().min(8).max(50)
 		})
-		.refine(data => data.newPassword === data.confirmNewPassword, {
+		.refine((data) => data.newPassword === data.confirmNewPassword, {
 			message: t("settings.passwordsDoNotMatch"),
 			path: ["confirmNewPassword"]
 		})
-)
+);
 
 const updatePasswordState = ref({
 	oldPassword: "",
 	newPassword: "",
 	confirmNewPassword: ""
-})
+});
 
-const toast = useToast()
+const toast = useToast();
 
-const appStore = useAppStore()
+const appStore = useAppStore();
 
-const userStore = useUserStore()
+const userStore = useUserStore();
 
 const user = ref<GetUserInfoResponseInterface>({
 	username: "",
@@ -317,15 +308,15 @@ const user = ref<GetUserInfoResponseInterface>({
 	description: "",
 	age: 14,
 	sex: "male"
-})
+});
 
-const isDeleteAccountModalShow = ref(false)
-const isDeleteAccountModalLoading = ref(false)
+const isDeleteAccountModalShow = ref(false);
+const isDeleteAccountModalLoading = ref(false);
 
-const isConfirmNewEmailModalShow = ref(false)
+const isConfirmNewEmailModalShow = ref(false);
 
 function showDeleteAccountModal() {
-	isDeleteAccountModalShow.value = true
+	isDeleteAccountModalShow.value = true;
 }
 
 async function saveInfoAboutMySelf() {
@@ -333,20 +324,20 @@ async function saveInfoAboutMySelf() {
 		age: aboutMySelfFormState.age,
 		description: aboutMySelfFormState.description,
 		sex: aboutMySelfFormState.sex
-	})
+	});
 
 	if (userStore.isError) {
 		toast.add({
 			title: t("settings.error"),
 			description: userStore.errorMessage,
 			color: "error"
-		})
+		});
 	} else {
 		toast.add({
 			title: t("settings.success"),
 			description: t("settings.infoAboutMySelfUpdatedSuccessfully"),
 			color: "success"
-		})
+		});
 	}
 }
 
@@ -355,7 +346,7 @@ async function updatePassword() {
 		updatePasswordState.value.oldPassword,
 		updatePasswordState.value.newPassword,
 		updatePasswordState.value.confirmNewPassword
-	)
+	);
 
 	if (userStore.isError) {
 		toast.add({
@@ -364,7 +355,7 @@ async function updatePassword() {
 			progress: {
 				color: "error"
 			}
-		})
+		});
 	} else {
 		toast.add({
 			title: t("settings.success"),
@@ -372,23 +363,23 @@ async function updatePassword() {
 			progress: {
 				color: "success"
 			}
-		})
+		});
 	}
 }
 
 async function getUser() {
-	const data = await userStore.getUserInfo()
+	const data = await userStore.getUserInfo();
 
 	if (data) {
-		user.value.username = data.username
-		user.value.email = data.email
-		user.value.timezone = data.timezone
-		user.value.isAvailableForPermanentSessions
-			= data.isAvailableForPermanentSessions
+		user.value.username = data.username;
+		user.value.email = data.email;
+		user.value.timezone = data.timezone;
+		user.value.isAvailableForPermanentSessions =
+			data.isAvailableForPermanentSessions;
 
-		aboutMySelfFormState.age = data.age
-		aboutMySelfFormState.description = data.description ? data.description : ""
-		aboutMySelfFormState.sex = data.sex
+		aboutMySelfFormState.age = data.age;
+		aboutMySelfFormState.description = data.description ? data.description : "";
+		aboutMySelfFormState.sex = data.sex;
 	}
 }
 
@@ -398,9 +389,9 @@ async function updateUserPersonalInfo() {
 		email: user.value.email,
 		timezone: user.value.timezone,
 		isAvailableForPermanentSessions: user.value.isAvailableForPermanentSessions
-	})
+	});
 
-	isConfirmNewEmailModalShow.value = result.isMailSent
+	isConfirmNewEmailModalShow.value = result.isMailSent;
 
 	if (!result.isMailSent && !userStore.isError) {
 		toast.add({
@@ -409,7 +400,7 @@ async function updateUserPersonalInfo() {
 			progress: {
 				color: "success"
 			}
-		})
+		});
 	}
 	if (userStore.isError) {
 		toast.add({
@@ -418,24 +409,24 @@ async function updateUserPersonalInfo() {
 			progress: {
 				color: "error"
 			}
-		})
+		});
 	}
 }
 
 async function deleteAccount() {
-	isDeleteAccountModalLoading.value = true
+	isDeleteAccountModalLoading.value = true;
 
-	await userStore.deleteAccount()
+	await userStore.deleteAccount();
 
-	isDeleteAccountModalLoading.value = false
-	isDeleteAccountModalShow.value = false
+	isDeleteAccountModalLoading.value = false;
+	isDeleteAccountModalShow.value = false;
 }
 
 onMounted(() => {
-	appStore.setIsLoading(true)
+	appStore.setIsLoading(true);
 
 	getUser().then(() => {
-		appStore.setIsLoading(false)
-	})
-})
+		appStore.setIsLoading(false);
+	});
+});
 </script>

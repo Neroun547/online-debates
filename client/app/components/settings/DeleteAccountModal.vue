@@ -4,22 +4,22 @@ const props = defineProps({
 		type: Boolean,
 		default: false
 	}
-})
+});
 
 const isOpen = defineModel("isOpen", {
 	type: Boolean,
 	default: false,
 	required: true
-})
+});
 
-const emit = defineEmits(["close", "confirm"])
+const emit = defineEmits(["close", "confirm"]);
 
 function cancel() {
-	emit("close", false)
+	emit("close", false);
 }
 
 function confirm() {
-	emit("confirm", true)
+	emit("confirm", true);
 }
 </script>
 

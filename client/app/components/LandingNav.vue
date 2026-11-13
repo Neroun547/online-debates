@@ -6,22 +6,13 @@
 			<LanguageSelect />
 		</div>
 		<div class="flex max-w-[500px] justify-between w-full max-md:hidden">
-			<ULink
-to="/signup"
-class="text-black"
->
+			<ULink to="/signup" class="text-black">
 				{{ $t("landingNav.tryIt") }}
 			</ULink>
-			<ULink
-to="/support"
-class="text-black"
->
+			<ULink to="/support" class="text-black">
 				{{ $t("landingNav.support") }}
 			</ULink>
-			<ULink
-to="/chat-rules"
-class="text-black"
->
+			<ULink to="/chat-rules" class="text-black">
 				{{ $t("landingNav.chatRules") }}
 			</ULink>
 		</div>
@@ -38,5 +29,5 @@ class="text-black"
 </template>
 
 <script setup lang="ts">
-import LanguageSelect from "./LanguageSelect.vue"
+import LanguageSelect from "./LanguageSelect.vue";
 </script>

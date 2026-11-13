@@ -10,11 +10,11 @@
 </template>
 
 <script setup>
-import { useAppStore } from "~/store/app-store"
+import { useAppStore } from "~/store/app-store";
 
-const appStore = useAppStore()
+const appStore = useAppStore();
 
 onMounted(() => {
-	appStore.setIsLoading(false)
-})
+	appStore.setIsLoading(false);
+});
 </script>

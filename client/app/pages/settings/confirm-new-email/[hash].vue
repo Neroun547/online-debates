@@ -17,32 +17,32 @@
 </template>
 
 <script setup>
-import { useAppStore } from "~/store/app-store"
-import { useUserStore } from "~/store/user/user.store"
+import { useAppStore } from "~/store/app-store";
+import { useUserStore } from "~/store/user/user.store";
 
-const route = useRoute()
-const userStore = useUserStore()
+const route = useRoute();
+const userStore = useUserStore();
 
-const appStore = useAppStore()
+const appStore = useAppStore();
 
-const isUserNewEmailConfirmedSuccess = ref(false)
-const isUserNewEmailConfirmError = ref(false)
-const userNewEmailErrorText = ref("")
+const isUserNewEmailConfirmedSuccess = ref(false);
+const isUserNewEmailConfirmError = ref(false);
+const userNewEmailErrorText = ref("");
 
 onMounted(async () => {
-	isUserNewEmailConfirmError.value = false
-	isUserNewEmailConfirmedSuccess.value = false
+	isUserNewEmailConfirmError.value = false;
+	isUserNewEmailConfirmedSuccess.value = false;
 
-	await userStore.confirmNewEmail(route.params.hash)
+	await userStore.confirmNewEmail(route.params.hash);
 
-	appStore.setIsLoading(false)
+	appStore.setIsLoading(false);
 
 	if (userStore.isError) {
-		isUserNewEmailConfirmError.value = true
-		userNewEmailErrorText.value = userStore.errorMessage
+		isUserNewEmailConfirmError.value = true;
+		userNewEmailErrorText.value = userStore.errorMessage;
 	} else {
-		isUserNewEmailConfirmedSuccess.value = true
-		window.location.href = "/settings"
+		isUserNewEmailConfirmedSuccess.value = true;
+		window.location.href = "/settings";
 	}
-})
+});
 </script>

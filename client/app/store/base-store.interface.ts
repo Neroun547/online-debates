@@ -1,4 +1,4 @@
 export interface BaseStoreInterface {
-	errorMessage: string | undefined
-	isError: boolean
+	errorMessage: string | undefined;
+	isError: boolean;
 }

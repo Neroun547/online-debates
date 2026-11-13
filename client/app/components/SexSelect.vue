@@ -11,12 +11,12 @@
 </template>
 
 <script setup lang="ts">
-const { t } = useI18n()
+const { t } = useI18n();
 
-const selectedSex = defineModel<string>("selectedSex")
+const selectedSex = defineModel<string>("selectedSex");
 
 const items = [
 	{ label: t("user.male"), value: "male" },
 	{ label: t("user.female"), value: "female" }
-]
+];
 </script>

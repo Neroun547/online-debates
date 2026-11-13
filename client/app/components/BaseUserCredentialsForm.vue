@@ -76,51 +76,51 @@
 </template>
 
 <script setup lang="ts">
-import type { z } from "zod"
+import type { z } from "zod";
 
 export interface PropsFieldItemInterface {
-	name: string
-	placeholder: string
-	type: "text" | "password" | "email" | "timezone" | "number" | "sex"
-	htmlTag: "input" | "select" | "textarea" | "numberInput"
-	label: string
+	name: string;
+	placeholder: string;
+	type: "text" | "password" | "email" | "timezone" | "number" | "sex";
+	htmlTag: "input" | "select" | "textarea" | "numberInput";
+	label: string;
 }
 
 interface Props {
-	fields: Array<PropsFieldItemInterface>
-	formSchema: z.AnyZodObject
-	submitButtonText: string
-	isError: boolean
-	errorMessage: string | undefined
-	isSuccess: boolean
-	successMessage: string | undefined
-	isFormLoading?: boolean
-	defaultValues?: { [key: string]: number | string }
+	fields: Array<PropsFieldItemInterface>;
+	formSchema: z.AnyZodObject;
+	submitButtonText: string;
+	isError: boolean;
+	errorMessage: string | undefined;
+	isSuccess: boolean;
+	successMessage: string | undefined;
+	isFormLoading?: boolean;
+	defaultValues?: { [key: string]: number | string };
 }
 
-const props = defineProps<Props>()
-const formState = ref<any>({})
+const props = defineProps<Props>();
+const formState = ref<any>({});
 
-const emit = defineEmits(["submitForm"])
+const emit = defineEmits(["submitForm"]);
 
 function submitForm(e: Event) {
-	e.preventDefault()
+	e.preventDefault();
 
-	emit("submitForm", formState.value)
+	emit("submitForm", formState.value);
 }
 
 watchEffect(() => {
 	if (props.fields && props.fields.length) {
-		const accumulator: any = {}
+		const accumulator: any = {};
 
 		for (let i = 0; i < props.fields.length; i++) {
-			const field = props.fields[i]
+			const field = props.fields[i];
 
 			if (field) {
-				accumulator[field.name] = props.defaultValues?.[field.name] ?? ""
+				accumulator[field.name] = props.defaultValues?.[field.name] ?? "";
 			}
 		}
-		formState.value = accumulator
+		formState.value = accumulator;
 	}
-})
+});
 </script>

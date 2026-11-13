@@ -1,12 +1,12 @@
-import { useUserStore } from "~/store/user/user.store"
+import { useUserStore } from "~/store/user/user.store";
 
 export function userAuthGuard() {
 	if (window) {
-		const userStore = useUserStore()
+		const userStore = useUserStore();
 
 		if (userStore.getIsAuth) {
-			return
+			return;
 		}
-		window.location.href = "/auth"
+		window.location.href = "/auth";
 	}
 }

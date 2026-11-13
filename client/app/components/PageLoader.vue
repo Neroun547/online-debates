@@ -10,11 +10,11 @@
 </template>
 
 <script setup>
-import Loader from "./Loader.vue"
+import Loader from "./Loader.vue";
 
 defineProps({
 	label: {
 		type: String
 	}
-})
+});
 </script>

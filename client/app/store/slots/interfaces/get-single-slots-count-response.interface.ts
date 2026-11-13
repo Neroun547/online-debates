@@ -1,3 +1,3 @@
 export interface GetSingleSlotsCountResponseInterface {
-	count: number
+	count: number;
 }

@@ -1,3 +1,3 @@
 export interface UpdateUsernameResponseInterface {
-	token: string
+	token: string;
 }

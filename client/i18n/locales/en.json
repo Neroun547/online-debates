@@ -372,7 +372,9 @@
 		"subjectsTitle": "Subjects on which the user communicates",
 		"timezone": "Timezone",
 		"aboutUser": "About user",
-		"sex": "Sex"
+		"sex": "Sex",
+		"male": "Male",
+		"female": "Female"
 	},
 	"users": {
 		"title": "Users",
@@ -400,5 +402,8 @@
 		"rules": {
 			"first": "Do not insult the person you are speaking with."
 		}
+	},
+	"privacyPolicy": {
+		"title": "Privacy policy"
 	}
 }

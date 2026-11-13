@@ -1,3 +1,3 @@
 export interface TransportProduceDataResponseInterface {
-	id: string
+	id: string;
 }

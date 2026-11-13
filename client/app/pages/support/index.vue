@@ -5,10 +5,7 @@
 				<div
 					class="mx-auto mb-4 flex size-12 items-center justify-center rounded-full bg-primary/10 text-primary"
 				>
-					<UIcon
-name="lucide:mail"
-class="size-6"
-/>
+					<UIcon name="lucide:mail" class="size-6" />
 				</div>
 				<h1 class="text-4xl font-semibold max-md:text-2xl">
 					{{ $t("support.title") }}
@@ -88,54 +85,54 @@ class="size-6"
 </template>
 
 <script setup lang="ts">
-import { z } from "zod"
-import { useAppStore } from "~/store/app-store"
-import { useSupportStore } from "~/store/support/support.store"
+import { z } from "zod";
+import { useAppStore } from "~/store/app-store";
+import { useSupportStore } from "~/store/support/support.store";
 
-const { t } = useI18n()
+const { t } = useI18n();
 
-const appStore = useAppStore()
-const supportStore = useSupportStore()
+const appStore = useAppStore();
+const supportStore = useSupportStore();
 
-const toast = useToast()
+const toast = useToast();
 
 const feedbackSchema = z.object({
 	email: z.string().email().trim(),
 	subject: z.string().trim().min(1).max(150),
 	message: z.string().trim().min(1).max(5000)
-})
+});
 
 const formState = reactive({
 	subject: "",
 	message: "",
 	email: ""
-})
+});
 
 async function saveMessage(e: Event) {
-	e.preventDefault()
+	e.preventDefault();
 
 	await supportStore.sendMessageToSupport({
 		subject: formState.subject,
 		message: formState.message,
 		email: formState.email
-	})
+	});
 
 	if (supportStore.isError) {
 		toast.add({
 			title: t("support.error"),
 			description: supportStore.errorMessage,
 			color: "error"
-		})
+		});
 	} else {
 		toast.add({
 			title: t("support.sentSuccessfully"),
 			description: t("support.sentDescription"),
 			color: "success"
-		})
+		});
 	}
 }
 
 onMounted(() => {
-	appStore.setIsLoading(false)
-})
+	appStore.setIsLoading(false);
+});
 </script>

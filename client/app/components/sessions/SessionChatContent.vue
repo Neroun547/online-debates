@@ -12,14 +12,8 @@
 				@click="emit('loadMore')"
 			/>
 
-			<div
-v-for="(chatMessage, index) in props.messages"
-:key="index"
->
-				<div
-v-if="chatMessage.isSender"
-class="flex justify-end"
->
+			<div v-for="(chatMessage, index) in props.messages" :key="index">
+				<div v-if="chatMessage.isSender" class="flex justify-end">
 					<div class="max-w-[78%]">
 						<div
 							class="rounded-2xl rounded-br-sm bg-sky-500 px-3.5 py-2.5 text-sm leading-5 text-white shadow-sm"
@@ -32,10 +26,7 @@ class="flex justify-end"
 					</div>
 				</div>
 
-				<div
-v-else
-class="flex justify-start"
->
+				<div v-else class="flex justify-start">
 					<div class="max-w-[78%]">
 						<div
 							class="rounded-2xl bg-gray-200 px-3.5 py-2.5 text-sm leading-5 text-black shadow-sm"
@@ -79,53 +70,53 @@ class="flex justify-start"
 </template>
 
 <script setup lang="ts">
-import type { SessionChatMessage } from "./types/session-chat.types"
+import type { SessionChatMessage } from "./types/session-chat.types";
 
 interface Props {
-	messages: SessionChatMessage[]
-	isLoadMoreAvailable: boolean
+	messages: SessionChatMessage[];
+	isLoadMoreAvailable: boolean;
 }
 
-const props = defineProps<Props>()
+const props = defineProps<Props>();
 
-const listOfMessages = useTemplateRef("listOfMessages")
+const listOfMessages = useTemplateRef("listOfMessages");
 
 const emit = defineEmits<{
-	sendMessage: [message: string]
-	loadMore: []
-}>()
+	sendMessage: [message: string];
+	loadMore: [];
+}>();
 
-const message = ref("")
+const message = ref("");
 
 function sendMessage() {
-	const trimmedMessage = message.value.trim()
+	const trimmedMessage = message.value.trim();
 
-	if (!trimmedMessage) return
+	if (!trimmedMessage) return;
 
-	emit("sendMessage", trimmedMessage)
-	message.value = ""
+	emit("sendMessage", trimmedMessage);
+	message.value = "";
 }
 
 async function scrollToMessagesBottom() {
-	await nextTick()
-	listOfMessages.value?.scrollTo({ top: listOfMessages.value?.scrollHeight })
+	await nextTick();
+	listOfMessages.value?.scrollTo({ top: listOfMessages.value?.scrollHeight });
 }
 
 watch(
 	() => props.messages,
 	(newValue, oldValue) => {
 		if (newValue.length > oldValue.length) {
-			scrollToMessagesBottom()
+			scrollToMessagesBottom();
 		}
 	}
-)
+);
 
 onMounted(() => {
 	// Wait 500 milliseconds before scroll ... Wait for render (idk -_-)
 	const timeout = window.setTimeout(() => {
-		scrollToMessagesBottom()
+		scrollToMessagesBottom();
 
-		window.clearTimeout(timeout)
-	}, 500)
-})
+		window.clearTimeout(timeout);
+	}, 500);
+});
 </script>

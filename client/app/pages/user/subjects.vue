@@ -43,36 +43,36 @@
 </template>
 
 <script setup lang="ts">
-import UserSubjectsList from "~/components/UserSubjectsList.vue"
-import LoadMoreButton from "~/components/LoadMoreButton.vue"
-import CreateSubjectModal from "~/components/subjects/CreateSubjectModal.vue"
-import { useAppStore } from "~/store/app-store"
-import { useCategoriesStore } from "~/store/categories/categories.store"
-import type { SubjectItem } from "~/store/categories/interfaces/get-subjects-response.interface"
+import UserSubjectsList from "~/components/UserSubjectsList.vue";
+import LoadMoreButton from "~/components/LoadMoreButton.vue";
+import CreateSubjectModal from "~/components/subjects/CreateSubjectModal.vue";
+import { useAppStore } from "~/store/app-store";
+import { useCategoriesStore } from "~/store/categories/categories.store";
+import type { SubjectItem } from "~/store/categories/interfaces/get-subjects-response.interface";
 
-const { t } = useI18n()
+const { t } = useI18n();
 
-const toast = useToast()
+const toast = useToast();
 
-const appStore = useAppStore()
-const categoriesStore = useCategoriesStore()
+const appStore = useAppStore();
+const categoriesStore = useCategoriesStore();
 
-const isCreateSubjectModalOpen = ref(false)
-const isLoadMoreButtonLoading = ref(false)
-const isLoadMoreAvailable = ref(false)
+const isCreateSubjectModalOpen = ref(false);
+const isLoadMoreButtonLoading = ref(false);
+const isLoadMoreAvailable = ref(false);
 
 async function updateSubject(subject: {
-	name: string
-	categoryId: number
-	id: number
+	name: string;
+	categoryId: number;
+	id: number;
 }) {
 	await categoriesStore.updateSubject({
 		name: subject.name,
 		categoryId: subject.categoryId,
 		id: subject.id
-	})
+	});
 
-	reloadSubjects()
+	reloadSubjects();
 
 	if (categoriesStore.isError) {
 		toast.add({
@@ -81,7 +81,7 @@ async function updateSubject(subject: {
 			progress: {
 				color: "error"
 			}
-		})
+		});
 	} else {
 		toast.add({
 			title: t("mySubjects.success"),
@@ -89,14 +89,14 @@ async function updateSubject(subject: {
 			progress: {
 				color: "success"
 			}
-		})
+		});
 	}
 }
 
 async function deleteSubject(subject: SubjectItem) {
-	await categoriesStore.deleteSubjectById(subject.id)
+	await categoriesStore.deleteSubjectById(subject.id);
 
-	reloadSubjects()
+	reloadSubjects();
 
 	if (categoriesStore.isError) {
 		toast.add({
@@ -105,7 +105,7 @@ async function deleteSubject(subject: SubjectItem) {
 			progress: {
 				color: "error"
 			}
-		})
+		});
 	} else {
 		toast.add({
 			title: t("mySubjects.success"),
@@ -113,54 +113,54 @@ async function deleteSubject(subject: SubjectItem) {
 			progress: {
 				color: "success"
 			}
-		})
+		});
 	}
 }
 
 function openCreateSubjectModal() {
-	isCreateSubjectModalOpen.value = true
+	isCreateSubjectModalOpen.value = true;
 }
 
-const page = ref(1)
-const limit = ref(20)
+const page = ref(1);
+const limit = ref(20);
 
-const subjects = ref<SubjectItem[]>([])
+const subjects = ref<SubjectItem[]>([]);
 
 async function loadSubjects() {
 	const response = await categoriesStore.getUserSubjects({
 		page: page.value,
 		limit: limit.value
-	})
+	});
 
 	if (response) {
-		subjects.value.push(...response.data)
-		isLoadMoreAvailable.value = response.isLoadMoreAvailable
+		subjects.value.push(...response.data);
+		isLoadMoreAvailable.value = response.isLoadMoreAvailable;
 	}
 }
 
 function reloadSubjects() {
-	appStore.setIsLoading(true)
-	subjects.value = []
+	appStore.setIsLoading(true);
+	subjects.value = [];
 
-	page.value = 1
+	page.value = 1;
 
 	loadSubjects().then(() => {
-		appStore.setIsLoading(false)
-	})
+		appStore.setIsLoading(false);
+	});
 }
 
 function incrementPage() {
-	isLoadMoreButtonLoading.value = true
-	page.value += 1
+	isLoadMoreButtonLoading.value = true;
+	page.value += 1;
 
 	loadSubjects().then(() => {
-		isLoadMoreButtonLoading.value = false
-	})
+		isLoadMoreButtonLoading.value = false;
+	});
 }
 
 onMounted(() => {
 	loadSubjects().then(() => {
-		appStore.setIsLoading(false)
-	})
-})
+		appStore.setIsLoading(false);
+	});
+});
 </script>

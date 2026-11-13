@@ -21,7 +21,7 @@
 					type="date"
 					:max="dateTo || undefined"
 					class="max-sm:text-xs h-8 rounded-md border border-default bg-default px-2.5 text-sm text-highlighted outline-none focus-visible:ring-2 focus-visible:ring-primary"
-				>
+				/>
 			</UFormField>
 
 			<UFormField :label="$t('mySessions.dateTo')">
@@ -31,7 +31,7 @@
 					type="date"
 					:min="dateFrom || undefined"
 					class="max-sm:text-xs h-8 rounded-md border border-default bg-default px-2.5 text-sm text-highlighted outline-none focus-visible:ring-2 focus-visible:ring-primary"
-				>
+				/>
 			</UFormField>
 		</div>
 
@@ -66,21 +66,11 @@
 			</template>
 		</UAlert>
 
-		<div
-v-if="isInitialLoading"
-class="mt-10 grid gap-4"
->
-			<USkeleton
-v-for="item in 3"
-:key="item"
-class="h-36 rounded-xl"
-/>
+		<div v-if="isInitialLoading" class="mt-10 grid gap-4">
+			<USkeleton v-for="item in 3" :key="item" class="h-36 rounded-xl" />
 		</div>
 
-		<div
-v-else-if="allSessions.length"
-class="mt-10 grid gap-4"
->
+		<div v-else-if="allSessions.length" class="mt-10 grid gap-4">
 			<article
 				v-for="session in allSessions"
 				:key="session.id"
@@ -186,10 +176,7 @@ class="mt-10 grid gap-4"
 						</div>
 					</div>
 
-					<div
-v-if="session.slot"
-class="text-left sm:text-right"
->
+					<div v-if="session.slot" class="text-left sm:text-right">
 						<p class="font-medium text-highlighted max-sm:text-sm">
 							{{ session.slot.startTime }}
 						</p>
@@ -201,9 +188,9 @@ class="text-left sm:text-right"
 					</div>
 					<div
 						v-if="
-							!session.slot
-							&& session.createdAt
-							&& session.creatorId === userStore.userId
+							!session.slot &&
+							session.createdAt &&
+							session.creatorId === userStore.userId
 						"
 					>
 						<p class="font-medium text-highlighted max-sm:text-xs">
@@ -216,9 +203,9 @@ class="text-left sm:text-right"
 					</div>
 					<div
 						v-if="
-							!session.slot
-							&& session.createdAt
-							&& session.creatorId !== userStore.userId
+							!session.slot &&
+							session.createdAt &&
+							session.creatorId !== userStore.userId
 						"
 					>
 						<p class="font-medium text-highlighted max-sm:text-xs">
@@ -238,19 +225,16 @@ class="text-left sm:text-right"
 						<span v-if="session.slot">{{
 							session.slot.subject?.category?.name
 						}}</span>
-						<span
-v-if="session.slot"
-class="ml-5"
->{{
+						<span v-if="session.slot" class="ml-5">{{
 							session.slot.subject?.name
 						}}</span>
 					</div>
 					<div class="ml-auto">
 						<UTooltip
 							v-if="
-								!isSessionStarted(session.slot?.startTime ?? '')
-								&& session.status === 'booked'
-								&& session.slot
+								!isSessionStarted(session.slot?.startTime ?? '') &&
+								session.status === 'booked' &&
+								session.slot
 							"
 							:text="
 								$t('mySessions.startAt', {
@@ -266,9 +250,9 @@ class="ml-5"
 						</UTooltip>
 						<UTooltip
 							v-if="
-								isSessionStarted(session.slot?.startTime ?? '')
-								&& session.status === 'booked'
-								&& session.slot
+								isSessionStarted(session.slot?.startTime ?? '') &&
+								session.status === 'booked' &&
+								session.slot
 							"
 							:text="$t('mySessions.startNow')"
 						>
@@ -297,10 +281,7 @@ class="ml-5"
 			v-else-if="!isError && isDateRangeValid"
 			class="mt-10 rounded-xl border border-dashed border-default px-6 py-12 text-center"
 		>
-			<UIcon
-name="i-lucide-calendar-x-2"
-class="mx-auto size-9 text-muted"
-/>
+			<UIcon name="i-lucide-calendar-x-2" class="mx-auto size-9 text-muted" />
 			<h2 class="mt-3 font-semibold text-highlighted">
 				{{ $t("mySessions.noSessions") }}
 			</h2>
@@ -309,52 +290,45 @@ class="mx-auto size-9 text-muted"
 			</p>
 		</div>
 
-		<div
-ref="loadMoreSentinel"
-class="h-px"
-aria-hidden="true"
-/>
+		<div ref="loadMoreSentinel" class="h-px" aria-hidden="true" />
 
 		<div
 			v-if="isLoadingMore"
 			class="flex items-center justify-center gap-2 py-8 text-sm text-muted"
 		>
-			<UIcon
-name="i-lucide-loader-circle"
-class="size-5 animate-spin"
-/>
+			<UIcon name="i-lucide-loader-circle" class="size-5 animate-spin" />
 			{{ $t("mySessions.loadingMore") }}
 		</div>
 	</div>
 </template>
 
 <script setup lang="ts">
-import { DateTime } from "luxon"
-import { storeToRefs } from "pinia"
-import { userAuthGuard } from "~/guards/user-auth.guard"
-import { useAppStore } from "~/store/app-store"
+import { DateTime } from "luxon";
+import { storeToRefs } from "pinia";
+import { userAuthGuard } from "~/guards/user-auth.guard";
+import { useAppStore } from "~/store/app-store";
 import type {
 	SessionStatus,
 	SessionUserInterface,
 	UserSessionInterface,
 	UserSessionsFilter
-} from "~/store/sessions/interfaces/get-user-sessions.interface"
-import { useSessionsStore } from "~/store/sessions/sessions.store"
-import { useUserStore } from "~/store/user/user.store"
+} from "~/store/sessions/interfaces/get-user-sessions.interface";
+import { useSessionsStore } from "~/store/sessions/sessions.store";
+import { useUserStore } from "~/store/user/user.store";
 
-const { t } = useI18n()
+const { t } = useI18n();
 
-const router = useRouter()
+const router = useRouter();
 
-const appStore = useAppStore()
-const sessionsStore = useSessionsStore()
-const userStore = useUserStore()
-const { errorMessage, isError } = storeToRefs(sessionsStore)
+const appStore = useAppStore();
+const sessionsStore = useSessionsStore();
+const userStore = useUserStore();
+const { errorMessage, isError } = storeToRefs(sessionsStore);
 
 const filtersSessionsSelectOptions = computed<
 	Array<{
-		label: string
-		value: UserSessionsFilter
+		label: string;
+		value: UserSessionsFilter;
 	}>
 >(() => [
 	{
@@ -369,64 +343,64 @@ const filtersSessionsSelectOptions = computed<
 		label: t("mySessions.all"),
 		value: "all"
 	}
-])
+]);
 
-const now = DateTime.now()
-const selectedSessionFilterOption = ref<UserSessionsFilter>("all")
-const dateFrom = ref(now.toFormat("yyyy-MM-dd"))
-const dateTo = ref(now.plus({ weeks: 2 }).toFormat("yyyy-MM-dd"))
-const allSessions = ref<UserSessionInterface[]>([])
-const loadMoreSentinel = ref<HTMLElement | null>(null)
+const now = DateTime.now();
+const selectedSessionFilterOption = ref<UserSessionsFilter>("all");
+const dateFrom = ref(now.toFormat("yyyy-MM-dd"));
+const dateTo = ref(now.plus({ weeks: 2 }).toFormat("yyyy-MM-dd"));
+const allSessions = ref<UserSessionInterface[]>([]);
+const loadMoreSentinel = ref<HTMLElement | null>(null);
 
-const page = ref(0)
-const limit = 10
-const hasMore = ref(true)
-const isLoading = ref(false)
-let requestVersion = 0
-let paginationObserver: IntersectionObserver | undefined
+const page = ref(0);
+const limit = 10;
+const hasMore = ref(true);
+const isLoading = ref(false);
+let requestVersion = 0;
+let paginationObserver: IntersectionObserver | undefined;
 
 const isDateRangeValid = computed(() => {
 	return Boolean(
 		dateFrom.value && dateTo.value && dateFrom.value <= dateTo.value
-	)
-})
-const isInitialLoading = computed(() => isLoading.value && page.value === 0)
-const isLoadingMore = computed(() => isLoading.value && page.value > 0)
+	);
+});
+const isInitialLoading = computed(() => isLoading.value && page.value === 0);
+const isLoadingMore = computed(() => isLoading.value && page.value > 0);
 
 function startSession(sessionId: number) {
 	// router.push("/my-sessions/" + sessionId);
 
-	window.location.href = "/my-sessions/" + sessionId
+	window.location.href = "/my-sessions/" + sessionId;
 }
 
 function isSessionStarted(date: string): boolean {
-	return DateTime.fromFormat(date, "yyyy-MM-dd HH:mm").toMillis() <= Date.now()
+	return DateTime.fromFormat(date, "yyyy-MM-dd HH:mm").toMillis() <= Date.now();
 }
 
 async function loadSessions(reset = false) {
 	if (!isDateRangeValid.value) {
 		if (reset) {
-			requestVersion += 1
-			allSessions.value = []
-			page.value = 0
-			hasMore.value = false
+			requestVersion += 1;
+			allSessions.value = [];
+			page.value = 0;
+			hasMore.value = false;
 		}
 
-		return
+		return;
 	}
 	if (!reset && (isLoading.value || !hasMore.value)) {
-		return
+		return;
 	}
 
-	const currentRequestVersion = reset ? ++requestVersion : requestVersion
-	const requestedPage = reset ? 1 : page.value + 1
+	const currentRequestVersion = reset ? ++requestVersion : requestVersion;
+	const requestedPage = reset ? 1 : page.value + 1;
 
 	if (reset) {
-		allSessions.value = []
-		page.value = 0
-		hasMore.value = true
+		allSessions.value = [];
+		page.value = 0;
+		hasMore.value = true;
 	}
-	isLoading.value = true
+	isLoading.value = true;
 
 	try {
 		const response = await sessionsStore.getUserSessions({
@@ -435,148 +409,148 @@ async function loadSessions(reset = false) {
 			dateFrom: dateFrom.value,
 			dateTo: dateTo.value,
 			status: selectedSessionFilterOption.value
-		})
+		});
 
 		if (currentRequestVersion !== requestVersion) {
-			return
+			return;
 		}
 		if (!response) {
-			hasMore.value = false
-			return
+			hasMore.value = false;
+			return;
 		}
 
 		const existingSessionIds = new Set(
-			allSessions.value.map(session => session.id)
-		)
+			allSessions.value.map((session) => session.id)
+		);
 		const newSessions = response.filter(
-			session => !existingSessionIds.has(session.id)
-		)
+			(session) => !existingSessionIds.has(session.id)
+		);
 
-		allSessions.value = [...allSessions.value, ...newSessions]
-		page.value = requestedPage
-		hasMore.value = response.length === limit
+		allSessions.value = [...allSessions.value, ...newSessions];
+		page.value = requestedPage;
+		hasMore.value = response.length === limit;
 	} finally {
 		if (currentRequestVersion === requestVersion) {
-			isLoading.value = false
+			isLoading.value = false;
 		}
 	}
 
-	await nextTick()
+	await nextTick();
 	if (hasMore.value && isSentinelVisible()) {
-		void loadSessions()
+		void loadSessions();
 	}
 }
 
 function isSentinelVisible(): boolean {
 	if (!loadMoreSentinel.value) {
-		return false
+		return false;
 	}
 
-	const bounds = loadMoreSentinel.value.getBoundingClientRect()
+	const bounds = loadMoreSentinel.value.getBoundingClientRect();
 
-	return bounds.top <= window.innerHeight + 300 && bounds.bottom >= 0
+	return bounds.top <= window.innerHeight + 300 && bounds.bottom >= 0;
 }
 
 function getSessionRoleLabel(session: UserSessionInterface): string {
 	if (!session.slot) {
-		return t("mySessions.permanentSession")
+		return t("mySessions.permanentSession");
 	}
 	return session.creatorId === userStore.userId
 		? t("mySessions.bookedWithMe")
-		: t("mySessions.myBooking")
+		: t("mySessions.myBooking");
 }
 
 function getCounterpartName(session: UserSessionInterface): string {
-	const isCreator = session.creatorId === userStore.userId
-	const counterpart = isCreator ? session.customer : session.creator
-	const counterpartId = isCreator ? session.customerId : session.creatorId
+	const isCreator = session.creatorId === userStore.userId;
+	const counterpart = isCreator ? session.customer : session.creator;
+	const counterpartId = isCreator ? session.customerId : session.creatorId;
 
 	return (
-		counterpart?.username
-		?? t("mySessions.userNumber", {
+		counterpart?.username ??
+		t("mySessions.userNumber", {
 			id: counterpartId
 		})
-	)
+	);
 }
 
 function getCounterpartUser(
 	session: UserSessionInterface
 ): SessionUserInterface {
-	const isCreator = session.creatorId === userStore.userId
-	const counterpart = isCreator ? session.customer : session.creator
+	const isCreator = session.creatorId === userStore.userId;
+	const counterpart = isCreator ? session.customer : session.creator;
 
-	return counterpart as SessionUserInterface
+	return counterpart as SessionUserInterface;
 }
 
 function getSessionStatusLabel(status: SessionStatus): string {
 	if (status === "booked") {
-		return t("mySessions.statusBooked")
+		return t("mySessions.statusBooked");
 	}
 	if (status === "completed") {
-		return t("mySessions.statusCompleted")
+		return t("mySessions.statusCompleted");
 	}
 
-	return t("mySessions.statusCancelled")
+	return t("mySessions.statusCancelled");
 }
 
 function getUserStatusLabel(status: SessionUserInterface["status"]): string {
 	if (status === "online") {
-		return t("mySessions.statusOnline")
+		return t("mySessions.statusOnline");
 	}
 	if (status === "busy") {
-		return t("mySessions.statusBusy")
+		return t("mySessions.statusBusy");
 	}
 
-	return t("mySessions.statusOffline")
+	return t("mySessions.statusOffline");
 }
 
 function formatSessionTime(dateFromValue: string, dateToValue: string): string {
-	return `${dateFromValue} – ${dateToValue}`
+	return `${dateFromValue} – ${dateToValue}`;
 }
 
 function getStatusColor(
 	status: SessionStatus
 ): "success" | "warning" | "error" | "neutral" {
 	if (status === "completed") {
-		return "success"
+		return "success";
 	}
 	if (status === "cancelled") {
-		return "error"
+		return "error";
 	}
 	if (status === "booked") {
-		return "warning"
+		return "warning";
 	}
 
-	return "neutral"
+	return "neutral";
 }
 
 watch(
 	[selectedSessionFilterOption, dateFrom, dateTo],
 	() => void loadSessions(true)
-)
+);
 
 onMounted(async () => {
-	appStore.setIsLoading(true)
-	userAuthGuard()
+	appStore.setIsLoading(true);
+	userAuthGuard();
 
 	paginationObserver = new IntersectionObserver(
 		(entries) => {
 			if (entries[0]?.isIntersecting) {
-				void loadSessions()
+				void loadSessions();
 			}
 		},
 		{ rootMargin: "300px 0px" }
-	)
+	);
 
 	if (loadMoreSentinel.value) {
-		paginationObserver.observe(loadMoreSentinel.value)
+		paginationObserver.observe(loadMoreSentinel.value);
 	}
 
-	await loadSessions(true)
-	appStore.setIsLoading(false)
-})
+	await loadSessions(true);
+	appStore.setIsLoading(false);
+});
 
 onBeforeUnmount(() => {
-	paginationObserver?.disconnect()
-})
+	paginationObserver?.disconnect();
+});
 </script>

@@ -1,66 +1,66 @@
 <script setup lang="ts">
-import { useCategoriesStore } from "~/store/categories/categories.store"
-import type { CategoryItem } from "~/store/categories/interfaces/get-categories-response.interface"
+import { useCategoriesStore } from "~/store/categories/categories.store";
+import type { CategoryItem } from "~/store/categories/interfaces/get-categories-response.interface";
 
-const { locale } = useI18n()
+const { locale } = useI18n();
 
 const props = defineProps({
 	limit: {
 		type: Number,
 		default: 20
 	}
-})
+});
 
-const selectedCategoryId = defineModel<number | null>({ default: null })
+const selectedCategoryId = defineModel<number | null>({ default: null });
 
-const categoriesStore = useCategoriesStore()
+const categoriesStore = useCategoriesStore();
 
-const categories = ref<CategoryItem[]>([])
-const page = ref(1)
-const loading = ref(false)
-const isLoadMoreAvailable = ref(false)
+const categories = ref<CategoryItem[]>([]);
+const page = ref(1);
+const loading = ref(false);
+const isLoadMoreAvailable = ref(false);
 
-let requestId = 0
+let requestId = 0;
 
 async function loadCategories(targetPage = 1, reset = false) {
 	if (loading.value && !reset) {
-		return
+		return;
 	}
 
-	const currentRequestId = ++requestId
+	const currentRequestId = ++requestId;
 
 	if (reset) {
-		categories.value = []
-		isLoadMoreAvailable.value = false
+		categories.value = [];
+		isLoadMoreAvailable.value = false;
 	}
 
-	loading.value = true
+	loading.value = true;
 
 	try {
 		const response = await categoriesStore.getCategories(
 			targetPage,
 			props.limit
-		)
+		);
 
 		if (currentRequestId !== requestId || !response) {
-			return
+			return;
 		}
 
 		categories.value = reset
-			? response.data.map(item => mapCategoryWithTranslate(item))
-			: [...categories.value, ...response.data].map(item =>
-				mapCategoryWithTranslate(item)
-			)
+			? response.data.map((item) => mapCategoryWithTranslate(item))
+			: [...categories.value, ...response.data].map((item) =>
+					mapCategoryWithTranslate(item)
+				);
 
-		page.value = targetPage
-		isLoadMoreAvailable.value = response.isLoadMoreAvailable
+		page.value = targetPage;
+		isLoadMoreAvailable.value = response.isLoadMoreAvailable;
 		// Set initial value
 		if (selectedCategoryId.value === -1) {
-			selectedCategoryId.value = categories.value[0]?.id ?? null
+			selectedCategoryId.value = categories.value[0]?.id ?? null;
 		}
 	} finally {
 		if (currentRequestId === requestId) {
-			loading.value = false
+			loading.value = false;
 		}
 	}
 }
@@ -70,32 +70,32 @@ function mapCategoryWithTranslate(category: CategoryItem) {
 		return {
 			...category,
 			name: category.translateNameEn
-		}
+		};
 	}
 	if (locale.value === "uk" && category.translateNameUk) {
 		return {
 			...category,
 			name: category.translateNameUk
-		}
+		};
 	}
 	if (locale.value === "ru" && category.translateNameRu) {
 		return {
 			...category,
 			name: category.translateNameRu
-		}
+		};
 	}
-	return category
+	return category;
 }
 
 function loadNextPage() {
 	if (!loading.value && isLoadMoreAvailable.value) {
-		loadCategories(page.value + 1)
+		loadCategories(page.value + 1);
 	}
 }
 
 onMounted(() => {
-	loadCategories(1, true)
-})
+	loadCategories(1, true);
+});
 </script>
 
 <template>
@@ -122,10 +122,7 @@ onMounted(() => {
 		</template>
 
 		<template #content-bottom>
-			<div
-v-if="isLoadMoreAvailable"
-class="border-default border-t p-2"
->
+			<div v-if="isLoadMoreAvailable" class="border-default border-t p-2">
 				<UButton
 					:label="$t('loadMore')"
 					variant="ghost"

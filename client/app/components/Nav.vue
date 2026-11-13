@@ -8,38 +8,26 @@
 				class="block mr-5 mt-1 cursor-pointer"
 				@click="goBack"
 			>
-				<UIcon
-name="lucide:arrow-left"
-class="w-[20px] h-[20px]"
-/>
+				<UIcon name="lucide:arrow-left" class="w-[20px] h-[20px]" />
 			</button>
 			<button
 				v-if="!appStore.isSideNavHidden"
 				class="max-[1300px]:block hidden p-2"
 				@click="toggleMenu"
 			>
-				<UIcon
-name="lucide:menu"
-class="text-black"
-/>
+				<UIcon name="lucide:menu" class="text-black" />
 			</button>
 			<div :class="[appStore.isSideNavHidden ? '' : 'max-[1300px]:ml-5']">
 				{{ isUserOnlineText }}
 			</div>
 			<div class="ml-3">
-				<USwitch
-v-model="localIsOnlineState"
-color="success"
-/>
+				<USwitch v-model="localIsOnlineState" color="success" />
 			</div>
 		</div>
 		<div class="flex items-center mr-2">
 			<div>
 				<ULink to="/settings">
-					<UIcon
-name="lucide:settings"
-class="h-[24px] w-[24px]"
-/>
+					<UIcon name="lucide:settings" class="h-[24px] w-[24px]" />
 				</ULink>
 			</div>
 		</div>
@@ -47,44 +35,44 @@ class="h-[24px] w-[24px]"
 </template>
 
 <script setup>
-import { useAppStore } from "~/store/app-store"
-import { useUserStore } from "~/store/user/user.store"
+import { useAppStore } from "~/store/app-store";
+import { useUserStore } from "~/store/user/user.store";
 
-const emit = defineEmits(["toggleMenu"])
+const emit = defineEmits(["toggleMenu"]);
 
-const userStore = useUserStore()
-const appStore = useAppStore()
+const userStore = useUserStore();
+const appStore = useAppStore();
 
-const isMenuOpen = ref(false)
+const isMenuOpen = ref(false);
 
-const localIsOnlineState = ref(false)
+const localIsOnlineState = ref(false);
 
 const isUserOnlineText = computed(() => {
 	if (localIsOnlineState.value) {
-		return $t("nav.onlineStatusLabel")
+		return $t("nav.onlineStatusLabel");
 	}
-	return $t("nav.offlineStatusLabel")
-})
+	return $t("nav.offlineStatusLabel");
+});
 
 function goBack() {
 	if (
-		appStore.isGoBackButtonVisible
-		&& typeof appStore.goBackAction === "function"
+		appStore.isGoBackButtonVisible &&
+		typeof appStore.goBackAction === "function"
 	) {
-		appStore.goBackAction()
+		appStore.goBackAction();
 	}
 }
 
 function toggleMenu() {
-	isMenuOpen.value = !isMenuOpen.value
-	emit("toggleMenu", isMenuOpen.value)
+	isMenuOpen.value = !isMenuOpen.value;
+	emit("toggleMenu", isMenuOpen.value);
 }
 
 watch(localIsOnlineState, () => {
-	userStore.updateIsOnlineState(localIsOnlineState.value)
-})
+	userStore.updateIsOnlineState(localIsOnlineState.value);
+});
 
 onMounted(() => {
-	localIsOnlineState.value = userStore.isOnline
-})
+	localIsOnlineState.value = userStore.isOnline;
+});
 </script>

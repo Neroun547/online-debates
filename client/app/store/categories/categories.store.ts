@@ -1,12 +1,12 @@
-import { useApiFetch } from "~/libs/useApiFetch"
-import type { CategoriesStore } from "./interfaces/categories-store.interface"
+import { useApiFetch } from "~/libs/useApiFetch";
+import type { CategoriesStore } from "./interfaces/categories-store.interface";
 import type {
 	CategoryItem,
 	GetCategoriesResponseInterface
-} from "./interfaces/get-categories-response.interface"
-import type { GetSubjectsResponseInterface } from "./interfaces/get-subjects-response.interface"
-import type { CreateSubjectRequestInterface } from "./interfaces/create-subject-request.interface"
-import type { GetSubjectByIdResponseInterface } from "./interfaces/get-subject-by-id-response.interface"
+} from "./interfaces/get-categories-response.interface";
+import type { GetSubjectsResponseInterface } from "./interfaces/get-subjects-response.interface";
+import type { CreateSubjectRequestInterface } from "./interfaces/create-subject-request.interface";
+import type { GetSubjectByIdResponseInterface } from "./interfaces/get-subject-by-id-response.interface";
 
 export const useCategoriesStore = defineStore("categories", {
 	state: (): CategoriesStore => ({
@@ -18,22 +18,22 @@ export const useCategoriesStore = defineStore("categories", {
 			subjectId: number
 		): Promise<GetSubjectByIdResponseInterface | undefined> {
 			try {
-				this.clearError()
+				this.clearError();
 
 				return await useApiFetch<GetSubjectByIdResponseInterface>(
 					"/subjects/" + subjectId
-				)
+				);
 			} catch (error: any) {
-				this.setError(error.response._data.message)
+				this.setError(error.response._data.message);
 			}
 		},
 		async updateSubject(subject: {
-			name: string
-			categoryId: number
-			id: number
+			name: string;
+			categoryId: number;
+			id: number;
 		}) {
 			try {
-				this.clearError()
+				this.clearError();
 
 				await useApiFetch("/subjects/" + subject.id, {
 					method: "PUT",
@@ -41,27 +41,27 @@ export const useCategoriesStore = defineStore("categories", {
 						name: subject.name,
 						categoryId: subject.categoryId
 					}
-				})
+				});
 			} catch (error: any) {
-				this.setError(error.response._data.message)
+				this.setError(error.response._data.message);
 			}
 		},
 		async deleteSubjectById(id: number) {
 			try {
-				this.clearError()
+				this.clearError();
 
-				await useApiFetch("/subjects/" + id, { method: "DELETE" })
+				await useApiFetch("/subjects/" + id, { method: "DELETE" });
 			} catch (error: any) {
-				this.setError(error.response._data.message)
+				this.setError(error.response._data.message);
 			}
 		},
 		async createSubject(subject: CreateSubjectRequestInterface) {
 			try {
-				this.clearError()
+				this.clearError();
 
-				await useApiFetch("/subjects", { method: "POST", body: subject })
+				await useApiFetch("/subjects", { method: "POST", body: subject });
 			} catch (error: any) {
-				this.setError(error.response._data.message)
+				this.setError(error.response._data.message);
 			}
 		},
 		async getCategories(
@@ -69,91 +69,91 @@ export const useCategoriesStore = defineStore("categories", {
 			limit: number
 		): Promise<GetCategoriesResponseInterface | undefined> {
 			try {
-				this.clearError()
+				this.clearError();
 
 				const response = await useApiFetch<GetCategoriesResponseInterface>(
 					`/categories?page=${page}&limit=${limit}`,
 					{ method: "GET" }
-				)
+				);
 
-				return response
+				return response;
 			} catch (error: any) {
-				this.setError(error.response._data.message)
+				this.setError(error.response._data.message);
 			}
 		},
 		async getUserSubjects(params: {
-			page: number
-			limit: number
-			categoryId?: number
+			page: number;
+			limit: number;
+			categoryId?: number;
 		}): Promise<GetSubjectsResponseInterface | undefined> {
 			try {
-				this.clearError()
+				this.clearError();
 
-				let url = `/user/subjects?page=${params.page}&limit=${params.limit}`
+				let url = `/user/subjects?page=${params.page}&limit=${params.limit}`;
 
 				if (params.categoryId) {
-					url += `&categoryId=${params.categoryId}`
+					url += `&categoryId=${params.categoryId}`;
 				}
-				const response = await useApiFetch<GetSubjectsResponseInterface>(url)
+				const response = await useApiFetch<GetSubjectsResponseInterface>(url);
 
-				return response
+				return response;
 			} catch (error: any) {
-				this.setError(error.response._data.message)
+				this.setError(error.response._data.message);
 			}
 		},
 		async getSubjects(params: {
-			page: number
-			limit: number
-			categoryId?: number
-			userId?: number
+			page: number;
+			limit: number;
+			categoryId?: number;
+			userId?: number;
 		}): Promise<GetSubjectsResponseInterface | undefined> {
 			try {
-				this.clearError()
+				this.clearError();
 
-				let url = `/subjects?page=${params.page}&limit=${params.limit}`
+				let url = `/subjects?page=${params.page}&limit=${params.limit}`;
 
 				if (params.userId) {
-					url += `&userId=${params.userId}`
+					url += `&userId=${params.userId}`;
 				}
 				if (params.categoryId) {
-					url += `&categoryId=${params.categoryId}`
+					url += `&categoryId=${params.categoryId}`;
 				}
-				const response = await useApiFetch<GetSubjectsResponseInterface>(url)
+				const response = await useApiFetch<GetSubjectsResponseInterface>(url);
 
-				return response
+				return response;
 			} catch (error: any) {
-				this.setError(error.response._data.message)
+				this.setError(error.response._data.message);
 			}
 		},
 		async getCategoryById(id: number): Promise<CategoryItem | undefined> {
 			try {
-				this.clearError()
+				this.clearError();
 
-				const response = await useApiFetch<CategoryItem>(`/categories/${id}`)
+				const response = await useApiFetch<CategoryItem>(`/categories/${id}`);
 
-				return response
+				return response;
 			} catch (error: any) {
-				this.setError(error.response._data.message)
+				this.setError(error.response._data.message);
 			}
 		},
 		async getTheMostPopularCategories(): Promise<CategoryItem[] | undefined> {
 			try {
-				this.clearError()
+				this.clearError();
 
 				return await useApiFetch<CategoryItem[]>("/categories/popular", {
 					method: "GET"
-				})
+				});
 			} catch (error: any) {
-				this.setError(error.response._data.message)
+				this.setError(error.response._data.message);
 			}
 		},
 		clearError() {
-			this.isError = false
-			this.errorMessage = undefined
+			this.isError = false;
+			this.errorMessage = undefined;
 		},
 		setError(error: any) {
-			this.isError = true
-			this.errorMessage = getErrorMessage(error)
+			this.isError = true;
+			this.errorMessage = getErrorMessage(error);
 		}
 	}
-})
+});

@@ -11,18 +11,12 @@
 			@date-change="loadSlots"
 			@book="bookSession"
 		/>
-		<section
-v-if="currentSubject"
-class="mx-auto max-w-5xl"
->
+		<section v-if="currentSubject" class="mx-auto max-w-5xl">
 			<div class="mb-10 text-center">
 				<div
 					class="mb-4 inline-flex size-12 items-center justify-center bg-primary/10 text-primary"
 				>
-					<UIcon
-name="lucide:messages-square"
-class="size-6"
-/>
+					<UIcon name="lucide:messages-square" class="size-6" />
 				</div>
 				<h1 class="text-4xl font-semibold tracking-tight max-md:text-2xl">
 					{{ currentSubject.name }}
@@ -38,10 +32,7 @@ class="size-6"
 				</h2>
 			</div>
 
-			<div
-v-if="users.length"
-class="space-y-3"
->
+			<div v-if="users.length" class="space-y-3">
 				<article
 					v-for="user in users"
 					:key="user.id"
@@ -114,20 +105,11 @@ class="space-y-3"
 								class="mt-2 flex flex-wrap gap-x-5 gap-y-1.5 text-sm text-gray-500 dark:text-gray-400"
 							>
 								<span class="flex min-w-0 items-center gap-1.5">
-									<UIcon
-name="lucide:mail"
-class="size-4 shrink-0"
-/>
+									<UIcon name="lucide:mail" class="size-4 shrink-0" />
 									<span class="truncate">{{ user.email }}</span>
 								</span>
-								<span
-v-if="user.timezone"
-class="flex items-center gap-1.5"
->
-									<UIcon
-name="lucide:clock-3"
-class="size-4 shrink-0"
-/>
+								<span v-if="user.timezone" class="flex items-center gap-1.5">
+									<UIcon name="lucide:clock-3" class="size-4 shrink-0" />
 									{{ user.timezone }}
 								</span>
 							</div>
@@ -141,10 +123,7 @@ class="size-4 shrink-0"
 								v-if="user.isAvailableForPermanentSessions"
 								class="mt-3 flex items-center gap-1.5 text-xs font-medium text-emerald-600 dark:text-emerald-400"
 							>
-								<UIcon
-name="lucide:circle-check"
-class="size-4"
-/>
+								<UIcon name="lucide:circle-check" class="size-4" />
 								{{ t("settings.availableForPermanentSessions") }}
 							</div>
 						</div>
@@ -181,10 +160,7 @@ class="size-4"
 				<div
 					class="mx-auto flex size-12 items-center justify-center bg-white text-gray-400 shadow-sm dark:bg-gray-800"
 				>
-					<UIcon
-name="lucide:user-round-search"
-class="size-6"
-/>
+					<UIcon name="lucide:user-round-search" class="size-6" />
 				</div>
 				<h3 class="mt-4 font-semibold text-gray-900 dark:text-white">
 					{{ t("subjects.noParticipants") }}
@@ -198,29 +174,29 @@ class="size-6"
 </template>
 
 <script setup lang="ts">
-import { useAppStore } from "~/store/app-store"
-import { useUserStore } from "~/store/user/user.store"
-import { useCategoriesStore } from "~/store/categories/categories.store"
-import type { GetSubjectByIdResponseInterface } from "~/store/categories/interfaces/get-subject-by-id-response.interface"
-import type { GetUsersBySubjectResponseInterface } from "~/store/user/interfaces/get-users-by-subject-response.interface"
-import BookSessionModal from "~/components/subjects/BookSessionModal.vue"
-import { useBookSession } from "~/composables/book-session.composable"
+import { useAppStore } from "~/store/app-store";
+import { useUserStore } from "~/store/user/user.store";
+import { useCategoriesStore } from "~/store/categories/categories.store";
+import type { GetSubjectByIdResponseInterface } from "~/store/categories/interfaces/get-subject-by-id-response.interface";
+import type { GetUsersBySubjectResponseInterface } from "~/store/user/interfaces/get-users-by-subject-response.interface";
+import BookSessionModal from "~/components/subjects/BookSessionModal.vue";
+import { useBookSession } from "~/composables/book-session.composable";
 
-const { t } = useI18n()
+const { t } = useI18n();
 
-const route = useRoute()
+const route = useRoute();
 
-const usersStore = useUserStore()
-const appStore = useAppStore()
-const categoriesStore = useCategoriesStore()
+const usersStore = useUserStore();
+const appStore = useAppStore();
+const categoriesStore = useCategoriesStore();
 
-const categoryId = computed(() => Number(route.params.id))
-const subjectId = computed(() => Number(route.params.subjectId))
+const categoryId = computed(() => Number(route.params.id));
+const subjectId = computed(() => Number(route.params.subjectId));
 
 const calendarState = ref({
 	year: new Date().getFullYear(),
 	month: new Date().getMonth() + 1
-})
+});
 
 const {
 	bookingSlots,
@@ -237,27 +213,27 @@ const {
 	categoryId: categoryId.value,
 	subjectId: subjectId.value,
 	currentCalendarState: calendarState
-})
+});
 
-const currentSubject = ref<GetSubjectByIdResponseInterface>()
+const currentSubject = ref<GetSubjectByIdResponseInterface>();
 
-const users = ref<GetUsersBySubjectResponseInterface[]>([])
+const users = ref<GetUsersBySubjectResponseInterface[]>([]);
 
-const page = ref(1)
-const limit = ref(20)
+const page = ref(1);
+const limit = ref(20);
 
 function getUserSexLabel(sex: "male" | "female") {
 	if (sex === "male") {
-		return t("userProfile.male")
+		return t("userProfile.male");
 	} else {
-		return t("userProfile.female")
+		return t("userProfile.female");
 	}
 }
 
 async function getCurrentSubject() {
-	const response = await categoriesStore.getSubjectById(subjectId.value)
+	const response = await categoriesStore.getSubjectById(subjectId.value);
 	if (response) {
-		currentSubject.value = response
+		currentSubject.value = response;
 	}
 }
 
@@ -266,18 +242,18 @@ async function getUsers() {
 		subjectId: subjectId.value,
 		page: page.value,
 		limit: limit.value
-	})
+	});
 
 	if (response) {
-		users.value.push(...response)
+		users.value.push(...response);
 	}
 }
 
 onMounted(() => {
 	getCurrentSubject().then(() => {
-		appStore.setIsLoading(false)
-	})
+		appStore.setIsLoading(false);
+	});
 
-	getUsers()
-})
+	getUsers();
+});
 </script>

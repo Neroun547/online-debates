@@ -20,10 +20,7 @@
 						v-if="props.startTime || props.endTime"
 						class="mt-4 space-y-2 rounded-lg bg-gray-50 p-3 text-sm dark:bg-gray-800"
 					>
-						<div
-v-if="props.startTime"
-class="flex justify-between gap-6"
->
+						<div v-if="props.startTime" class="flex justify-between gap-6">
 							<dt class="text-gray-500 dark:text-gray-400 max-md:text-xs">
 								{{ $t("userSlots.DeleteSingleSlotModal.dateFrom") }}
 							</dt>
@@ -33,10 +30,7 @@ class="flex justify-between gap-6"
 								{{ props.startTime }}
 							</dd>
 						</div>
-						<div
-v-if="props.endTime"
-class="flex justify-between gap-6"
->
+						<div v-if="props.endTime" class="flex justify-between gap-6">
 							<dt class="text-gray-500 dark:text-gray-400 max-md:text-xs">
 								{{ $t("userSlots.DeleteSingleSlotModal.dateTo") }}
 							</dt>
@@ -74,17 +68,17 @@ class="flex justify-between gap-6"
 
 <script setup lang="ts">
 interface Props {
-	startTime?: string
-	endTime?: string
+	startTime?: string;
+	endTime?: string;
 }
 
-const props = defineProps<Props>()
+const props = defineProps<Props>();
 
 const isModalOpen = defineModel<boolean>("isModalOpen", {
 	default: false
-})
+});
 
 const emit = defineEmits<{
-	confirm: []
-}>()
+	confirm: [];
+}>();
 </script>

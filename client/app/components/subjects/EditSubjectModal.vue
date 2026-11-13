@@ -1,8 +1,5 @@
 <template>
-	<UModal
-v-model:open="isOpen"
-:title="props.modalTitle"
->
+	<UModal v-model:open="isOpen" :title="props.modalTitle">
 		<template #body>
 			<UForm
 				:schema="formSchema"
@@ -44,40 +41,40 @@ v-model:open="isOpen"
 </template>
 
 <script setup lang="ts">
-import PaginationCategoriesSelect from "./PaginationCategoriesSelect.vue"
-import { z } from "zod"
+import PaginationCategoriesSelect from "./PaginationCategoriesSelect.vue";
+import { z } from "zod";
 
 interface Props {
-	modalTitle: string
-	name: string
-	categoryId: number
+	modalTitle: string;
+	name: string;
+	categoryId: number;
 }
 
-const isOpen = defineModel<boolean>("isOpen")
-const props = defineProps<Props>()
+const isOpen = defineModel<boolean>("isOpen");
+const props = defineProps<Props>();
 
-const emit = defineEmits(["update"])
+const emit = defineEmits(["update"]);
 
 const formSchema = z.object({
 	categoryId: z.number(),
 	name: z.string().min(1).max(500)
-})
+});
 
 const formState = ref({
 	name: "",
 	categoryId: -1
-})
+});
 
 function editSubject() {
-	emit("update", formState.value)
+	emit("update", formState.value);
 }
 
 watch(
 	props,
 	() => {
-		formState.value.name = props.name
-		formState.value.categoryId = props.categoryId
+		formState.value.name = props.name;
+		formState.value.categoryId = props.categoryId;
 	},
 	{ immediate: true }
-)
+);
 </script>

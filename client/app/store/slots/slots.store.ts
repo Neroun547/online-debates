@@ -1,19 +1,19 @@
-import { useApiFetch } from "~/libs/useApiFetch"
-import type { BaseStoreInterface } from "../base-store.interface"
-import type { CreateSlotsTemplatesRequestInterface } from "./interfaces/create-slots-templates-request.interface"
-import type { SlotItem } from "~/pages/user/slots.vue"
-import { Time } from "@internationalized/date"
-import type { GetSlotsTemplatesResponseInterface } from "./interfaces/get-slots-templates-response.interface"
-import type { CreateSingleSlotRequestInterface } from "./interfaces/create-single-slot-request.interface"
-import type { GetSingleSlotsResponseInterface } from "./interfaces/get-single-slots-response.interface"
-import type { GetSingleSlotsCountResponseInterface } from "./interfaces/get-single-slots-count-response.interface"
-import type { GetSlotsForBookingResponseInterface } from "./interfaces/get-slots-for-booking-response.interface"
-import type { GetAvailableDatesForSlotsItemRequestInterface } from "./interfaces/get-available-dates-for-slots-item-request.interface"
+import { useApiFetch } from "~/libs/useApiFetch";
+import type { BaseStoreInterface } from "../base-store.interface";
+import type { CreateSlotsTemplatesRequestInterface } from "./interfaces/create-slots-templates-request.interface";
+import type { SlotItem } from "~/pages/user/slots.vue";
+import { Time } from "@internationalized/date";
+import type { GetSlotsTemplatesResponseInterface } from "./interfaces/get-slots-templates-response.interface";
+import type { CreateSingleSlotRequestInterface } from "./interfaces/create-single-slot-request.interface";
+import type { GetSingleSlotsResponseInterface } from "./interfaces/get-single-slots-response.interface";
+import type { GetSingleSlotsCountResponseInterface } from "./interfaces/get-single-slots-count-response.interface";
+import type { GetSlotsForBookingResponseInterface } from "./interfaces/get-slots-for-booking-response.interface";
+import type { GetAvailableDatesForSlotsItemRequestInterface } from "./interfaces/get-available-dates-for-slots-item-request.interface";
 
 function getHoursAndMinutesFromStr(time: string) {
-	const arr = time.split(":")
+	const arr = time.split(":");
 
-	return { hours: Number(arr[0]), minutes: Number(arr[1]) }
+	return { hours: Number(arr[0]), minutes: Number(arr[1]) };
 }
 
 export const useSlotsStore = defineStore("slotsStore", {
@@ -23,61 +23,61 @@ export const useSlotsStore = defineStore("slotsStore", {
 	}),
 	actions: {
 		async getSingleSlotsCount(params: {
-			dateFrom: string
-			dateTo: string
-			subjectId: number
+			dateFrom: string;
+			dateTo: string;
+			subjectId: number;
 		}): Promise<number | undefined> {
 			try {
-				this.clearError()
+				this.clearError();
 
 				const data = await useApiFetch<GetSingleSlotsCountResponseInterface>(
 					`/user/slots/single-slots/count?dateFrom=${params.dateFrom}&dateTo=${params.dateTo}&subjectId=${params.subjectId}`
-				)
+				);
 
-				return data?.count
+				return data?.count;
 			} catch (error) {
-				this.clearError()
+				this.clearError();
 			}
 		},
 		async deleteSingleSlot(id: number) {
 			try {
-				this.clearError()
+				this.clearError();
 
-				await useApiFetch(`/slots/single-slot/${id}`, { method: "DELETE" })
+				await useApiFetch(`/slots/single-slot/${id}`, { method: "DELETE" });
 			} catch (error: any) {
-				this.setError(error.response._data.message)
+				this.setError(error.response._data.message);
 			}
 		},
 		async saveSlotsTemplates(
 			data: CreateSlotsTemplatesRequestInterface
 		): Promise<void> {
 			try {
-				this.clearError()
+				this.clearError();
 
-				await useApiFetch("/slots/templates", { method: "PUT", body: data })
+				await useApiFetch("/slots/templates", { method: "PUT", body: data });
 			} catch (error: any) {
-				this.setError(error.response._data.message)
+				this.setError(error.response._data.message);
 			}
 		},
 		async getTimeSlots(subjectId: number): Promise<SlotItem[]> {
 			try {
-				this.clearError()
+				this.clearError();
 
 				const response = await useApiFetch<
 					Array<GetSlotsTemplatesResponseInterface>
-				>(`/user/slots/templates/?subjectId=${subjectId}`)
+				>(`/user/slots/templates/?subjectId=${subjectId}`);
 
-				if (!response) return []
+				if (!response) return [];
 
-				const result: SlotItem[] = []
-				let tmpIndex = 1
+				const result: SlotItem[] = [];
+				let tmpIndex = 1;
 
 				for (const templateSlot of response) {
 					result.push({
 						weekday: templateSlot.weekday,
 						intervals: templateSlot.intervals.map((item) => {
-							const parsedTimeFrom = getHoursAndMinutesFromStr(item.startTime)
-							const parsedTimeTo = getHoursAndMinutesFromStr(item.endTime)
+							const parsedTimeFrom = getHoursAndMinutesFromStr(item.startTime);
+							const parsedTimeTo = getHoursAndMinutesFromStr(item.endTime);
 
 							return {
 								timeFrom: new Time(
@@ -87,26 +87,26 @@ export const useSlotsStore = defineStore("slotsStore", {
 								),
 								timeTo: new Time(parsedTimeTo.hours, parsedTimeTo.minutes, 0),
 								id: tmpIndex++
-							}
+							};
 						}),
 						enabled: true,
 						isError: false,
 						errorMessage: ""
-					})
+					});
 				}
-				return result
+				return result;
 			} catch (error: any) {
-				this.setError(error.response._data.message)
+				this.setError(error.response._data.message);
 			}
-			return []
+			return [];
 		},
 		async createSingleSlot(data: CreateSingleSlotRequestInterface) {
 			try {
-				this.clearError()
+				this.clearError();
 
-				await useApiFetch("/slots/single-slot", { method: "POST", body: data })
+				await useApiFetch("/slots/single-slot", { method: "POST", body: data });
 			} catch (error: any) {
-				this.setError(error.response._data.message)
+				this.setError(error.response._data.message);
 			}
 		},
 		async getSingleSlots(
@@ -117,37 +117,37 @@ export const useSlotsStore = defineStore("slotsStore", {
 			limit: number
 		) {
 			try {
-				this.clearError()
+				this.clearError();
 
 				return await useApiFetch<GetSingleSlotsResponseInterface>(
 					`/user/slots/single-slots?subjectId=${subjectId}&dateFrom=${dateFrom}&dateTo=${dateTo}&page=${page}&limit=${limit}`
-				)
+				);
 			} catch (error: any) {
-				this.setError(error.response._data.message)
+				this.setError(error.response._data.message);
 			}
 		},
 		async getSlotsForBooking(params: {
-			dateFrom: string
-			dateTo: string
-			subjectId: number
-			userId: number
+			dateFrom: string;
+			dateTo: string;
+			subjectId: number;
+			userId: number;
 		}): Promise<GetSlotsForBookingResponseInterface[] | undefined> {
 			try {
-				this.clearError()
+				this.clearError();
 
 				return await useApiFetch<GetSlotsForBookingResponseInterface[]>(
 					`/booking/slots?dateFrom=${params.dateFrom}&dateTo=${params.dateTo}&userId=${params.userId}&subjectId=${params.subjectId}`
-				)
+				);
 			} catch (error: any) {
-				this.setError(error.response._data.message)
+				this.setError(error.response._data.message);
 			}
 		},
 		async bookSession(params: {
-			slot: GetSlotsForBookingResponseInterface
-			currentUserDateTime: string
+			slot: GetSlotsForBookingResponseInterface;
+			currentUserDateTime: string;
 		}) {
 			try {
-				this.clearError()
+				this.clearError();
 
 				await useApiFetch("/booking/slots/session", {
 					method: "POST",
@@ -155,9 +155,9 @@ export const useSlotsStore = defineStore("slotsStore", {
 						slotId: params.slot.id,
 						currentUserDateTime: params.currentUserDateTime
 					}
-				})
+				});
 			} catch (error: any) {
-				this.setError(error)
+				this.setError(error);
 			}
 		},
 		async getAvailableDatesForSlots(
@@ -167,22 +167,22 @@ export const useSlotsStore = defineStore("slotsStore", {
 			dateTo: string
 		) {
 			try {
-				this.clearError()
+				this.clearError();
 
 				return await useApiFetch<GetAvailableDatesForSlotsItemRequestInterface>(
 					`/booking/slots/available-dates?userId=${userId}&subjectId=${subjectId}&dateFrom=${dateFrom}&dateTo=${dateTo}`
-				)
+				);
 			} catch (error: any) {
-				this.setError(error.response._data.message)
+				this.setError(error.response._data.message);
 			}
 		},
 		clearError() {
-			this.isError = false
-			this.errorMessage = undefined
+			this.isError = false;
+			this.errorMessage = undefined;
 		},
 		setError(error: any) {
-			this.isError = true
-			this.errorMessage = getErrorMessage(error)
+			this.isError = true;
+			this.errorMessage = getErrorMessage(error);
 		}
 	}
-})
+});

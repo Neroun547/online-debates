@@ -20,10 +20,7 @@
 				<template #footerLinks>
 					<p>
 						{{ $t("signup.alreadyHaveAccount") }}
-						<ULink
-to="/auth"
-class="text-primary hover:text-primary"
->
+						<ULink to="/auth" class="text-primary hover:text-primary">
 							{{ $t("signup.signIn") }}
 						</ULink>
 					</p>
@@ -34,28 +31,28 @@ class="text-primary hover:text-primary"
 </template>
 
 <script setup lang="ts">
-import type { PropsFieldItemInterface } from "~/components/BaseUserCredentialsForm.vue"
-import { z } from "zod"
-import { useUserStore } from "~/store/user/user.store"
-import type { SignupRequestInterface } from "~/store/user/interfaces/signup-request.interface"
-import { useAppStore } from "~/store/app-store"
-import { redirectAuthUser } from "~/utils/redirect-auth-user"
+import type { PropsFieldItemInterface } from "~/components/BaseUserCredentialsForm.vue";
+import { z } from "zod";
+import { useUserStore } from "~/store/user/user.store";
+import type { SignupRequestInterface } from "~/store/user/interfaces/signup-request.interface";
+import { useAppStore } from "~/store/app-store";
+import { redirectAuthUser } from "~/utils/redirect-auth-user";
 
-const isFormLoading = ref(false)
+const isFormLoading = ref(false);
 
-const appStore = useAppStore()
-const userStore = useUserStore()
-const { t } = useI18n()
+const appStore = useAppStore();
+const userStore = useUserStore();
+const { t } = useI18n();
 
-const isFormSubmittedSuccess = ref(false)
-const isSignupError = ref(false)
-const signupErrorMessage = ref<string | undefined>(undefined)
+const isFormSubmittedSuccess = ref(false);
+const isSignupError = ref(false);
+const signupErrorMessage = ref<string | undefined>(undefined);
 
 const defaultValues = {
 	age: 18,
 	timezone: Intl.DateTimeFormat().resolvedOptions().timeZone ?? "",
 	sex: "male"
-}
+};
 
 const fields = computed<Array<PropsFieldItemInterface>>(() => [
 	{
@@ -107,7 +104,7 @@ const fields = computed<Array<PropsFieldItemInterface>>(() => [
 		type: "text",
 		htmlTag: "textarea"
 	}
-])
+]);
 
 const formSchema = z.object({
 	username: z.string().trim().min(6).max(50),
@@ -116,28 +113,28 @@ const formSchema = z.object({
 	timezone: z.string().min(1).max(50),
 	age: z.number().int().min(18),
 	description: z.string().max(5000).optional()
-})
+});
 
 async function signup(data: SignupRequestInterface) {
-	isFormLoading.value = true
+	isFormLoading.value = true;
 
-	await userStore.signup(data)
+	await userStore.signup(data);
 
 	if (!userStore.isError) {
-		isFormSubmittedSuccess.value = true
-		isSignupError.value = false
-		signupErrorMessage.value = ""
+		isFormSubmittedSuccess.value = true;
+		isSignupError.value = false;
+		signupErrorMessage.value = "";
 	} else {
-		isFormSubmittedSuccess.value = false
-		isSignupError.value = true
-		signupErrorMessage.value = userStore.errorMessage
+		isFormSubmittedSuccess.value = false;
+		isSignupError.value = true;
+		signupErrorMessage.value = userStore.errorMessage;
 	}
-	isFormLoading.value = false
+	isFormLoading.value = false;
 }
 
 onMounted(() => {
-	appStore.setIsLoading(false)
+	appStore.setIsLoading(false);
 
-	redirectAuthUser()
-})
+	redirectAuthUser();
+});
 </script>

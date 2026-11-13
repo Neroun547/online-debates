@@ -10,10 +10,7 @@
 					inactive-class="text-black"
 					class="flex items-center"
 				>
-					<UIcon
-name="lucide:list"
-class="block mr-2"
-/>
+					<UIcon name="lucide:list" class="block mr-2" />
 					<div class="text-left w-full">{{ $t("sideNav.categories") }}</div>
 				</ULink>
 			</div>
@@ -24,10 +21,7 @@ class="block mr-2"
 					inactive-class="text-black"
 					class="flex items-center"
 				>
-					<UIcon
-name="lucide:circle-user-round"
-class="block mr-2"
-/>
+					<UIcon name="lucide:circle-user-round" class="block mr-2" />
 					<div class="text-left w-full">{{ $t("sideNav.users") }}</div>
 				</ULink>
 			</div>
@@ -38,10 +32,7 @@ class="block mr-2"
 					inactive-class="text-black"
 					class="flex items-center"
 				>
-					<UIcon
-name="lucide:calendar-plus-2"
-class="block mr-2"
-/>
+					<UIcon name="lucide:calendar-plus-2" class="block mr-2" />
 					<div class="text-left w-full">{{ $t("sideNav.mySlots") }}</div>
 				</ULink>
 			</div>
@@ -52,10 +43,7 @@ class="block mr-2"
 					inactive-class="text-black"
 					class="flex items-center"
 				>
-					<UIcon
-name="lucide:notebook"
-class="block mr-2"
-/>
+					<UIcon name="lucide:notebook" class="block mr-2" />
 					<div class="text-left w-full">{{ $t("sideNav.mySubjects") }}</div>
 				</ULink>
 			</div>
@@ -66,10 +54,7 @@ class="block mr-2"
 					inactive-class="text-black"
 					class="flex items-center"
 				>
-					<UIcon
-name="lucide:clipboard-clock"
-class="block mr-2"
-/>
+					<UIcon name="lucide:clipboard-clock" class="block mr-2" />
 					<div>{{ $t("sideNav.mySessions") }}</div>
 				</ULink>
 			</div>
@@ -80,10 +65,7 @@ class="block mr-2"
 					inactive-class="text-black"
 					class="flex items-center"
 				>
-					<UIcon
-name="lucide:settings"
-class="block mr-2"
-/>
+					<UIcon name="lucide:settings" class="block mr-2" />
 					<div class="text-left w-full">{{ $t("sideNav.settings") }}</div>
 				</ULink>
 			</div>
@@ -94,24 +76,15 @@ class="block mr-2"
 					inactive-class="text-black"
 					class="flex items-center"
 				>
-					<UIcon
-name="lucide:circle-question-mark"
-class="block mr-2"
-/>
+					<UIcon name="lucide:circle-question-mark" class="block mr-2" />
 					<div>{{ $t("sideNav.support") }}</div>
 				</ULink>
 			</div>
 			<div class="border-gray-200 border-t mt-5" />
 			<div class="mt-5">
 				<div class="flex items-center">
-					<UIcon
-name="lucide:log-in"
-class="text-red-600 mr-2"
-/>
-					<button
-class="cursor-pointer"
-@click="userStore.logout"
->
+					<UIcon name="lucide:log-in" class="text-red-600 mr-2" />
+					<button class="cursor-pointer" @click="userStore.logout">
 						{{ $t("sideNav.exit") }}
 					</button>
 				</div>
@@ -121,7 +94,7 @@ class="cursor-pointer"
 </template>
 
 <script setup>
-import { useUserStore } from "~/store/user/user.store"
+import { useUserStore } from "~/store/user/user.store";
 
-const userStore = useUserStore()
+const userStore = useUserStore();
 </script>

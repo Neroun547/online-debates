@@ -56,45 +56,45 @@
 </template>
 
 <script setup lang="ts">
-import type { SubjectItem } from "~/store/categories/interfaces/get-subjects-response.interface.ts"
-import BaseDeleteModal from "./BaseDeleteModal.vue"
-import EditSubjectModal from "./subjects/EditSubjectModal.vue"
+import type { SubjectItem } from "~/store/categories/interfaces/get-subjects-response.interface.ts";
+import BaseDeleteModal from "./BaseDeleteModal.vue";
+import EditSubjectModal from "./subjects/EditSubjectModal.vue";
 
 interface Props {
-	data: Array<SubjectItem>
-	categoryId?: number
-	isEditButtonVisible?: boolean
-	isDeleteButtonVisible?: boolean
+	data: Array<SubjectItem>;
+	categoryId?: number;
+	isEditButtonVisible?: boolean;
+	isDeleteButtonVisible?: boolean;
 }
 
-const activeDeleteSubject = ref<SubjectItem>()
-const isDeleteSubjectModalOpen = ref<boolean>(false)
+const activeDeleteSubject = ref<SubjectItem>();
+const isDeleteSubjectModalOpen = ref<boolean>(false);
 
-const activeEditSubject = ref<SubjectItem>()
-const isEditSubjectModalOpen = ref<boolean>(false)
+const activeEditSubject = ref<SubjectItem>();
+const isEditSubjectModalOpen = ref<boolean>(false);
 
-const emit = defineEmits(["delete", "update"])
+const emit = defineEmits(["delete", "update"]);
 
-const props = defineProps<Props>()
+const props = defineProps<Props>();
 
 function openDeleteSubjectModal(subject: SubjectItem) {
-	activeDeleteSubject.value = subject
+	activeDeleteSubject.value = subject;
 
-	isDeleteSubjectModalOpen.value = true
+	isDeleteSubjectModalOpen.value = true;
 }
 
 function openEditSubjectModal(subject: SubjectItem) {
-	activeEditSubject.value = subject
-	isEditSubjectModalOpen.value = true
+	activeEditSubject.value = subject;
+	isEditSubjectModalOpen.value = true;
 }
 
 function deleteSubject() {
-	emit("delete", activeDeleteSubject.value)
-	isDeleteSubjectModalOpen.value = false
+	emit("delete", activeDeleteSubject.value);
+	isDeleteSubjectModalOpen.value = false;
 }
 
-function editSubject(data: { name: string, categoryId: number }) {
-	emit("update", { ...data, id: activeEditSubject.value?.id })
-	isEditSubjectModalOpen.value = false
+function editSubject(data: { name: string; categoryId: number }) {
+	emit("update", { ...data, id: activeEditSubject.value?.id });
+	isEditSubjectModalOpen.value = false;
 }
 </script>

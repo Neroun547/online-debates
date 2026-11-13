@@ -1,4 +1,4 @@
 export interface UpdateUserDataResponseInterface {
-	token: string
-	isMailSent?: boolean
+	token: string;
+	isMailSent?: boolean;
 }

@@ -5,10 +5,7 @@
 				<span
 					class="flex size-10 shrink-0 items-center justify-center rounded-full bg-primary/10 text-primary"
 				>
-					<UIcon
-name="i-lucide-image-up"
-class="size-5"
-/>
+					<UIcon name="i-lucide-image-up" class="size-5" />
 				</span>
 
 				<div>
@@ -22,10 +19,7 @@ class="size-5"
 			</div>
 		</div>
 
-		<form
-class="p-5 sm:p-6"
-@submit.prevent="updateAvatar"
->
+		<form class="p-5 sm:p-6" @submit.prevent="updateAvatar">
 			<div class="grid gap-5 md:grid-cols-[220px_minmax(0,1fr)]">
 				<div
 					class="flex flex-col items-center justify-center rounded-lg bg-elevated/50 px-5 py-6 text-center"
@@ -103,93 +97,93 @@ class="p-5 sm:p-6"
 </template>
 
 <script setup lang="ts">
-import { useUserStore } from "~/store/user/user.store"
+import { useUserStore } from "~/store/user/user.store";
 
-const toast = useToast()
-const userStore = useUserStore()
+const toast = useToast();
+const userStore = useUserStore();
 
-const isUpdateAvatarLoading = ref<boolean>(false)
-const isDeleteAvatarLoading = ref<boolean>(false)
+const isUpdateAvatarLoading = ref<boolean>(false);
+const isDeleteAvatarLoading = ref<boolean>(false);
 
-const MAX_AVATAR_SIZE = 30 * 1024 * 1024
+const MAX_AVATAR_SIZE = 30 * 1024 * 1024;
 const ALLOWED_AVATAR_MIME_TYPES = new Set([
 	"image/jpeg",
 	"image/jpg",
 	"image/png",
 	"image/webp"
-])
-const ALLOWED_AVATAR_EXTENSIONS = [".jpg", ".jpeg", ".png", ".webp"]
+]);
+const ALLOWED_AVATAR_EXTENSIONS = [".jpg", ".jpeg", ".png", ".webp"];
 
-const avatar = ref<File | null>(null)
-const avatarValidationError = ref<string | null>(null)
+const avatar = ref<File | null>(null);
+const avatarValidationError = ref<string | null>(null);
 
 watch(avatar, (file) => {
 	if (!file) {
-		return
+		return;
 	}
 
-	const filename = file.name.toLowerCase()
-	const hasAllowedType = ALLOWED_AVATAR_MIME_TYPES.has(file.type)
-	const hasAllowedExtension = ALLOWED_AVATAR_EXTENSIONS.some(extension =>
+	const filename = file.name.toLowerCase();
+	const hasAllowedType = ALLOWED_AVATAR_MIME_TYPES.has(file.type);
+	const hasAllowedExtension = ALLOWED_AVATAR_EXTENSIONS.some((extension) =>
 		filename.endsWith(extension)
-	)
+	);
 
 	if (!hasAllowedType || !hasAllowedExtension) {
-		avatarValidationError.value = $t("settings.avatar.invalidFormat")
-		avatar.value = null
+		avatarValidationError.value = $t("settings.avatar.invalidFormat");
+		avatar.value = null;
 
-		return
+		return;
 	}
 
 	if (file.size > MAX_AVATAR_SIZE) {
-		avatarValidationError.value = $t("settings.avatar.fileTooLarge")
-		avatar.value = null
+		avatarValidationError.value = $t("settings.avatar.fileTooLarge");
+		avatar.value = null;
 
-		return
+		return;
 	}
 
-	avatarValidationError.value = null
-})
+	avatarValidationError.value = null;
+});
 
 async function deleteAvatar() {
-	isDeleteAvatarLoading.value = true
-	await userStore.deleteAvatar()
+	isDeleteAvatarLoading.value = true;
+	await userStore.deleteAvatar();
 
 	if (userStore.isError) {
 		toast.add({
 			title: "Error",
 			description: userStore.errorMessage,
 			color: "error"
-		})
+		});
 	} else {
 		toast.add({
 			title: $t("settings.avatar.deleted"),
 			description: $t("settings.avatar.deletedSuccessfully"),
 			color: "success"
-		})
+		});
 	}
-	isDeleteAvatarLoading.value = false
+	isDeleteAvatarLoading.value = false;
 }
 
 async function updateAvatar() {
-	isUpdateAvatarLoading.value = true
+	isUpdateAvatarLoading.value = true;
 	if (avatar.value) {
-		await userStore.updateAvatar(avatar.value)
+		await userStore.updateAvatar(avatar.value);
 
 		if (userStore.isError) {
 			toast.add({
 				title: "Error",
 				description: userStore.errorMessage,
 				color: "error"
-			})
+			});
 		} else {
 			toast.add({
 				title: $t("settings.avatar.updated"),
 				description: $t("settings.avatar.updatedSuccessfully"),
 				color: "success"
-			})
+			});
 		}
 	}
-	isUpdateAvatarLoading.value = false
+	isUpdateAvatarLoading.value = false;
 }
 </script>

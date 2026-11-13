@@ -23,10 +23,7 @@
 						class="bg-blue-500 cursor-pointer pl-10 pr-10 pt-2 pb-2 text-white rounded-xl mt-5 flex items-center max-md:text-sm"
 					>
 						<div>{{ $t("landing.tryNow") }}</div>
-						<UIcon
-name="lucide:arrow-right"
-class="block ml-2"
-/>
+						<UIcon name="lucide:arrow-right" class="block ml-2" />
 					</button>
 				</ULink>
 			</div>
@@ -68,10 +65,7 @@ class="block ml-2"
 							<div
 								class="bg-indigo-50 text-primary rounded-[200%] w-[80px] h-[80px] flex justify-center items-center m-auto"
 							>
-								<UIcon
-name="lucide:search"
-class="w-[30px] h-[30px]"
-/>
+								<UIcon name="lucide:search" class="w-[30px] h-[30px]" />
 							</div>
 							<div class="w-[200px] text-center">
 								<h2 class="font-bold mt-3">
@@ -87,10 +81,7 @@ class="w-[30px] h-[30px]"
 				<div
 					class="mt-5 bg-gray-100 rounded-[200%] w-[40px] h-[40px] flex items-center justify-center text-primary bg-indigo-50 max-[1420px]:hidden"
 				>
-					<UIcon
-name="lucide:arrow-right"
-class="text-[25px]"
-/>
+					<UIcon name="lucide:arrow-right" class="text-[25px]" />
 				</div>
 				<div>
 					<div class="flex">
@@ -103,10 +94,7 @@ class="text-[25px]"
 							<div
 								class="bg-indigo-50 text-primary rounded-[200%] w-[80px] h-[80px] flex justify-center items-center m-auto"
 							>
-								<UIcon
-name="lucide:calendar"
-class="w-[30px] h-[30px]"
-/>
+								<UIcon name="lucide:calendar" class="w-[30px] h-[30px]" />
 							</div>
 							<div class="w-[200px] text-center">
 								<h2 class="font-bold mt-3">
@@ -122,10 +110,7 @@ class="w-[30px] h-[30px]"
 				<div
 					class="mt-5 bg-gray-100 rounded-[200%] w-[40px] h-[40px] flex items-center justify-center text-primary bg-indigo-50 max-[1420px]:hidden"
 				>
-					<UIcon
-name="lucide:arrow-right"
-class="text-[25px]"
-/>
+					<UIcon name="lucide:arrow-right" class="text-[25px]" />
 				</div>
 				<div>
 					<div class="flex">
@@ -138,10 +123,7 @@ class="text-[25px]"
 							<div
 								class="bg-indigo-50 text-primary rounded-[200%] w-[80px] h-[80px] flex justify-center items-center m-auto"
 							>
-								<UIcon
-name="lucide:clock"
-class="w-[30px] h-[30px]"
-/>
+								<UIcon name="lucide:clock" class="w-[30px] h-[30px]" />
 							</div>
 							<div class="w-[200px] text-center">
 								<h2 class="font-bold mt-3">
@@ -157,10 +139,7 @@ class="w-[30px] h-[30px]"
 				<div
 					class="mt-5 bg-gray-100 rounded-[200%] w-[40px] h-[40px] flex items-center justify-center text-primary bg-indigo-50 max-[1420px]:hidden"
 				>
-					<UIcon
-name="lucide:arrow-right"
-class="text-[25px]"
-/>
+					<UIcon name="lucide:arrow-right" class="text-[25px]" />
 				</div>
 				<div>
 					<div class="flex">
@@ -173,10 +152,7 @@ class="text-[25px]"
 							<div
 								class="bg-indigo-50 text-primary rounded-[200%] w-[80px] h-[80px] flex justify-center items-center m-auto"
 							>
-								<UIcon
-name="lucide:smile"
-class="w-[30px] h-[30px]"
-/>
+								<UIcon name="lucide:smile" class="w-[30px] h-[30px]" />
 							</div>
 							<div class="w-[200px] text-center">
 								<h2 class="font-bold mt-3">
@@ -207,10 +183,8 @@ class="w-[30px] h-[30px]"
 							to="/home"
 							class="text-primary flex items-center max-[890px]:mt-5"
 							>{{ $t("landing.viewAllCategories") }}
-							<UIcon
-name="lucide:arrow-right"
-class="ml-2"
-/></ULink>
+							<UIcon name="lucide:arrow-right" class="ml-2"
+						/></ULink>
 					</div>
 					<div class="flex justify-between mt-5 mb-10 max-[1200px]:flex-col">
 						<ULink
@@ -230,10 +204,7 @@ class="ml-2"
 										class="text-primary flex items-center hover:text-primary text-sm"
 									>
 										{{ $t("landing.categories.goToCategory") }}
-										<UIcon
-class="ml-2"
-name="lucide:arrow-right"
-/>
+										<UIcon class="ml-2" name="lucide:arrow-right" />
 									</ULink>
 								</div>
 							</div>
@@ -246,32 +217,32 @@ name="lucide:arrow-right"
 </template>
 
 <script setup lang="ts">
-import Loader from "~/components/Loader.vue"
-import { useCategoriesStore } from "~/store/categories/categories.store"
-import type { CategoryItem } from "~/store/categories/interfaces/get-categories-response.interface"
-import { useAppStore } from "~/store/app-store.ts"
+import Loader from "~/components/Loader.vue";
+import { useCategoriesStore } from "~/store/categories/categories.store";
+import type { CategoryItem } from "~/store/categories/interfaces/get-categories-response.interface";
+import { useAppStore } from "~/store/app-store.ts";
 
-const appStore = useAppStore()
-const categoriesStore = useCategoriesStore()
+const appStore = useAppStore();
+const categoriesStore = useCategoriesStore();
 
-const categories = ref<CategoryItem[]>([])
-const isCategoriesLoading = ref<boolean>(false)
+const categories = ref<CategoryItem[]>([]);
+const isCategoriesLoading = ref<boolean>(false);
 
 async function getTheMostPopularCategories() {
-	isCategoriesLoading.value = true
-	const response = await categoriesStore.getTheMostPopularCategories()
+	isCategoriesLoading.value = true;
+	const response = await categoriesStore.getTheMostPopularCategories();
 
 	if (response) {
-		categories.value = response
+		categories.value = response;
 	}
-	isCategoriesLoading.value = false
+	isCategoriesLoading.value = false;
 }
 
 onMounted(() => {
 	getTheMostPopularCategories().then(() => {
-		appStore.setIsLoading(false)
-	})
-})
+		appStore.setIsLoading(false);
+	});
+});
 </script>
 
 <style scoped>

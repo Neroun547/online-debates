@@ -6,10 +6,7 @@
 		<template #body>
 			<div class="w-max ml-auto mt-5 flex max-sm:flex-col">
 				<div class="max-sm:flex max-sm:justify-between">
-					<label
-for=""
-class="mr-2"
->
+					<label for="" class="mr-2">
 						{{ $t("userSlots.CreateSingleSlotModal.timeFrom") }}
 					</label>
 					<UInputTime
@@ -21,17 +18,10 @@ class="mr-2"
 				</div>
 
 				<div class="max-sm:mt-5 max-sm:flex max-sm:justify-between">
-					<label
-for=""
-class="mr-2"
->
+					<label for="" class="mr-2">
 						{{ $t("userSlots.CreateSingleSlotModal.timeTo") }}
 					</label>
-					<UInputTime
-v-model="timeTo"
-:hour-cycle="24"
-required
-/>
+					<UInputTime v-model="timeTo" :hour-cycle="24" required />
 				</div>
 			</div>
 			<UCalendar
@@ -58,33 +48,33 @@ required
 </template>
 
 <script setup lang="ts">
-import { CalendarDate, Time } from "@internationalized/date"
+import { CalendarDate, Time } from "@internationalized/date";
 
-const { locale } = useI18n()
+const { locale } = useI18n();
 
 interface Props {
-	isSaveSingleSlotLoading: boolean
+	isSaveSingleSlotLoading: boolean;
 }
 
-const props = defineProps<Props>()
+const props = defineProps<Props>();
 
-const now = new Date()
+const now = new Date();
 
-const isModalOpen = defineModel<boolean>("isModalOpen")
+const isModalOpen = defineModel<boolean>("isModalOpen");
 
-const emit = defineEmits(["save"])
+const emit = defineEmits(["save"]);
 
 const date = shallowRef(
 	new CalendarDate(now.getFullYear(), now.getMonth() + 1, now.getDate())
-)
-const timeFrom = shallowRef(new Time(10, 0, 0))
-const timeTo = shallowRef(new Time(12, 0, 0))
+);
+const timeFrom = shallowRef(new Time(10, 0, 0));
+const timeTo = shallowRef(new Time(12, 0, 0));
 
 async function save() {
 	emit("save", {
 		date: date.value,
 		timeFrom: timeFrom.value,
 		timeTo: timeTo.value
-	})
+	});
 }
 </script>
